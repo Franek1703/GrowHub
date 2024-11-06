@@ -46,6 +46,14 @@ class Sensor(db.Model):
     created_at = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
     min_value = db.Column(db.Float, nullable=True)
     max_value = db.Column(db.Float, nullable=True)
+    frequency = db.Column(db.Integer, nullable=True)
+
+class FertilizingDevice(db.Model):
+    __tablename__ = 'fertilizing_devices'
+    fertilizing_device_id = db.Column(db.Integer, primary_key=True)
+    device_id = db.Column(db.Integer, db.ForeignKey('devices.device_id'), nullable=False)
+    device_type = db.Column(db.String, default="pompa") 
+    activation_time = db.Column(db.Integer, nullable=False) 
     
 class SensorReading(db.Model):
     __tablename__ = 'sensors_readings'
