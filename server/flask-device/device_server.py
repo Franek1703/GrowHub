@@ -46,7 +46,7 @@ class Sensor(db.Model):
     created_at = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
     min_value = db.Column(db.Float, nullable=True)
     max_value = db.Column(db.Float, nullable=True)
-    frequency = db.Column(db.Integer, nullable=True)
+    measurement_frequency = db.Column(db.Integer, nullable=True)
 
 class FertilizingDevice(db.Model):
     __tablename__ = 'fertilizing_devices'
@@ -61,26 +61,53 @@ class SensorReading(db.Model):
     sensor_id = db.Column(db.Integer, db.ForeignKey('sensors.sensor_id'), nullable=False)
     value = db.Column(db.Float, nullable=False)
     recorded_at = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
-    sensor_type = db.Column(db.String)
+    sensor_type = db.Column(db.String, db.ForeignKey('sensors.sensor_type'))
 with app.app_context():
         db.create_all()
 
 # Routes
-@app.route('/', methods=['GET'])
-def test():
-    return render_template('index.html')
+
 @app.route('/add_reading', methods=['POST'])
 def add_reading():
-    data = request.json
+    data = request.get_json()
+    sensor_id = data.get('sensor_id')
+    value = data.get('value')
+    recorded_at = data.get('recorded_at')
+    sensor_type = data.get('sensor_type')
+
+    if not sensor_id or value is None or not recorded_at or not sensor_type:
+        return jsonify({'error': 'sensor_id, value, recorded_at, and sensor_type are required'}), 400
+
+    sensor = Sensor.query.filter_by(sensor_id=sensor_id).first()
+    if not sensor:
+        return jsonify({'error': 'Sensor not found'}), 404
+
     new_reading = SensorReading(
-        sensor_id=data['sensor_id'],
-        value=data['value'],
-        recorded_at=data['recorded_at'],
-        sensor_type=data['sensor_type']
+        sensor_id=sensor_id,
+        value=value,
+        recorded_at=recorded_at,
+        sensor_type=sensor_type
     )
     db.session.add(new_reading)
     db.session.commit()
-    return jsonify({"message": "Reading added successfully!"})
+
+    if sensor_type in ["TNS", "PH"] and (value < sensor.min_value or value > sensor.max_value):
+        # Pobierz urządzenie nawożące związane z tym czujnikiem
+        fertilizing_device = FertilizingDevice.query.filter_by(device_id=sensor.device_id).first()
+        
+        if fertilizing_device:
+            return jsonify({
+                'needs_fertilization': True,
+                'activation_time': fertilizing_device.activation_time,
+                'frequency': sensor.measurement_frequency
+            })
+        else:
+            return jsonify({'error': 'No fertilizing device found for this sensor'}), 404
+
+    return jsonify({
+        'needs_fertilization': False,
+        'frequency': sensor.measurement_frequency
+    })
 
 @app.route('/get_sensor_thresholds/<int:sensor_id>', methods=['GET'])
 def get_sensor_thresholds(sensor_id):
