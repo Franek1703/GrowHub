@@ -3,8 +3,16 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from datetime import datetime, timedelta
 from alert_enum import AlertMessages
+from flasgger import Swagger
 
 app = Flask(__name__)
+swagger = Swagger(app, template={
+    "info": {
+        "title": "Device Monitoring API",
+        "description": "API for monitoring sensor readings from device.",
+        "version": "1.0.0"
+    }
+})
 
 
 db_name = 'admin:admin@localhost:5432/pbl5DB'
@@ -82,6 +90,73 @@ with app.app_context():
 
 @app.route('/add_reading', methods=['POST'])
 def add_reading():
+    """
+    Add a new sensor reading
+    ---
+    tags:
+        - Sensor Readings
+    description: Add a new sensor reading to the database and check if fertilization is needed.
+    parameters:
+      - name: sensor_id
+        in: body
+        type: integer
+        required: true
+        description: ID of the sensor
+      - name: value
+        in: body
+        type: float
+        required: true
+        description: Value of the sensor reading
+      - name: recorded_at
+        in: body
+        type: string
+        required: true
+        description: Timestamp when the reading was recorded (ISO format)
+      - name: sensor_type
+        in: body
+        type: string
+        required: true
+        description: Type of the sensor (e.g., PH, TNS, Temperature)
+    responses:
+        200:
+            description: Successful response with fertilization status and frequency
+            schema:
+                type: object
+                properties:
+                    needs_fertilization:
+                        type: boolean
+                        description: Indicates if fertilization is needed
+                    frequency:
+                        type: integer
+                        description: Frequency of the sensor readings
+                    activation_time:
+                        type: integer
+                        description: Duration of fertilization (if needed)
+            examples:
+                application/json: {
+                    "needs_fertilization": true,
+                    "frequency": 60,
+                    "activation_time": 120
+                }
+        400:
+            description: Missing or invalid parameters
+            examples:
+                application/json: {
+                    "error": "sensor_id, value, recorded_at, and sensor_type are required"
+                }
+        404:
+            description: Sensor not found or sensor_type mismatch
+            examples:
+                application/json: {
+                    "error": "Sensor not found or sensor_type mismatch"
+                }
+        406:
+            description: No fertilizing device found for this sensor
+            examples:
+                application/json: {
+                    "error": "No fertilizing device found for this sensor"
+                }
+    """
     data = request.get_json()
     sensor_id = data.get('sensor_id')
     value = data.get('value')
@@ -158,7 +233,7 @@ def add_reading():
         if fertilizing_device:
             response['activation_time'] = sensor.activation_time
         else:
-            return jsonify({'error': 'No fertilizing device found for this sensor'}), 404
+            return jsonify({'error': 'No fertilizing device found for this sensor'}), 406
         
     return jsonify(response)
 
