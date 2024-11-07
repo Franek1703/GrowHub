@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from datetime import datetime
+from datetime import datetime, timedelta
+from alert_enum import AlertMessages
 
 app = Flask(__name__)
 
@@ -62,6 +63,18 @@ class SensorReading(db.Model):
     value = db.Column(db.Float, nullable=False)
     recorded_at = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
     sensor_type = db.Column(db.String, db.ForeignKey('sensors.sensor_type'))
+    
+class Alert(db.Model):
+    __tablename__ = 'alerts'
+    alert_id = db.Column(db.Integer, primary_key=True)
+    sensor_id = db.Column(db.Integer, db.ForeignKey('sensors.sensor_id'), nullable=False)
+    value = db.Column(db.Float, nullable=False)
+    alert_time = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
+    message = db.Column(db.String, nullable=False)
+    resolved = db.Column(db.Boolean, default=False)
+    resolved_at = db.Column(db.DateTime(), index=True)
+    
+    
 with app.app_context():
         db.create_all()
 
@@ -80,7 +93,7 @@ def add_reading():
 
     sensor = Sensor.query.filter_by(sensor_id=sensor_id).first()
     if not sensor:
-        return jsonify({'error': 'Sensor not found'}), 404
+        return jsonify({'error': 'Sensor not found or sensor_type mismatch'}), 404
 
     new_reading = SensorReading(
         sensor_id=sensor_id,
@@ -89,35 +102,65 @@ def add_reading():
         sensor_type=sensor_type
     )
     db.session.add(new_reading)
+
+    alert_message = None
+    needs_fertilization = False
+    resolved = False
+    resolved_at = None
+
+    if value < sensor.min_value:
+        if sensor_type.lower() == "PH".lower():
+            alert_message = AlertMessages.PH_LOW.value
+            needs_fertilization = True
+            resolved = True
+            resolved_at = datetime.utcnow() + timedelta(seconds=sensor.activation_time)
+            
+        elif sensor_type.lower() == "TNS".lower():
+            alert_message = AlertMessages.TNS_LOW.value
+            needs_fertilization = True
+            resolved = True
+            resolved_at = datetime.utcnow() + timedelta(seconds=sensor.activation_time)
+            
+        elif sensor_type.lower() == "Temperature".lower():
+            alert_message = AlertMessages.TEMP_LOW.value
+            
+    elif value > sensor.max_value:
+        if sensor_type.lower() == "PH".lower():
+            alert_message = AlertMessages.PH_HIGH.value
+            
+        elif sensor_type.lower() == "TNS".lower():
+            alert_message = AlertMessages.TNS_HIGH.value
+            
+        elif sensor_type.lower() == "Temperature".lower():
+            alert_message = AlertMessages.TEMP_HIGH.value
+
+    if alert_message:
+        alert = Alert(
+            sensor_id=sensor_id,
+            value=value,
+            alert_time=datetime.utcnow(),
+            message=alert_message,
+            resolved=resolved,
+            resolved_at=resolved_at
+        )
+        db.session.add(alert)
+
     db.session.commit()
 
-    if sensor_type in ["TNS", "PH"] and (value < sensor.min_value or value > sensor.max_value):
-        # Pobierz urządzenie nawożące związane z tym czujnikiem
-        fertilizing_device = FertilizingDevice.query.filter_by(device_id=sensor.device_id).first()
-        
+    response = {
+        'needs_fertilization': needs_fertilization,
+        'frequency': sensor.measurement_frequency
+    }
+    
+    fertilizing_device = FertilizingDevice.query.filter_by(device_id=sensor.device_id).first()
+
+    if needs_fertilization:
         if fertilizing_device:
-            return jsonify({
-                'needs_fertilization': True,
-                'activation_time': fertilizing_device.activation_time,
-                'frequency': sensor.measurement_frequency
-            })
+            response['activation_time'] = sensor.activation_time
         else:
             return jsonify({'error': 'No fertilizing device found for this sensor'}), 404
-
-    return jsonify({
-        'needs_fertilization': False,
-        'frequency': sensor.measurement_frequency
-    })
-
-@app.route('/get_sensor_thresholds/<int:sensor_id>', methods=['GET'])
-def get_sensor_thresholds(sensor_id):
-    sensor = Sensor.query.get(sensor_id)
-    if sensor:
-        return jsonify({
-            "min_value": sensor.min_value,
-            "max_value": sensor.max_value
-        })
-    return jsonify({"error": "Sensor not found"}), 404
+        
+    return jsonify(response)
 
 if __name__ == '__main__':  
     app.run(port=5001, debug=True)
