@@ -31,3 +31,13 @@ class DefaultValues(Enum):
             return DefaultValues.MIN_TEMP.value
         else:
             raise ValueError("Invalid type. Available types: 'ph', 'tds', 'temperature'.")
+    @staticmethod
+    def get_unit(value_type):
+        if value_type.lower() == "ph":
+            return "pH"
+        elif value_type.lower() == "tds":
+            return "ppm"
+        elif value_type.lower() == "temperature":
+            return "°C"
+        else:
+            raise ValueError("Invalid type. Available types: 'ph', 'tds', 'temperature'.")

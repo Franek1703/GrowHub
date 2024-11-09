@@ -1,22 +1,26 @@
-Adds a new fertilizing device to an existing device, if one of the specified type doesn’t already exist.
-    ---
-    tags:
-        - Fertilizing Devices
-    description: Adds a new fertilizing device for a device, specified by device_id, with a default type 'Pump'.
-    parameters:
-        - name: device_id
-          in: body
+tags:
+  - Fertilizing Devices
+description: Adds a new fertilizing device for a device, specified by device_id, with a default type 'Pump'.
+parameters:
+  - in: body
+    name: fertilizing_device
+    schema:
+      type: object
+      required:
+        - device_id
+      properties:
+        device_id:
           type: integer
-          required: true
           description: ID of the device to add the fertilizing device to.
-        - name: device_type
-          in: body
+        device_type:
           type: string
-          required: false
-          default: Pump
-          description: Type of fertilizing device.
-    responses:
-        201:
-            description: Fertilizing device successfully added.
-        400:
-            description: Fertilizing device of specified type already exists for this device.
+          description: Type of fertilizing device (default is 'Pump').
+          default: "Pump"
+responses:
+  201:
+    description: Fertilizing device successfully added.
+  400:
+    description: Fertilizing device of specified type already exists for this device.
+    examples:
+      application/json:
+        error: "Fertilizing device of specified type already exists for this device."

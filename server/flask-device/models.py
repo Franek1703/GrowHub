@@ -59,7 +59,7 @@ class Alert(db.Model):
     __tablename__ = 'alerts'
     alert_id = db.Column(db.Integer, primary_key=True)
     sensor_id = db.Column(db.Integer, db.ForeignKey('sensors.sensor_id'), nullable=False)
-    value = db.Column(db.Float, nullable=False)
+    value = db.Column(db.Float, nullable=True)
     alert_time = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
     message = db.Column(db.String, nullable=False)
     resolved = db.Column(db.Boolean, default=False)

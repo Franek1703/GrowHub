@@ -16,10 +16,9 @@ def add_reading():
     data = request.get_json()
     sensor_id = data.get('sensor_id')
     value = data.get('value')
-    recorded_at = data.get('recorded_at')
     sensor_type = data.get('sensor_type')
 
-    if not sensor_id or value is None or not recorded_at or not sensor_type:
+    if not sensor_id or value is None or not sensor_type:
         return jsonify({'error': 'sensor_id, value, recorded_at, and sensor_type are required'}), 400
 
     sensor = Sensor.query.filter_by(sensor_id=sensor_id, sensor_type=sensor_type).first()
@@ -29,7 +28,7 @@ def add_reading():
     new_reading = SensorReading(
         sensor_id=sensor_id,
         value=value,
-        recorded_at=recorded_at,
+        recorded_at=datetime.utcnow(),
         sensor_type=sensor_type
     )
     db.session.add(new_reading)
@@ -108,7 +107,7 @@ def add_device():
         return jsonify({"message": "Device with this SSID already exists.", "device_id": existing_device.device_id}), 400
 
     # Add new device
-    new_device = Device(device_name=device_name, location=location, ssid=ssid)
+    new_device = Device(name=device_name, location=location, ssid=ssid)
     db.session.add(new_device)
     db.session.commit()
 
@@ -127,7 +126,7 @@ def add_sensor():
     if existing_sensor:
         return jsonify({"message": f"Sensor of type '{sensor_type}' already exists for device_id '{device_id}'."}), 400
 
-    new_sensor = Sensor(device_id=device_id, sensor_type=sensor_type, min_value=DefaultValues.get_min(sensor_type.lower()), max_value=DefaultValues.get_max(sensor_type.lower()), frequency=DefaultValues.SENSOR_FREQUENCY)
+    new_sensor = Sensor(device_id=device_id, sensor_type=sensor_type, min_value=DefaultValues.get_min(sensor_type.lower()), max_value=DefaultValues.get_max(sensor_type.lower()), measurement_frequency=DefaultValues.SENSOR_FREQUENCY.value, unit = DefaultValues.get_unit(sensor_type.lower()))
     db.session.add(new_sensor)
     db.session.commit()
     return jsonify({"message": "Sensor added successfully.", "sensor_id": new_sensor.sensor_id}), 201
@@ -145,7 +144,7 @@ def add_fertilizing_device():
     if existing_fertilizing_device:
         return jsonify({"message": f"Fertilizing device of type '{device_type}' already exists for device_id '{device_id}'."}), 400
 
-    new_fertilizing_device = FertilizingDevice(device_id=device_id, device_type=device_type, activation_time=DefaultValues.ACTIVATION_TIME)
+    new_fertilizing_device = FertilizingDevice(device_id=device_id, device_type=device_type, activation_time=DefaultValues.ACTIVATION_TIME.value)
     db.session.add(new_fertilizing_device)
     db.session.commit()
     return jsonify({"message": "Fertilizing device added successfully.", "fertilizing_device_id": new_fertilizing_device.fertilizing_device_id}), 201
@@ -178,7 +177,7 @@ def get_sensor_frequency():
 
     sensor = Sensor.query.get(sensor_id)
     if sensor:
-        return jsonify({"frequency": sensor.frequency}), 200
+        return jsonify({"frequency": sensor.measurement_frequency}), 200
     else:
         return jsonify({"message": "Sensor not found."}), 404
 
@@ -196,3 +195,32 @@ def get_fertilizing_device_activation_time():
         return jsonify({"activation_time": fertilizing_device.activation_time}), 200
     else:
         return jsonify({"message": "Fertilizing device not found."}), 404
+    
+# Endpoint to create a new alert
+@api.route('/create_alert', methods=['POST'])
+@swag_from('swagger_templates/create_alert.yml')
+def create_alert():
+    data = request.get_json()
+
+    sensor_id = data.get('sensor_id')
+    message = data.get('message')
+    resolved = data.get('resolved', False)
+
+    # Validation checks
+    if sensor_id is None or message is None:
+        return jsonify({"message": "Parameters 'sensor_id', and 'message' are required."}), 400
+
+    new_alert = Alert(
+        sensor_id=sensor_id,
+        alert_time=datetime.utcnow(),
+        message=message,
+        resolved=resolved
+    )
+    
+    db.session.add(new_alert)
+    db.session.commit()
+
+    return jsonify({
+        "message": "Alert created successfully.",
+        "alert_id": new_alert.alert_id
+    }), 201
