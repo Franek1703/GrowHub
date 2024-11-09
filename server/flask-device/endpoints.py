@@ -166,3 +166,33 @@ def add_dosage():
 
     return jsonify({
         "message": "Dosage history record added successfully."}), 201
+    
+# Endpoint to get the frequency of a sensor
+@api.route('/get_sensor_frequency', methods=['GET'])
+@swag_from('swagger_templates/get_sensor_frequency.yml')
+def get_sensor_frequency():
+    sensor_id = request.args.get('sensor_id', type=int)
+
+    if sensor_id is None:
+        return jsonify({"message": "Parameter 'sensor_id' is required."}), 400
+
+    sensor = Sensor.query.get(sensor_id)
+    if sensor:
+        return jsonify({"frequency": sensor.frequency}), 200
+    else:
+        return jsonify({"message": "Sensor not found."}), 404
+
+# Endpoint to get the activation time of a fertilizing device
+@api.route('/get_fertilizing_device_activation_time', methods=['GET'])
+@swag_from('swagger_templates/get_fertilizing_device_activation_time.yml')
+def get_fertilizing_device_activation_time():
+    device_id = request.args.get('device_id', type=int)
+
+    if device_id is None:
+        return jsonify({"message": "Parameter 'device_id' is required."}), 400
+
+    fertilizing_device = FertilizingDevice.query.filter_by(device_id=device_id).first()
+    if fertilizing_device:
+        return jsonify({"activation_time": fertilizing_device.activation_time}), 200
+    else:
+        return jsonify({"message": "Fertilizing device not found."}), 404
