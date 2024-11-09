@@ -1,0 +1,25 @@
+# swagger_templates/add_device.yml
+tags:
+  - Devices
+description: Adds a new device to the system if it doesn’t already exist based on the SSID.
+parameters:
+  - name: ssid
+    in: body
+    type: string
+    required: true
+    description: Unique identifier for the device (SSID).
+  - name: device_name
+    in: body
+    type: string
+    required: true
+    description: Name of the device.
+  - name: location
+    in: body
+    type: string
+    required: false
+    description: Location of the device.
+responses:
+  201:
+    description: Device added successfully.
+  400:
+    description: Device with this SSID already exists.

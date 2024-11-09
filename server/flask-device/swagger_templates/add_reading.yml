@@ -1,0 +1,65 @@
+Add a new sensor reading
+    ---
+    tags:
+        - Sensor Readings
+    description: Add a new sensor reading to the database and check if fertilization is needed.
+    parameters:
+      - name: sensor_id
+        in: body
+        type: integer
+        required: true
+        description: ID of the sensor
+      - name: value
+        in: body
+        type: float
+        required: true
+        description: Value of the sensor reading
+      - name: recorded_at
+        in: body
+        type: string
+        required: true
+        description: Timestamp when the reading was recorded (ISO format)
+      - name: sensor_type
+        in: body
+        type: string
+        required: true
+        description: Type of the sensor (e.g., PH, TNS, Temperature)
+    responses:
+        200:
+            description: Successful response with fertilization status and frequency
+            schema:
+                type: object
+                properties:
+                    needs_fertilization:
+                        type: boolean
+                        description: Indicates if fertilization is needed
+                    frequency:
+                        type: integer
+                        description: Frequency of the sensor readings
+                    activation_time:
+                        type: integer
+                        description: Duration of fertilization (if needed)
+            examples:
+                application/json: {
+                    "needs_fertilization": true,
+                    "frequency": 60,
+                    "activation_time": 120
+                }
+        400:
+            description: Missing or invalid parameters
+            examples:
+                application/json: {
+                    "error": "sensor_id, value, recorded_at, and sensor_type are required"
+                }
+        404:
+            description: Sensor not found or sensor_type mismatch
+            examples:
+                application/json: {
+                    "error": "Sensor not found or sensor_type mismatch"
+                }
+        406:
+            description: No fertilizing device found for this sensor
+            examples:
+                application/json: {
+                    "error": "No fertilizing device found for this sensor"
+                }

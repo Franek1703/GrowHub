@@ -8,7 +8,6 @@ app = Flask(__name__)
 app.config.from_object(Config)
 db.init_app(app)
 
-# Inicjalizacja Swagger
 swagger = Swagger(app, template={
     "info": {
         "title": "Device Monitoring API",
@@ -17,10 +16,9 @@ swagger = Swagger(app, template={
     }
 })
 
-# Rejestracja blueprinta
 app.register_blueprint(api, url_prefix='/device-service-api')
 
-# Tworzenie bazy danych przy starcie aplikacji
+
 with app.app_context():
     db.create_all()
 

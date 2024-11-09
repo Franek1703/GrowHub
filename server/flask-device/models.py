@@ -9,6 +9,7 @@ db = SQLAlchemy()
 class Device(db.Model):
     __tablename__ = 'devices'
     device_id = db.Column(db.Integer, primary_key=True)
+    ssid = db.Column(db.String, nullable=False)
     name = db.Column(db.String, nullable=False)
     location = db.Column(db.String, nullable=True)
     created_at = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
@@ -43,7 +44,7 @@ class FertilizingDevice(db.Model):
     __tablename__ = 'fertilizing_devices'
     fertilizing_device_id = db.Column(db.Integer, primary_key=True)
     device_id = db.Column(db.Integer, db.ForeignKey('devices.device_id'), nullable=False)
-    device_type = db.Column(db.String, default="pompa") 
+    device_type = db.Column(db.String, default="Pump") 
     activation_time = db.Column(db.Integer, nullable=False) 
     
 class SensorReading(db.Model):
@@ -63,3 +64,8 @@ class Alert(db.Model):
     message = db.Column(db.String, nullable=False)
     resolved = db.Column(db.Boolean, default=False)
     resolved_at = db.Column(db.DateTime(), index=True)
+class DosageHistory(db.Model):
+    __tablename__ = 'dosage_history'
+    device_id = db.Column(db.Integer, db.ForeignKey('devices.device_id'), primary_key=True)
+    dose = db.Column(db.Float, nullable=False)
+    dosed_at = db.Column(db.DateTime(), default=datetime.utcnow, index=True)

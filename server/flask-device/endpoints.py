@@ -1,7 +1,9 @@
 from flask import Blueprint, jsonify, request
-from models import db, Alert, Device, User, Sensor, FertilizingDevice, SensorReading
-from datetime import datetime, timedelta
+from models import db, Alert, Device, DosageHistory, Sensor, FertilizingDevice, SensorReading
+from datetime import datetime
 from alert_enum import AlertMessages
+from device_default_values import DefaultValues
+from flasgger import swag_from
 
 # Tworzenie blueprinta
 api = Blueprint('api', __name__)
@@ -9,74 +11,8 @@ api = Blueprint('api', __name__)
 # Routes
 
 @api.route('/add_reading', methods=['POST'])
+@swag_from('swagger_templates/add_reading.yml')
 def add_reading():
-    """
-    Add a new sensor reading
-    ---
-    tags:
-        - Sensor Readings
-    description: Add a new sensor reading to the database and check if fertilization is needed.
-    parameters:
-      - name: sensor_id
-        in: body
-        type: integer
-        required: true
-        description: ID of the sensor
-      - name: value
-        in: body
-        type: float
-        required: true
-        description: Value of the sensor reading
-      - name: recorded_at
-        in: body
-        type: string
-        required: true
-        description: Timestamp when the reading was recorded (ISO format)
-      - name: sensor_type
-        in: body
-        type: string
-        required: true
-        description: Type of the sensor (e.g., PH, TNS, Temperature)
-    responses:
-        200:
-            description: Successful response with fertilization status and frequency
-            schema:
-                type: object
-                properties:
-                    needs_fertilization:
-                        type: boolean
-                        description: Indicates if fertilization is needed
-                    frequency:
-                        type: integer
-                        description: Frequency of the sensor readings
-                    activation_time:
-                        type: integer
-                        description: Duration of fertilization (if needed)
-            examples:
-                application/json: {
-                    "needs_fertilization": true,
-                    "frequency": 60,
-                    "activation_time": 120
-                }
-        400:
-            description: Missing or invalid parameters
-            examples:
-                application/json: {
-                    "error": "sensor_id, value, recorded_at, and sensor_type are required"
-                }
-        404:
-            description: Sensor not found or sensor_type mismatch
-            examples:
-                application/json: {
-                    "error": "Sensor not found or sensor_type mismatch"
-                }
-        406:
-            description: No fertilizing device found for this sensor
-            examples:
-                application/json: {
-                    "error": "No fertilizing device found for this sensor"
-                }
-    """
     data = request.get_json()
     sensor_id = data.get('sensor_id')
     value = data.get('value')
@@ -156,3 +92,77 @@ def add_reading():
             return jsonify({'error': 'No fertilizing device found for this sensor'}), 406
         
     return jsonify(response)
+
+@api.route('/add_new/device', methods=['POST'])
+@swag_from('swagger_templates/add_device.yml')
+def add_device():
+    
+    data = request.get_json()
+    ssid = data.get('ssid')
+    device_name = data.get('device_name')
+    location = data.get('location', '')
+
+    # Check if device exists
+    existing_device = Device.query.filter_by(ssid=ssid).first()
+    if existing_device:
+        return jsonify({"message": "Device with this SSID already exists.", "device_id": existing_device.device_id}), 400
+
+    # Add new device
+    new_device = Device(device_name=device_name, location=location, ssid=ssid)
+    db.session.add(new_device)
+    db.session.commit()
+
+    return jsonify({"message": "Device added successfully.", "device_id": new_device.device_id}), 201
+
+# Endpoint to add a new sensor
+@api.route('/add_new/sensor', methods=['POST'])
+@swag_from('swagger_templates/add_sensor.yml')
+def add_sensor():
+    data = request.get_json()
+    device_id = data.get('device_id')
+    sensor_type = data.get('sensor_type')
+
+    # Check if the specified type of sensor already exists for the given device
+    existing_sensor = Sensor.query.filter_by(device_id=device_id, sensor_type=sensor_type).first()
+    if existing_sensor:
+        return jsonify({"message": f"Sensor of type '{sensor_type}' already exists for device_id '{device_id}'."}), 400
+
+    new_sensor = Sensor(device_id=device_id, sensor_type=sensor_type, min_value=DefaultValues.get_min(sensor_type.lower()), max_value=DefaultValues.get_max(sensor_type.lower()), frequency=DefaultValues.SENSOR_FREQUENCY)
+    db.session.add(new_sensor)
+    db.session.commit()
+    return jsonify({"message": "Sensor added successfully.", "sensor_id": new_sensor.sensor_id}), 201
+
+# Endpoint to add a new fertilizing device
+@api.route('/add_new/fertilizing_device', methods=['POST'])
+@swag_from('swagger_templates/add_fertilizing_device.yml')
+def add_fertilizing_device():
+    data = request.get_json()
+    device_id = data.get('device_id')
+    device_type = data.get('device_type', 'Pump')  # Default device type is 'Pump'
+
+    # Check if a fertilizing device of this type already exists for the specified device
+    existing_fertilizing_device = FertilizingDevice.query.filter_by(device_id=device_id, device_type=device_type).first()
+    if existing_fertilizing_device:
+        return jsonify({"message": f"Fertilizing device of type '{device_type}' already exists for device_id '{device_id}'."}), 400
+
+    new_fertilizing_device = FertilizingDevice(device_id=device_id, device_type=device_type, activation_time=DefaultValues.ACTIVATION_TIME)
+    db.session.add(new_fertilizing_device)
+    db.session.commit()
+    return jsonify({"message": "Fertilizing device added successfully.", "fertilizing_device_id": new_fertilizing_device.fertilizing_device_id}), 201
+
+@api.route('/add_dosage', methods=['POST'])
+@swag_from('swagger_templates/add_dosage.yml')
+def add_dosage():
+    data = request.get_json()
+    device_id = data.get('device_id')
+    dose = data.get('dose')
+
+    if not device_id or dose is None:
+        return jsonify({"message": "Both 'device_id' and 'dose' are required."}), 400
+
+    new_dosage = DosageHistory(device_id=device_id, dose=dose, dosed_at=datetime.utcnow())
+    db.session.add(new_dosage)
+    db.session.commit()
+
+    return jsonify({
+        "message": "Dosage history record added successfully."}), 201
