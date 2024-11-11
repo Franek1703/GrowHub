@@ -1,0 +1,27 @@
+tags:
+  - Dosage History
+description: Adds a new record to the dosage history of a device, including dosage amount and time.
+parameters:
+  - in: body
+    name: dosage_record
+    schema:
+      type: object
+      required:
+        - device_id
+        - dose
+      properties:
+        device_id:
+          type: integer
+          description: ID of the device receiving the dosage.
+        dose:
+          type: number
+          format: float
+          description: Dosage amount for fertilization.
+responses:
+  201:
+    description: Dosage history record added successfully.
+  400:
+    description: Missing device_id or dose parameter.
+    examples:
+      application/json:
+        error: "device_id and dose are required"

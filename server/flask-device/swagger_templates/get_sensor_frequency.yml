@@ -1,0 +1,20 @@
+tags:
+  - Sensors
+description: Returns the frequency of a specified sensor.
+parameters:
+  - name: sensor_id
+    in: query
+    type: integer
+    required: true
+    description: ID of the sensor.
+responses:
+  200:
+    description: Sensor frequency retrieved successfully.
+    schema:
+      type: object
+      properties:
+        frequency:
+          type: integer
+          description: Frequency of the sensor.
+  404:
+    description: Sensor not found.

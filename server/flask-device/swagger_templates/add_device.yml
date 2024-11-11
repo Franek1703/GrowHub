@@ -1,0 +1,29 @@
+tags:
+  - Devices
+description: Adds a new device to the system if it doesn’t already exist based on the SSID.
+parameters:
+  - in: body
+    name: device
+    schema:
+      type: object
+      required:
+        - ssid
+        - device_name
+      properties:
+        ssid:
+          type: string
+          description: Unique identifier for the device (SSID).
+        device_name:
+          type: string
+          description: Name of the device.
+        location:
+          type: string
+          description: Location of the device.
+responses:
+  201:
+    description: Device added successfully.
+  400:
+    description: Device with this SSID already exists.
+    examples:
+      application/json:
+        error: "Device with this SSID already exists."

@@ -1,0 +1,26 @@
+tags:
+  - Sensors
+description: Adds a new sensor for a device, specified by device_id. Checks if the sensor type already exists for that device.
+parameters:
+  - in: body
+    name: sensor
+    schema:
+      type: object
+      required:
+        - device_id
+        - sensor_type
+      properties:
+        device_id:
+          type: integer
+          description: ID of the device to add the sensor to.
+        sensor_type:
+          type: string
+          description: Type of sensor to add (e.g., Temperature, PH, TNS).
+responses:
+  201:
+    description: Sensor successfully added.
+  400:
+    description: Sensor of specified type already exists for this device.
+    examples:
+      application/json:
+        error: "Sensor of specified type already exists for this device"

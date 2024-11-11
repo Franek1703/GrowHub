@@ -1,0 +1,36 @@
+tags:
+  - Alerts
+description: Creates a new alert when a sensor is misreading or an error occurs on the device.
+parameters:
+  - in: body
+    name: alert
+    schema:
+      type: object
+      required:
+        - sensor_id
+        - value
+        - message
+      properties:
+        sensor_id:
+          type: integer
+          description: ID of the sensor causing the alert.
+        message:
+          type: string
+          description: Description of the alert.
+        resolved:
+          type: boolean
+          description: Whether the alert is resolved. Defaults to false.
+responses:
+  201:
+    description: Alert created successfully.
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Alert created successfully."
+        alert_id:
+          type: integer
+          description: ID of the newly created alert.
+  400:
+    description: Missing or invalid data.

@@ -1,0 +1,58 @@
+tags:
+  - Sensor Readings
+description: Add a new sensor reading to the database and check if fertilization is needed.
+parameters:
+  - in: body
+    name: sensor_reading
+    schema:
+      type: object
+      required:
+        - sensor_id
+        - value
+        - sensor_type
+      properties:
+        sensor_id:
+          type: integer
+          description: ID of the sensor.
+        value:
+          type: number
+          format: float
+          description: Value of the sensor reading.
+        sensor_type:
+          type: string
+          description: Type of the sensor (e.g., PH, TNS, Temperature).
+responses:
+  200:
+    description: Successful response with fertilization status and frequency.
+    schema:
+      type: object
+      properties:
+        needs_fertilization:
+          type: boolean
+          description: Indicates if fertilization is needed.
+        frequency:
+          type: integer
+          description: Frequency of the sensor readings.
+        activation_time:
+          type: integer
+          description: Duration of fertilization (if needed).
+    examples:
+      application/json: 
+        needs_fertilization: true
+        frequency: 60
+        activation_time: 120
+  400:
+    description: Missing or invalid parameters.
+    examples:
+      application/json:
+        error: "sensor_id, value, and sensor_type are required"
+  404:
+    description: Sensor not found or sensor_type mismatch.
+    examples:
+      application/json:
+        error: "Sensor not found or sensor_type mismatch"
+  406:
+    description: No fertilizing device found for this sensor.
+    examples:
+      application/json:
+        error: "No fertilizing device found for this sensor"

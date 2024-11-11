@@ -1,0 +1,20 @@
+tags:
+  - Fertilizing Devices
+description: Returns the activation time of a specified fertilizing device.
+parameters:
+  - name: device_id
+    in: query
+    type: integer
+    required: true
+    description: ID of the device.
+responses:
+  200:
+    description: Fertilizing device activation time retrieved successfully.
+    schema:
+      type: object
+      properties:
+        activation_time:
+          type: integer
+          description: Activation time of the fertilizing device.
+  404:
+    description: Fertilizing device not found.
