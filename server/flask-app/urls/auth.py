@@ -8,7 +8,7 @@ auth = Blueprint('auth', __name__)
 
 # Registration Endpoint
 @auth.route('/register', methods=['POST'])
-@swag_from('swagger_templates/register.yml')
+@swag_from('../swagger_templates/register.yml')
 def register():
     data = request.get_json()
 
@@ -36,7 +36,7 @@ def register():
 
 # Login Endpoint
 @auth.route('/login', methods=['POST'])
-@swag_from('swagger_templates/login.yml')
+@swag_from('../swagger_templates/login.yml')
 def login():
     data = request.get_json()
 
