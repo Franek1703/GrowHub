@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, redirect
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flasgger import swag_from
 
@@ -12,6 +12,9 @@ def get_user_by_jwt():
     user = User.query.get(user_id)
     return user
 
+@api.route('/')
+def docs_redirect():
+    return redirect('/apidocs')
 
 @api.route('/user-devices', methods=['GET'])
 @jwt_required()
