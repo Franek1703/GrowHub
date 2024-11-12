@@ -27,6 +27,10 @@ swagger = Swagger(app, template={
 app.register_blueprint(auth, url_prefix="/auth")
 app.register_blueprint(api, url_prefix="/api")
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return jsonify({"error": "Page not found"}), 404
+
 with app.app_context():
     db.create_all() 
 

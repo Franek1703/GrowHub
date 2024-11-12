@@ -12,9 +12,14 @@ def get_user_by_jwt():
     user = User.query.get(user_id)
     return user
 
+#Redirect from homepage to docs
 @api.route('/')
 def docs_redirect():
     return redirect('/apidocs')
+
+@api.errorhandler(404)
+def page_not_found(e):
+    return jsonify({"error": "Page not found"}), 404
 
 @api.route('/user-devices', methods=['GET'])
 @jwt_required()
@@ -22,7 +27,7 @@ def docs_redirect():
 def get_user_devices():
     user = get_user_by_jwt()
     if not user:
-        return jsonify({'message': 'User not found.'}), 404
+        return jsonify({'message': 'User not found.'}), 400
 
     devices = [{'device_id': d.device_id, 'name': d.name} for d in user.devices]
     return jsonify(devices=devices), 200
@@ -75,7 +80,11 @@ def set_sensor_values(sensor_id):
         return jsonify({'message': 'User not found.'}), 404
     
     if not request.is_json:
-        return jsonify({'message': 'Request body must be JSON'}), 400
+        return jsonify({'message': 'Request body must be JSON.'}), 400
+    
+    sensor = Sensor.query.get(sensor_id)
+    if not sensor:
+        return jsonify({'message': 'Sensor not found.'}), 404
 
     data = request.get_json()
 
@@ -84,10 +93,6 @@ def set_sensor_values(sensor_id):
     max_value = data.get('max_value')
     measurement_frequency = data.get('measurement_frequency')
 
-    sensor = Sensor.query.get(sensor_id)
-    if not sensor:
-        return jsonify({'message': 'Sensor not found'}), 404
-    
 
     if min_value is not None:
         sensor.min_value = min_value
