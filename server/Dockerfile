@@ -1,17 +1,25 @@
-# Dockerfile
-FROM python:3.14-slim
+# Use an official Python runtime as a parent image
+FROM python:3.12-slim
 
-WORKDIR /flask-docker
+# Set the working directory in the container
+WORKDIR /app
 
-# Copy requirements first for better caching
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+# Copy the entire project into the container at /app
+COPY . /app
 
-# Copy the rest of the application
-COPY . .
 
-# Expose port 5000
-EXPOSE 5000
+# Change to the specific folder containing your Flask app
+WORKDIR /app
 
-# Run gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+# Install dependencies
+RUN pip install --no-cache-dir -r flask-device/requirements.txt
+
+# Expose the port that the Flask app will run on
+EXPOSE 5001
+
+# Define environment variables
+ENV FLASK_APP=device_server.py
+ENV FLASK_RUN_PORT=5001
+
+# Run the Flask app
+CMD ["python", "/app/flask-device/device_server.py"]
