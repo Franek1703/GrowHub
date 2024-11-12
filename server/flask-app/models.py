@@ -1,18 +1,12 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import JWTManager, create_access_token
+from datetime import timedelta
 
 db = SQLAlchemy()
 
 
-class Device(db.Model):
-    __tablename__ = 'devices'
-    device_id = db.Column(db.Integer, primary_key=True)
-    ssid = db.Column(db.String, nullable=False)
-    name = db.Column(db.String, nullable=False)
-    location = db.Column(db.String, nullable=True)
-    created_at = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
-    users = db.relationship('User', secondary='user_device', back_populates='devices')
-    
 class User(db.Model):
     __tablename__ = 'users'
     user_id = db.Column(db.Integer, primary_key=True)
@@ -21,7 +15,28 @@ class User(db.Model):
     password_hash = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
     devices = db.relationship('Device', secondary='user_device', back_populates='users')
-# Association table for the many-to-many relationship between Users and Devices
+
+    def set_password(self, password):
+        #Hash the password when setting it
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        #Check if the provided password matches the stored hash
+        return check_password_hash(self.password_hash, password)
+
+    def generate_jwt(self):
+        #Generate JWT token for the user that expires after 10 days
+        return create_access_token(identity=self.user_id, expires_delta=timedelta(days=10))
+    
+class Device(db.Model):
+    __tablename__ = 'devices'
+    device_id = db.Column(db.Integer, primary_key=True)
+    ssid = db.Column(db.String, nullable=False)
+    name = db.Column(db.String, nullable=False)
+    location = db.Column(db.String, nullable=True)
+    created_at = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
+    users = db.relationship('User', secondary='user_device', back_populates='devices')
+
 user_device = db.Table('user_device',
     db.Column('user_id', db.Integer, db.ForeignKey('users.user_id'), primary_key=True),
     db.Column('device_id', db.Integer, db.ForeignKey('devices.device_id'), primary_key=True)
@@ -69,4 +84,3 @@ class DosageHistory(db.Model):
     device_id = db.Column(db.Integer, db.ForeignKey('devices.device_id'), nullable=False)
     dose = db.Column(db.Float, nullable=False)
     dosed_at = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
-

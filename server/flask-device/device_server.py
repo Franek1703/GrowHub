@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flasgger import Swagger
 from config import Config
 from models import db
@@ -18,6 +18,9 @@ swagger = Swagger(app, template={
 
 app.register_blueprint(api, url_prefix='/device-service-api')
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return jsonify({"error": "Page not found"}), 404
 
 with app.app_context():
     db.create_all()
