@@ -4,7 +4,8 @@ import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/features/bottom_navigation_bar/bottom_navigation_bar_widget.dart';
 
 class MainPage extends StatelessWidget {
-  const MainPage({super.key});
+   final Widget child;
+  const MainPage({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +15,8 @@ class MainPage extends StatelessWidget {
       "/notification" : Assets.iconsUi.bell
     };
     return Scaffold(
-      backgroundColor: GHColors().background,
       bottomNavigationBar: GHBottomNavBar(items: items,),
+      body: child,
     );
   }
 }

@@ -13,7 +13,7 @@ class GHRouter{
   initialLocation: '/dashboard',
   routes: [
     ShellRoute(
-      builder: (context, state, child) => MainPage(),
+      builder: (context, state, child) => MainPage(child: child,),
       routes: [
         GoRoute(
           path: '/dashboard',
