@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:growhub/config/routing.dart';
-
-import 'package:growhub/views/main_page.dart';
+import 'package:growhub/features/device_dashboard/cubit/device_cubit_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
   runApp(const MainApp());
@@ -12,8 +12,15 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: GHRouter().router,
+    return MultiBlocProvider(
+      providers: [
+         BlocProvider(
+          create: (context) => DeviceCubit()..loadDevices(),
+        ),
+      ],
+      child: MaterialApp.router(
+        routerConfig: GHRouter().router,
+      ),
     );
   }
 }

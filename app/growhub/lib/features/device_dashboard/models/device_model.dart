@@ -1,10 +1,10 @@
 import 'package:growhub/features/Sensors/models/sensor_model.dart';
 
-class Device {
+class DeviceModel {
   final String name;
   final List<Sensor> sensors;
 
-  Device({
+  DeviceModel({
     required this.name,
     required this.sensors,
   });

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:growhub/config/assets.gen.dart';
+import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/features/bottom_navigation_bar/bottom_navigation_bar_widget.dart';
 
 class MainPage extends HookWidget {
@@ -27,6 +28,7 @@ class MainPage extends HookWidget {
     }
     
     return Scaffold(
+      backgroundColor: GHColors().background,
       body: Stack(
         children: [
           child,
