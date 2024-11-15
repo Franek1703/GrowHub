@@ -21,10 +21,18 @@ class GHBottomNavBar extends HookWidget {
     return 
     SafeArea(
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+        margin: const EdgeInsets.symmetric(horizontal: 50),
         padding: EdgeInsets.symmetric(horizontal: 10),
         height: GHSizes().bottomBarHeight,
         decoration: BoxDecoration(
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.grey,
+              blurRadius: 5,
+              spreadRadius: 2,
+              offset: Offset(2, 2)
+            )
+          ],
           color: GHColors().bottomBar,
           borderRadius: const BorderRadius.all(Radius.circular(35)),
         ),

@@ -1,4 +1,3 @@
-
 import 'package:go_router/go_router.dart';
 import 'package:growhub/views/calendar/calendar_page.dart';
 import 'package:growhub/views/dashboard/dashboard_page.dart';
@@ -8,41 +7,51 @@ import 'package:growhub/views/profile/profile_page.dart';
 import 'package:growhub/views/sensors/sensors_page.dart';
 import 'package:growhub/views/settings/settings_page.dart';
 
-class GHRouter{
+class GHRouter {
   final router = GoRouter(
-  initialLocation: '/dashboard',
-  routes: [
-    ShellRoute(
-      builder: (context, state, child) => MainPage(child: child,),
-      routes: [
-        GoRoute(
-          path: '/dashboard',
-          builder: (context, state) => DashboardPage(),
-          routes: [
-            GoRoute(
-              path: 'sensor',
-              builder: (context, state) => SensorsPage(),
-            ),
-            GoRoute(
-              path: 'calendar',
-              builder: (context, state) => CalendarPage(),
-            ),
-            GoRoute(
-              path: 'settings',
-              builder: (context, state) => SettingsPage(),
-            ),
-          ],
+    initialLocation: '/dashboard',
+    routes: [
+      ShellRoute(
+        builder: (context, state, child) => MainPage(
+          path: state.fullPath!,
+          child: child,
         ),
-        GoRoute(
-          path: '/notification',
-          builder: (context, state) => NotificationPage(),
-        ),
-        GoRoute(
-          path: '/profile',
-          builder: (context, state) => ProfilePage(),
-        ),
-      ],
-    ),
-  ],
-);
+        routes: [
+          GoRoute(
+            path: '/dashboard',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: DashboardPage(),
+            ),
+            routes: [
+              GoRoute(
+                  path: 'sensor',
+                  pageBuilder: (context, state) => const NoTransitionPage(
+                        child: SensorsPage(),
+                      )),
+              GoRoute(
+                  path: 'calendar',
+                  pageBuilder: (context, state) => const NoTransitionPage(
+                        child: CalendarPage(),
+                      )),
+              GoRoute(
+                  path: 'settings',
+                  pageBuilder: (context, state) => const NoTransitionPage(
+                        child: SettingsPage(),
+                      )),
+            ],
+          ),
+          GoRoute(
+              path: '/notification',
+              pageBuilder: (context, state) => const NoTransitionPage(
+                    child: NotificationPage(),
+                  )),
+          GoRoute(
+              path: '/profile',
+              pageBuilder: (context, state) => const NoTransitionPage(
+                    child: ProfilePage(),
+                  )),
+        ],
+      ),
+    ],
+  );
 }
