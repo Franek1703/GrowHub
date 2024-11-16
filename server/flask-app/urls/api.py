@@ -3,7 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flasgger import swag_from
 from sqlalchemy import desc, and_, asc
 
-from models import Alert, User, DosageHistory, SensorReading, Sensor, db
+from models import User, DosageHistory, SensorReading, Sensor, db, Device, user_device
 
 api = Blueprint('api', __name__)
 
@@ -22,7 +22,7 @@ def docs_redirect():
 def page_not_found(e):
     return jsonify({"error": "Page not found"}), 404
 
-# User's owned devices
+# Get user's owned devices
 @api.route('/user-devices', methods=['GET'])
 @jwt_required()
 @swag_from('../swagger_templates/get_user_devices.yml')
@@ -33,6 +33,124 @@ def get_user_devices():
 
     devices = [{'device_id': d.device_id, 'name': d.name} for d in user.devices]
     return jsonify(devices=devices), 200
+
+# Add new user-device relation, which means add new user's device 
+@api.route('/user-devices', methods=['POST'])
+@jwt_required()
+@swag_from('../swagger_templates/add_user_device.yml')
+def add_user_device():
+    user = get_user_by_jwt()
+    if not user:
+        return jsonify({'message': 'User not found.'}), 400
+
+    data = request.get_json()
+
+    device_id = data.get('device_id')
+    
+    if not device_id:
+        return jsonify({"message", "Field device_id has to be provided."}), 400
+    
+    device = Device.query.filter_by(device_id=device_id).first()
+
+    if not device:
+        return jsonify({"message": f"There is no device with id = {device_id}"}), 400
+
+    
+    if device in user.devices:
+        return jsonify({"message": "Device is already associated with the user."}), 400
+    
+    user.devices.append(device)
+    db.session.commit()
+
+    return jsonify({"message":"Device added successfully"}), 200
+
+# Remove user-device relation using JSON payload
+@api.route('/user-devices', methods=['DELETE'])
+@jwt_required()
+@swag_from('../swagger_templates/remove_user_device.yml')
+def remove_user_device():
+    # Pobranie użytkownika na podstawie JWT
+    user = get_user_by_jwt()
+    if not user:
+        return jsonify({'message': 'User not found.'}), 404
+
+    # Pobranie danych z żądania JSON
+    data = request.get_json()
+    device_id = data.get('device_id')
+
+    # Walidacja obecności pola device_id
+    if not device_id:
+        return jsonify({"message": "Field device_id has to be provided."}), 400
+
+    # Pobranie urządzenia na podstawie podanego device_id
+    device = Device.query.filter_by(device_id=device_id).first()
+    if not device:
+        return jsonify({"message": f"There is no device with id = {device_id}"}), 404
+
+    # Sprawdzenie, czy urządzenie jest przypisane do użytkownika
+    if device not in user.devices:
+        return jsonify({"message": "Device is not associated with the user."}), 400
+
+    # Usunięcie urządzenia z relacji użytkownika
+    user.devices.remove(device)
+    db.session.commit()
+
+    return jsonify({"message": "Device removed successfully."}), 200
+
+@api.route('/user/change-profile', methods=['PATCH'])
+@jwt_required()
+@swag_from('../swagger_templates/change_user_profile.yml')
+def change_profile():
+    # Get current user's identity from the JWT
+    user = get_user_by_jwt()
+    if not user:
+        return jsonify({"message": "User not found."}), 404
+    
+    data = request.get_json()
+
+    # Extract the new data (email and password)
+    new_email = data.get('email')
+    new_password = data.get('password')
+
+    # Check if the email or password is provided, or both
+    if not new_email and not new_password:
+        return jsonify({"message": "Either email or password must be provided."}), 400
+    
+
+    if new_email == user.email:
+        return jsonify({"message": "New email can't be the same as the previous one."}), 400
+
+    if user.check_password(new_password):
+        return jsonify({"message": "New password can't be the same as the previous one."}), 400
+
+    # Check if the new email is already taken
+    if new_email:
+        existing_user = User.query.filter_by(email=new_email).first()
+        if existing_user:
+            return jsonify({"message": "Email is already in use."}), 400
+        user.email = new_email  # Update the email
+    
+    # If password is provided, hash and update it
+    if new_password:
+        user.set_password(new_password)
+
+    # Commit the changes to the database
+    db.session.commit()
+
+    return jsonify({"message": "Profile updated successfully."}), 200
+
+@api.route('user/info', methods=['GET'])
+@jwt_required()
+@swag_from('../swagger_templates/user_info.yml')
+def get_user_info():
+    user = get_user_by_jwt()
+
+    if not user:
+        return jsonify({"message": "User not found."}), 404
+    
+    return jsonify(user.to_dict()), 200
+    
+
 
 # User's sensors that are connected with the particular device
 @api.route('/sensors/<int:device_id>', methods=['GET'])
@@ -105,7 +223,7 @@ def get_sensor_reading(sensor_id):
         return jsonify(sensor_readings=sensor_readings_list), 200
 
 # Updating values (min, max, measurement frequency) of the user's particular sensor
-@api.route('sensor-values/<int:sensor_id>', methods = ["PUT"])
+@api.route('sensor-values/<int:sensor_id>', methods = ["PATCH"])
 @jwt_required()
 @swag_from('../swagger_templates/set_sensor_values.yml')
 def set_sensor_values(sensor_id):
@@ -122,19 +240,17 @@ def set_sensor_values(sensor_id):
 
     data = request.get_json()
 
-
     min_value = data.get('min_value')
     max_value = data.get('max_value')
     measurement_frequency = data.get('measurement_frequency')
 
-
-    if min_value is not None:
+    if min_value:
         sensor.min_value = min_value
 
-    if max_value is not None:
+    if max_value:
         sensor.max_value = max_value
 
-    if measurement_frequency is not None:
+    if measurement_frequency:
         sensor.measurement_frequency = measurement_frequency
     
     try:
@@ -149,45 +265,33 @@ def set_sensor_values(sensor_id):
                     "measurement_frequency": sensor.measurement_frequency
     }), 200
     
-
-@api.route('/change-profile', methods=['PATCH'])
-@jwt_required()  # Ensure the user is logged in
-@swag_from('../swagger_templates/change_profile.yml')
-def change_profile():
-    # Get current user's identity from the JWT
+# Endpoint to update device name and location
+@api.route('/devices/<int:device_id>', methods=['PATCH'])
+@jwt_required()
+@swag_from('../swagger_templates/update_devices.yml')
+def update_device(device_id):
+    
     user = get_user_by_jwt()
     if not user:
         return jsonify({"message": "User not found."}), 404
     
     data = request.get_json()
-
-    # Extract the new data (email and password)
-    new_email = data.get('email')
-    new_password = data.get('password')
-
-    # Check if the email or password is provided, or both
-    if not new_email and not new_password:
-        return jsonify({"message": "Either email or password must be provided."}), 400
     
+    name = data.get('name')
+    location = data.get('location')
 
-    if new_email == user.email:
-        return jsonify({"message": "New email can't be the same as the previous one."}), 400
-
-    if user.check_password(new_password):
-        return jsonify({"message": "New password can't be the same as the previous one."}), 400
-
-    # Check if the new email is already taken
-    if new_email:
-        existing_user = User.query.filter_by(email=new_email).first()
-        if existing_user:
-            return jsonify({"message": "Email is already in use."}), 400
-        user.email = new_email  # Update the email
     
-    # If password is provided, hash and update it
-    if new_password:
-        user.set_password(new_password)
+    if not name and not location:
+        return jsonify({"message": "Name or location must be provided."}), 400
+    
+    device = Device.query.filter_by(device_id=device_id).first()
+    if not device:
+        return jsonify({"message": "Device not found."}), 404
 
-    # Commit the changes to the database
+    if name:
+        device.name = name
+    if location:
+        device.location = location
     db.session.commit()
 
-    return jsonify({"message": "Profile updated successfully."}), 200
+    return jsonify({"message": "Device updated successfully."}), 200

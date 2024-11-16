@@ -28,6 +28,16 @@ class User(db.Model):
         #Generate JWT token for the user that expires after 10 days
         return create_access_token(identity=self.user_id, expires_delta=timedelta(days=10))
     
+    def to_dict(self):
+        # Convert the user instance to a dictionary
+        return {
+            "user_id": self.user_id,
+            "username": self.username,
+            "email": self.email,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "devices": [device.to_dict() for device in self.devices] if self.devices else [],
+        }
+    
 class Device(db.Model):
     __tablename__ = 'devices'
     device_id = db.Column(db.Integer, primary_key=True)
@@ -36,6 +46,17 @@ class Device(db.Model):
     location = db.Column(db.String, nullable=True)
     created_at = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
     users = db.relationship('User', secondary='user_device', back_populates='devices')
+
+    def to_dict(self):
+        # Convert the user instance to a dictionary
+        return {
+            "device_id": self.device_id,
+            "ssid": self.ssid,
+            "name": self.name,
+            "location":self.location,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
+    
 
 user_device = db.Table('user_device',
     db.Column('user_id', db.Integer, db.ForeignKey('users.user_id'), primary_key=True),

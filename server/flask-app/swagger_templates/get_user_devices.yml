@@ -1,7 +1,7 @@
 # swagger_templates/get_user_devices.yml
 ---
 tags:
-  - Devices
+  - User Devices
 summary: Get user devices
 description: Returns a list of devices associated with the authenticated user.
 operationId: getUserDevices
