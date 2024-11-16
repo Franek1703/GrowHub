@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/features/device_dashboard/cubit/device_cubit_cubit.dart';
 import 'package:growhub/features/profile/model/profile_model.dart';
-import 'package:growhub/views/dashboard/device_card.dart';
+import 'package:growhub/features/device_dashboard/widgets/device_card.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -47,9 +47,7 @@ class DashboardPage extends StatelessWidget {
                 child: DeviceCard(device: device),
               ),
             ),
-        
             SizedBox(height: 20),
-        
             InkWell(
               customBorder: const CircleBorder(),
               onTap: () {
@@ -59,14 +57,13 @@ class DashboardPage extends StatelessWidget {
                 width: 50,
                 height: 50,
                 decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: GHColors().bottomBar, width: 4)
-                ),
+                    color: Colors.transparent,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: GHColors.bottomBar, width: 4)),
                 child: Icon(
                   Icons.add,
                   size: 30,
-                  color: GHColors().bottomBar,
+                  color: GHColors.bottomBar,
                 ),
               ),
             ),

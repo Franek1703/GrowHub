@@ -1,7 +1,6 @@
 part of 'device_cubit_cubit.dart';
 
-@immutable
-sealed class DeviceCubitState {
+abstract class DeviceCubitState {
   final List<DeviceModel> devices;
 
   DeviceCubitState(this.devices);
@@ -17,5 +16,4 @@ final class DeviceCubitLoading extends DeviceCubitState {
 
 final class DeviceCubitLoaded extends DeviceCubitState {
   DeviceCubitLoaded(super.devices);
-
 }

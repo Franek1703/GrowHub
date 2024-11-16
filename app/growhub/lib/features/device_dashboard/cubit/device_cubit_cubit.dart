@@ -1,13 +1,11 @@
-import 'package:bloc/bloc.dart';
-import 'package:growhub/features/Sensors/models/sensor_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:growhub/features/sensors/models/sensor_model.dart';
 import 'package:growhub/features/device_dashboard/models/device_model.dart';
-import 'package:meta/meta.dart';
-
 part 'device_cubit_state.dart';
 
 class DeviceCubit extends Cubit<DeviceCubitState> {
   DeviceCubit() : super(DeviceCubitInitial(const []));
-  
+
   void loadDevices() {
     emit(DeviceCubitLoaded(devices));
   }

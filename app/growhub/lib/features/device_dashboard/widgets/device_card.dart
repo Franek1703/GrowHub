@@ -10,17 +10,17 @@ class DeviceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      margin: EdgeInsets.symmetric(horizontal: 35),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      margin: const EdgeInsets.symmetric(horizontal: 35),
       decoration: BoxDecoration(
-        color: GHColors().primary,
+        color: GHColors.primary,
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.13),
             spreadRadius: 2,
             blurRadius: 8,
-            offset: Offset(2, 2),
+            offset: const Offset(2, 2),
           ),
         ],
       ),
@@ -43,7 +43,7 @@ class DeviceCard extends StatelessWidget {
                 },
                 icon: const Icon(
                   Icons.help_outline,
-                  color: Colors.black54,
+                  color: Colors.black,
                 ),
               ),
             ],
@@ -65,9 +65,9 @@ class DeviceCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(right: 30),
                 child: SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: Assets.kwiatki.cactusSvgrepoCom.svg()),
+                    width: 50,
+                    height: 50,
+                    child: Assets.kwiatki.cactusSvgrepoCom.svg()),
               )
             ],
           )
