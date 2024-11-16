@@ -150,3 +150,44 @@ def set_sensor_values(sensor_id):
     }), 200
     
 
+@api.route('/change-profile', methods=['PATCH'])
+@jwt_required()  # Ensure the user is logged in
+@swag_from('../swagger_templates/change_profile.yml')
+def change_profile():
+    # Get current user's identity from the JWT
+    user = get_user_by_jwt()
+    if not user:
+        return jsonify({"message": "User not found."}), 404
+    
+    data = request.get_json()
+
+    # Extract the new data (email and password)
+    new_email = data.get('email')
+    new_password = data.get('password')
+
+    # Check if the email or password is provided, or both
+    if not new_email and not new_password:
+        return jsonify({"message": "Either email or password must be provided."}), 400
+    
+
+    if new_email == user.email:
+        return jsonify({"message": "New email can't be the same as the previous one."}), 400
+
+    if user.check_password(new_password):
+        return jsonify({"message": "New password can't be the same as the previous one."}), 400
+
+    # Check if the new email is already taken
+    if new_email:
+        existing_user = User.query.filter_by(email=new_email).first()
+        if existing_user:
+            return jsonify({"message": "Email is already in use."}), 400
+        user.email = new_email  # Update the email
+    
+    # If password is provided, hash and update it
+    if new_password:
+        user.set_password(new_password)
+
+    # Commit the changes to the database
+    db.session.commit()
+
+    return jsonify({"message": "Profile updated successfully."}), 200
