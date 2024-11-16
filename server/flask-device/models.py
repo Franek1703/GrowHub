@@ -1,8 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
-
-
 db = SQLAlchemy()
 
 
@@ -18,7 +16,7 @@ class Device(db.Model):
 class User(db.Model):
     __tablename__ = 'users'
     user_id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, unique=True, nullable=False)
+    username = db.Column(db.String, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
     password_hash = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
@@ -64,8 +62,11 @@ class Alert(db.Model):
     message = db.Column(db.String, nullable=False)
     resolved = db.Column(db.Boolean, default=False)
     resolved_at = db.Column(db.DateTime(), index=True)
+
 class DosageHistory(db.Model):
     __tablename__ = 'dosage_history'
-    device_id = db.Column(db.Integer, db.ForeignKey('devices.device_id'), primary_key=True)
+    dosage_history_id = db.Column(db.Integer, primary_key=True)
+    device_id = db.Column(db.Integer, db.ForeignKey('devices.device_id'), nullable=False)
     dose = db.Column(db.Float, nullable=False)
     dosed_at = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
+
