@@ -53,6 +53,19 @@ class Sensor(db.Model):
     max_value = db.Column(db.Float, nullable=True)
     measurement_frequency = db.Column(db.Integer, nullable=True)
 
+    def to_dict(self):
+        return {
+            "sensor_id": self.sensor_id,
+            "device_id": self.device_id,
+            "sensor_type": self.sensor_type,
+            "unit": self.unit,
+            "created_at": self.created_at,
+            "min_value": self.min_value,
+            "max_value": self.max_value,
+            "measurement_frequency": self.measurement_frequency
+        }
+
+
 class FertilizingDevice(db.Model):
     __tablename__ = 'fertilizing_devices'
     fertilizing_device_id = db.Column(db.Integer, primary_key=True)

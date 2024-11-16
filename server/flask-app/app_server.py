@@ -7,11 +7,29 @@ from urls.auth import auth
 from urls.api import api
 from flask_jwt_extended import JWTManager
 from flasgger import Swagger
+from sqlalchemy.exc import OperationalError
 
 app = Flask(__name__)
 
-app.config.from_object(Config)
-db.init_app(app)
+try:
+    # Load app config
+    app.config.from_object(Config)
+
+    # Initialize the app
+    db.init_app(app)
+
+    # Try creating tables
+    with app.app_context():
+        db.create_all() 
+except OperationalError as e:
+    print("Database connection failed. Please ensure the database is running and accessible.")
+    print(f"Error: {e}")
+    exit(1)
+except Exception as e:
+    print("An unexpected error occurred during app initialization.")
+    print(f"Error: {e}")
+    exit(1)
+
 
 jwt = JWTManager(app)
 
@@ -31,8 +49,6 @@ app.register_blueprint(api, url_prefix="/api")
 def page_not_found(e):
     return jsonify({"error": "Page not found"}), 404
 
-with app.app_context():
-    db.create_all() 
 
 if __name__ == '__main__': 
     app.run(port=5000, debug=True)
