@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:growhub/config/assets.gen.dart';
 import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/config/constants/sizes.dart';
-import 'package:growhub/features/bottom_navigation_bar/bottom_bar_icon.dart';
+import 'package:growhub/features/bottom_app_bar/bottom_bar_icon.dart';
 
 class GHBottomAppBar extends HookWidget {
   final Map<String, SvgGenImage> items;
@@ -30,7 +30,7 @@ class GHBottomAppBar extends HookWidget {
               spreadRadius: 2,
               offset: Offset(2, 2))
         ],
-        color: GHColors.bottomBar,
+        color: GHColors.black,
         borderRadius: const BorderRadius.all(Radius.circular(35)),
       ),
       child: Row(

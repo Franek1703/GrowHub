@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:growhub/config/assets.gen.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/features/device_dashboard/models/device_model.dart';
 
@@ -10,14 +10,14 @@ class DeviceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       margin: const EdgeInsets.symmetric(horizontal: 35),
       decoration: BoxDecoration(
         color: GHColors.primary,
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.13),
+            color: GHColors.black.withOpacity(0.13),
             spreadRadius: 2,
             blurRadius: 8,
             offset: const Offset(2, 2),
@@ -41,9 +41,9 @@ class DeviceCard extends StatelessWidget {
                 onPressed: () {
                   // TODO: Implement logic for this button
                 },
-                icon: const Icon(
+                icon: Icon(
                   Icons.help_outline,
-                  color: Colors.black,
+                  color: GHColors.black,
                 ),
               ),
             ],
@@ -57,18 +57,21 @@ class DeviceCard extends StatelessWidget {
                   (sensor) {
                     return Text(
                       "${sensor.lastReading}${sensor.unit}",
-                      style: TextStyle(fontSize: 16),
+                      style: const TextStyle(fontSize: 16),
                     );
                   },
                 ).toList(),
               ),
               Padding(
-                padding: const EdgeInsets.only(right: 30),
-                child: SizedBox(
-                    width: 50,
-                    height: 50,
-                    child: Assets.kwiatki.cactusSvgrepoCom.svg()),
-              )
+                  padding: const EdgeInsets.only(right: 30),
+                  child: SvgPicture.asset(
+                    device.icon.path,
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.contain,
+                    colorFilter:
+                        ColorFilter.mode(GHColors.black, BlendMode.srcIn),
+                  ))
             ],
           )
         ],

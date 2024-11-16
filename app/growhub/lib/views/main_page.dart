@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:growhub/config/assets.gen.dart';
 import 'package:growhub/config/constants/colors.dart';
-import 'package:growhub/features/bottom_navigation_bar/bottom_app_bar.dart';
+import 'package:growhub/features/bottom_app_bar/bottom_app_bar.dart';
 
 class MainPage extends HookWidget {
   final Widget child;

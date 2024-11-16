@@ -27,20 +27,25 @@ class BottomBarIcon extends HookWidget {
         onTap();
         context.go(path);
       },
-      icon: Container(
-        width: 40,
-        height: 40,
-        padding: const EdgeInsets.all(8),
+      icon: AnimatedContainer(
+        duration: Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+        width: 46,
+        height: 46,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: isTapped ? GHColors.white : Colors.transparent,
         ),
-        child: icon.svg(
+        child: Center(
+          child: icon.svg(
             width: 20,
             height: 20,
             colorFilter: ColorFilter.mode(
-                isTapped ? GHColors.bottomBar : GHColors.white,
-                BlendMode.srcIn)),
+              isTapped ? GHColors.black : GHColors.white,
+              BlendMode.srcIn,
+            ),
+          ),
+        ),
       ),
     );
   }
