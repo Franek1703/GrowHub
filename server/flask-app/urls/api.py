@@ -24,6 +24,7 @@ def page_not_found(e):
 
 @api.route('/configuration', methods = ['GET'])
 @jwt_required()
+@swag_from('../swagger_templates/get_configuration.yml')
 def get_app_configuration():
     user = get_user_by_jwt()
     if not user:

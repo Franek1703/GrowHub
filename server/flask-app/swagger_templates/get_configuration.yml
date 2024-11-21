@@ -1,0 +1,120 @@
+# swagger_templates/get_configuration.yml
+---
+tags:
+  - App configuration
+summary: Get the configuration of the user's devices
+description: Retrieves the configuration details of the user's devices, sensors, and fertilizing devices.
+operationId: getAppConfiguration
+responses:
+  200:
+    description: Successfully retrieved the user's devices, sensors, and fertilizing devices.
+    schema:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            user_id:
+              type: integer
+              example: 1
+              description: The ID of the user.
+            username:
+              type: string
+              example: "JohnDoe"
+              description: The username of the user.
+            email:
+              type: string
+              example: "johndoe@example.com"
+              description: The email of the user.
+            created_at:
+              type: string
+              format: date-time
+              example: "2024-11-21T14:33:20.123456"
+              description: The account creation timestamp.
+        devices:
+          type: array
+          items:
+            type: object
+            properties:
+              device_id:
+                type: integer
+                example: 101
+                description: The ID of the device.
+              ssid:
+                type: string
+                example: "DeviceSSID"
+                description: The SSID of the device.
+              name:
+                type: string
+                example: "SmartPump"
+                description: The name of the device.
+              location:
+                type: string
+                example: "Living Room"
+                description: The location where the device is installed.
+              created_at:
+                type: string
+                format: date-time
+                example: "2024-11-21T14:33:20.123456"
+                description: The creation timestamp of the device.
+              sensors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    sensor_id:
+                      type: integer
+                      example: 1
+                      description: The ID of the sensor.
+                    sensor_type:
+                      type: string
+                      example: "Temperature"
+                      description: The type of the sensor.
+                    unit:
+                      type: string
+                      example: "Celsius"
+                      description: The unit of measurement for the sensor.
+                    created_at:
+                      type: string
+                      format: date-time
+                      example: "2024-11-21T14:33:20.123456"
+                      description: The creation timestamp of the sensor.
+        fertilizing_devices:
+          type: array
+          items:
+            type: object
+            properties:
+              fertilizing_device_id:
+                type: integer
+                example: 1
+                description: The ID of the fertilizing device.
+              device_id:
+                type: integer
+                example: 101
+                description: The ID of the associated device.
+              device_type:
+                type: string
+                example: "Pump"
+                description: The type of the device (e.g., "Pump").
+              activation_time:
+                type: integer
+                example: 30
+                description: The time (in seconds) for the activation of the fertilizing device.
+  400:
+    description: User not found or other issues in retrieving user data.
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "User not found"
+  500:
+    description: Internal server error.
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "An error occurred while fetching the configuration."
+security:
+  - jwt: []
