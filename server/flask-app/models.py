@@ -57,7 +57,6 @@ class Device(db.Model):
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }
     
-
 user_device = db.Table('user_device',
     db.Column('user_id', db.Integer, db.ForeignKey('users.user_id'), primary_key=True),
     db.Column('device_id', db.Integer, db.ForeignKey('devices.device_id'), primary_key=True)
@@ -93,6 +92,14 @@ class FertilizingDevice(db.Model):
     device_id = db.Column(db.Integer, db.ForeignKey('devices.device_id'), nullable=False)
     device_type = db.Column(db.String, default="Pump") 
     activation_time = db.Column(db.Integer, nullable=False) 
+
+    def to_dict(self):
+        return {
+            "fertilizing_device_id": self.fertilizing_device_id,
+            "device_id": self.device_id,
+            "device_type": self.device_type,
+            "activation_time": self.activation_time
+        }
     
 class SensorReading(db.Model):
     __tablename__ = 'sensors_readings'
@@ -101,6 +108,15 @@ class SensorReading(db.Model):
     value = db.Column(db.Float, nullable=False)
     recorded_at = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
     sensor_type = db.Column(db.String)
+
+    def to_dict(self):
+        return {
+            "reading_id": self.reading_id,
+            "sensor_id": self.sensor_id,
+            "value": self.value,
+            "recorded_at": self.recorded_at,
+            "sensor_type": self.sensor_type
+        }
     
 class Alert(db.Model):
     __tablename__ = 'alerts'
@@ -112,9 +128,28 @@ class Alert(db.Model):
     resolved = db.Column(db.Boolean, default=False)
     resolved_at = db.Column(db.DateTime(), index=True)
 
+    def to_dict(self):
+        return {
+            "alert_id": self.alert_id,
+            "sensor_id": self.sensor_id,
+            "value": self.value,
+            "alert_time": self.alert_time,
+            "message": self.message,
+            "resolved": self.resolved,
+            "resolved_at": self.resolved_at
+        }
+
 class DosageHistory(db.Model):
     __tablename__ = 'dosage_history'
     dosage_history_id = db.Column(db.Integer, primary_key=True)
     device_id = db.Column(db.Integer, db.ForeignKey('devices.device_id'), nullable=False)
     dose = db.Column(db.Float, nullable=False)
     dosed_at = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
+
+    def to_dict(self):
+        return {
+            "dosage_history_id": self.dosage_history_id,
+            "device_id": self.device_id,
+            "dose": self.dose,
+            "dosed_at": self.dosed_at
+        }

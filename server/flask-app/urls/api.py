@@ -3,7 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flasgger import swag_from
 from sqlalchemy import desc, and_, asc
 
-from models import User, DosageHistory, SensorReading, Sensor, db, Device, user_device
+from models import User, DosageHistory, SensorReading, Sensor, db, Device, FertilizingDevice
 
 api = Blueprint('api', __name__)
 
@@ -21,6 +21,45 @@ def docs_redirect():
 @api.errorhandler(404)
 def page_not_found(e):
     return jsonify({"error": "Page not found"}), 404
+
+@api.route('/configuration', methods = ['GET'])
+@jwt_required()
+def get_app_configuration():
+    user = get_user_by_jwt()
+    if not user:
+        return jsonify({'message': 'User not found'}), 400
+    
+    devices = [device.to_dict() for device in user.devices]
+
+    fertilizing_devices = []
+    device_sensors_map = {}
+
+    for device in devices:
+        # Query sensors for the current device
+        device_sensors = Sensor.query.filter_by(device_id=device["device_id"]).all()
+        device_sensors_map[device["device_id"]] = [sensor.to_dict() for sensor in device_sensors]
+        
+        # Also query fertilizing devices
+        fertilizing_devices.extend(FertilizingDevice.query.filter_by(device_id=device["device_id"]).all())
+
+    # Add the sensors to the devices by updating the devices list
+    for device in devices:
+        device["sensors"] = device_sensors_map.get(device["device_id"], [])
+
+    # Prepare fertilizing devices (as before)
+    fertilizing_devices = [fertilizing_device.to_dict() for fertilizing_device in fertilizing_devices]
+
+    # Remove devices from user_dict to avoid duplication
+    user_dict = user.to_dict()
+    user_dict.pop("devices", None)
+
+    # Return the final JSON structure
+    return jsonify({
+        "user": user_dict,
+        "devices": devices,
+        "fertilizing_devices": fertilizing_devices,
+    }), 200
+
 
 # Get user's owned devices
 @api.route('/user-devices', methods=['GET'])
