@@ -38,7 +38,33 @@ def get_app_configuration():
     for device in devices:
         # Query sensors for the current device
         device_sensors = Sensor.query.filter_by(device_id=device["device_id"]).all()
-        device_sensors_map[device["device_id"]] = [sensor.to_dict() for sensor in device_sensors]
+        
+        device_sensors_dict = []
+
+
+        # Add last sensor reading to sensor, {} if null
+        for sensor in device_sensors:
+            sensor_dict = sensor.to_dict() 
+            sensor_reading = SensorReading.query.filter(
+            and_(
+                SensorReading.sensor_id == sensor_dict["sensor_id"],
+                SensorReading.recorded_at.isnot(None)
+            )
+            ).order_by(desc(SensorReading.recorded_at)).first()
+            
+
+            if not sensor_reading:
+                sensor_reading = {}
+            else:
+                sensor_reading = sensor_reading.to_dict()
+
+            sensor_dict.update({"last_reading": sensor_reading})
+
+            device_sensors_dict.append(sensor_dict)
+
+
+        
+        device_sensors_map[device["device_id"]] = [sensor for sensor in device_sensors_dict]
         
         # Also query fertilizing devices
         fertilizing_devices.extend(FertilizingDevice.query.filter_by(device_id=device["device_id"]).all())
@@ -54,7 +80,6 @@ def get_app_configuration():
     user_dict = user.to_dict()
     user_dict.pop("devices", None)
 
-    # Return the final JSON structure
     return jsonify({
         "user": user_dict,
         "devices": devices,
