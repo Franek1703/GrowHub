@@ -7,9 +7,22 @@ import 'package:growhub/views/profile/profile_page.dart';
 import 'package:growhub/views/sensors/sensors_page.dart';
 import 'package:growhub/views/settings/settings_page.dart';
 
+enum GHRoutePath {
+  root("/"),
+  dashboard("/dashboard"),
+  sensor("/sensor"),
+  calendar("/calendar"),
+  settings("settings"),
+  notification("/notification"),
+  profile("/profile");
+
+  const GHRoutePath(this.path);
+  final String path;
+}
+
 class GHRouter {
   final router = GoRouter(
-    initialLocation: '/dashboard',
+    initialLocation: GHRoutePath.dashboard.path,
     routes: [
       ShellRoute(
         builder: (context, state, child) => MainPage(
@@ -18,35 +31,35 @@ class GHRouter {
         ),
         routes: [
           GoRoute(
-            path: '/dashboard',
+            path: GHRoutePath.dashboard.path,
             pageBuilder: (context, state) => const NoTransitionPage(
               child: DashboardPage(),
             ),
             routes: [
               GoRoute(
-                  path: 'sensor',
+                  path: GHRoutePath.sensor.path,
                   pageBuilder: (context, state) => const NoTransitionPage(
                         child: SensorsPage(),
                       )),
               GoRoute(
-                  path: 'calendar',
+                  path: GHRoutePath.calendar.path,
                   pageBuilder: (context, state) => const NoTransitionPage(
                         child: CalendarPage(),
                       )),
               GoRoute(
-                  path: 'settings',
+                  path: GHRoutePath.settings.path,
                   pageBuilder: (context, state) => const NoTransitionPage(
                         child: SettingsPage(),
                       )),
             ],
           ),
           GoRoute(
-              path: '/notification',
+              path: GHRoutePath.notification.path,
               pageBuilder: (context, state) => const NoTransitionPage(
                     child: NotificationPage(),
                   )),
           GoRoute(
-              path: '/profile',
+              path: GHRoutePath.profile.path,
               pageBuilder: (context, state) => const NoTransitionPage(
                     child: ProfilePage(),
                   )),

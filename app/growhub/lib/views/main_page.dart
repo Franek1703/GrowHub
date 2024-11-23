@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:growhub/config/assets.gen.dart';
 import 'package:growhub/config/constants/colors.dart';
-import 'package:growhub/features/bottom_navigation_bar/bottom_navigation_bar_widget.dart';
+import 'package:growhub/features/bottom_app_bar/bottom_app_bar.dart';
 
 class MainPage extends HookWidget {
   final Widget child;
@@ -12,23 +12,22 @@ class MainPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     late Map<String, SvgGenImage> items;
-    if(path.contains("/dashboard/")){
+    if (path.contains("/dashboard/")) {
       items = {
-      "/dashboard/calendar": Assets.iconsUi.calendar,
-      "/dashboard/sensor" : Assets.iconsUi.thermometer,
-      "/dashboard/settings" : Assets.iconsUi.settings,
+        "/dashboard/calendar": Assets.iconsUi.calendar,
+        "/dashboard/sensor": Assets.iconsUi.thermometer,
+        "/dashboard/settings": Assets.iconsUi.settings,
+      };
+    } else {
+      items = {
+        "/profile": Assets.iconsUi.user,
+        "/dashboard": Assets.iconsUi.leaf,
+        "/notification": Assets.iconsUi.bell
       };
     }
-    else{
-      items = {
-      "/profile": Assets.iconsUi.user,
-      "/dashboard": Assets.iconsUi.leaf,
-      "/notification": Assets.iconsUi.bell
-    };
-    }
-    
+
     return Scaffold(
-      backgroundColor: GHColors().background,
+      backgroundColor: GHColors.background,
       body: Stack(
         children: [
           child,
@@ -36,7 +35,7 @@ class MainPage extends HookWidget {
             bottom: 15,
             left: 0,
             right: 0,
-            child: GHBottomNavBar(
+            child: GHBottomAppBar(
               items: items,
             ),
           ),

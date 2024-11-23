@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:growhub/config/routing.dart';
+import 'package:growhub/config/themes/theme.dart';
 import 'package:growhub/features/device_dashboard/cubit/device_cubit_cubit.dart';
 import 'package:growhub/features/calendar/cubit/calendar_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,7 +16,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-         BlocProvider(
+        BlocProvider(
           create: (context) => DeviceCubit()..loadDevices(),
         ),
          BlocProvider(
@@ -24,6 +25,7 @@ class MainApp extends StatelessWidget {
       ],
       child: MaterialApp.router(
         routerConfig: GHRouter().router,
+        theme: GHTheme.theme(context),
       ),
     );
   }
