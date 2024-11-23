@@ -24,12 +24,12 @@ class GHTopAppBar extends StatelessWidget implements PreferredSizeWidget{
         title,
         style: TextStyle(
           fontWeight: FontWeight.bold,
-          color: GHColors().black,
+          color: GHColors.black,
         ),
       ),
       leading: showLeading 
         ? IconButton(
-            icon: Icon(Icons.close, color: GHColors().black),
+            icon: Icon(Icons.close, color: GHColors.black),
             onPressed: onLeadingPressed,
           )
         :null,

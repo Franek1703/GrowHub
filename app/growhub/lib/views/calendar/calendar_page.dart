@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:growhub/features/calendar/widgets/calendar_grid.dart';
 import 'package:growhub/features/calendar/widgets/calendar_header.dart';
-import 'package:growhub/features/top_app_bar/top_app_bar_widget.dart';
+import 'package:growhub/features/top_app_bar/top_app_bar.dart';
 import 'package:go_router/go_router.dart';
 
 class CalendarPage extends StatelessWidget {

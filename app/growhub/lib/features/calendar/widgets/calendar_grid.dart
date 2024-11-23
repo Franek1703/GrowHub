@@ -40,14 +40,14 @@ class CalendarGrid extends StatelessWidget {
                   margin: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: isSelected ? GHColors().primary : Colors.transparent,
-                    border: Border.all(color: GHColors().black),
+                    color: isSelected ? GHColors.primary : Colors.transparent,
+                    border: Border.all(color: GHColors.black),
                   ),
                   child: Center(
                     child: Text(
                       "$day",
                       style: TextStyle(
-                        color: GHColors().black,
+                        color: GHColors.black,
                       ),
                     ),
                   ),
