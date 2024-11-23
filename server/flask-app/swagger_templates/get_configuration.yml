@@ -1,5 +1,3 @@
-# swagger_templates/get_configuration.yml
----
 tags:
   - App configuration
 summary: Get the configuration of the user's devices
@@ -20,16 +18,16 @@ responses:
               description: The ID of the user.
             username:
               type: string
-              example: "JohnDoe"
+              example: "admin"
               description: The username of the user.
             email:
               type: string
-              example: "johndoe@example.com"
+              example: "admin@admin.com"
               description: The email of the user.
             created_at:
               type: string
               format: date-time
-              example: "2024-11-21T14:33:20.123456"
+              example: "2024-11-16T13:36:21.889283"
               description: The account creation timestamp.
         devices:
           type: array
@@ -38,24 +36,24 @@ responses:
             properties:
               device_id:
                 type: integer
-                example: 101
+                example: 1
                 description: The ID of the device.
               ssid:
                 type: string
                 example: "DeviceSSID"
-                description: The SSID of the device.
+                description: The SSID of the device. May be an empty string if not set.
               name:
                 type: string
-                example: "SmartPump"
+                example: "Moje urządzenie najlepsze"
                 description: The name of the device.
               location:
                 type: string
-                example: "Living Room"
-                description: The location where the device is installed.
+                example: "Warszawa, ul. Pogodna 5"
+                description: The location where the device is installed. May be `null`.
               created_at:
                 type: string
                 format: date-time
-                example: "2024-11-21T14:33:20.123456"
+                example: "2024-11-11T20:38:29.093416"
                 description: The creation timestamp of the device.
               sensors:
                 type: array
@@ -64,21 +62,61 @@ responses:
                   properties:
                     sensor_id:
                       type: integer
-                      example: 1
+                      example: 3
                       description: The ID of the sensor.
                     sensor_type:
                       type: string
                       example: "Temperature"
-                      description: The type of the sensor.
+                      description: The type of the sensor. May be an empty string if not set.
                     unit:
                       type: string
                       example: "Celsius"
-                      description: The unit of measurement for the sensor.
+                      description: The unit of measurement for the sensor. May be `null`.
                     created_at:
                       type: string
                       format: date-time
-                      example: "2024-11-21T14:33:20.123456"
+                      example: "2024-11-11T22:26:35.000000"
                       description: The creation timestamp of the sensor.
+                    max_value:
+                      type: number
+                      format: float
+                      example: 50.0
+                      description: The maximum measurable value for the sensor.
+                    min_value:
+                      type: number
+                      format: float
+                      example: 0.0
+                      description: The minimum measurable value for the sensor.
+                    measurement_frequency:
+                      type: integer
+                      example: 500
+                      description: The frequency (in seconds) at which the sensor takes readings. May be `null`.
+                    last_reading:
+                      type: object
+                      description: The last recorded reading for the sensor.
+                      properties:
+                        reading_id:
+                          type: integer
+                          example: 6
+                          description: The ID of the reading.
+                        sensor_id:
+                          type: integer
+                          example: 1
+                          description: The ID of the sensor associated with the reading.
+                        sensor_type:
+                          type: string
+                          example: "Temperature"
+                          description: The type of the sensor.
+                        value:
+                          type: number
+                          format: float
+                          example: 111111.0
+                          description: The recorded value of the sensor.
+                        recorded_at:
+                          type: string
+                          format: date-time
+                          example: "2024-11-16T14:19:55.000000"
+                          description: The timestamp of the recorded reading.
         fertilizing_devices:
           type: array
           items:
