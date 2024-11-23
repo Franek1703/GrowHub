@@ -1,4 +1,4 @@
 class GHSizes{
-  final bottomBarHeight = 70.0;
-  final topBarHeight = 70.0;
+  static const  bottomBarHeight = 70.0;
+  static const topBarHeight = 70.0;
 }

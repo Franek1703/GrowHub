@@ -18,7 +18,7 @@ class GHTopAppBar extends StatelessWidget implements PreferredSizeWidget{
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      toolbarHeight: GHSizes().topBarHeight,
+      toolbarHeight: GHSizes.topBarHeight,
       centerTitle: true,
       title: Text(
         title,
@@ -36,5 +36,6 @@ class GHTopAppBar extends StatelessWidget implements PreferredSizeWidget{
     );
   }
 
-  Size get preferredSize => Size.fromHeight(GHSizes().topBarHeight);
+  @override
+  Size get preferredSize => const Size.fromHeight(GHSizes.topBarHeight);
 }
