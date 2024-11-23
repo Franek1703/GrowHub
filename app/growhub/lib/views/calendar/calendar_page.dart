@@ -9,13 +9,13 @@ class CalendarPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       appBar: GHTopAppBar(
         title: 'Calendar',
         // onLeadingPressed: () => context.go('/dashboard'),
         showLeading: true,
       ),
-      body: const SafeArea(
+      body: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(
             left: 24.0,
