@@ -33,7 +33,7 @@ class GHBottomNavBar extends HookWidget {
               offset: Offset(2, 2)
             )
           ],
-          color: GHColors().bottomBar,
+          color: GHColors().black,
           borderRadius: const BorderRadius.all(Radius.circular(35)),
         ),
         child: Row(

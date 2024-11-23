@@ -38,7 +38,7 @@ class BottomBarIcon extends HookWidget {
             width: 20,
             height: 20,
             colorFilter: ColorFilter.mode(
-                isTapped ? GHColors().bottomBar : GHColors().white,
+                isTapped ? GHColors().black : GHColors().white,
                 BlendMode.srcIn)),
       ),
     );

@@ -61,12 +61,12 @@ class DashboardPage extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.transparent,
                   shape: BoxShape.circle,
-                  border: Border.all(color: GHColors().bottomBar, width: 4)
+                  border: Border.all(color: GHColors().black, width: 4)
                 ),
                 child: Icon(
                   Icons.add,
                   size: 30,
-                  color: GHColors().bottomBar,
+                  color: GHColors().black,
                 ),
               ),
             ),

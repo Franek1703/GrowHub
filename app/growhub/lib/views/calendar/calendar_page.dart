@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:growhub/features/calendar/widgets/calendar_grid.dart';
 import 'package:growhub/features/calendar/widgets/calendar_header.dart';
+import 'package:growhub/features/top_app_bar/top_app_bar_widget.dart';
+import 'package:go_router/go_router.dart';
 
 class CalendarPage extends StatelessWidget {
   const CalendarPage({super.key});
@@ -8,15 +10,10 @@ class CalendarPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Calendar', style: TextStyle(fontWeight: FontWeight.bold,),),
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () {
-            //TODO: add retun to dashboard here
-          },
-        ),
+      appBar: GHTopAppBar(
+        title: 'Calendar',
+        // onLeadingPressed: () => context.go('/dashboard'),
+        showLeading: true,
       ),
       body: const SafeArea(
         child: Padding(
