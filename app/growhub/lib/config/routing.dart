@@ -42,7 +42,7 @@ class GHRouter {
         ),
       ),
       GoRoute(
-        path: GHRoutePath.signup.path.substring(1),
+        path: GHRoutePath.signup.path,
         pageBuilder: (context, state) => const MaterialPage(
           child: SignupPage(),
         ),
