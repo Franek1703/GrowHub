@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:growhub/config/assets.gen.dart';
 import 'package:growhub/config/constants/colors.dart';
+import 'package:growhub/config/routing.dart';
 import 'package:growhub/features/bottom_app_bar/bottom_app_bar.dart';
 
 class MainPage extends HookWidget {
@@ -28,6 +30,10 @@ class MainPage extends HookWidget {
 
     return Scaffold(
       backgroundColor: GHColors.background,
+      appBar: path.contains("/dashboard/") ? AppBar(
+        leading: IconButton(onPressed: ()=>
+        context.pop(), icon: Icon(Icons.chevron_left)),
+      ) : null,
       body: Stack(
         children: [
           child,
