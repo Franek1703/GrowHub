@@ -16,11 +16,11 @@ class CalendarGrid extends StatelessWidget {
   static const double _cellBorderWidth = 2.0;
   static const double _fontSize = 14.0;
   static const double _gridSpacing = 2.0;
-  
+
   /// Layout constants
   static const EdgeInsets _cellMargin = EdgeInsets.all(4.0);
   static const int _daysPerWeek = 7;
-  
+
   /// Text styling
   static const TextStyle _dayTextStyle = TextStyle(
     fontSize: _fontSize,
@@ -142,14 +142,14 @@ class CalendarGrid extends StatelessWidget {
 
   /// Formats the date for display in the bubble tooltip
   String _formatDateTimestamp(DateTime date) {
-  final day = date.day.toString().padLeft(2, '0');
-  final month = date.month.toString().padLeft(2, '0');
-  final year = date.year.toString();
-  final hour = date.hour.toString().padLeft(2, '0');
-  final minute = date.minute.toString().padLeft(2, '0');
-  
-  return "$day.$month.$year, $hour:$minute";
-}
+    final day = date.day.toString().padLeft(2, '0');
+    final month = date.month.toString().padLeft(2, '0');
+    final year = date.year.toString();
+    final hour = date.hour.toString().padLeft(2, '0');
+    final minute = date.minute.toString().padLeft(2, '0');
+
+    return "$day.$month.$year, $hour:$minute";
+  }
 
   /// Handles date selection interaction
   void _onDateSelected(BuildContext context, DateTime date) {
@@ -170,7 +170,7 @@ class CalendarGrid extends StatelessWidget {
     final firstDayOfMonth = DateTime(month.year, month.month, 1);
     final daysInMonth = DateUtils.getDaysInMonth(month.year, month.month);
     final startOffset = firstDayOfMonth.weekday - 1;
-    
+
     return _GridParameters(
       daysInMonth: daysInMonth,
       startOffset: startOffset,
@@ -183,10 +183,10 @@ class CalendarGrid extends StatelessWidget {
 class _DayCell extends StatelessWidget {
   /// The day number to display
   final int day;
-  
+
   /// Whether this cell is currently selected
   final bool isSelected;
-  
+
   /// Whether this cell has associated data
   final bool hasData;
 
@@ -235,10 +235,10 @@ class _DayCell extends StatelessWidget {
 class _GridParameters {
   /// Total number of days in the current month
   final int daysInMonth;
-  
+
   /// Number of empty cells before the first day
   final int startOffset;
-  
+
   /// Total number of cells needed in the grid
   final int totalCells;
 
@@ -253,7 +253,7 @@ class _GridParameters {
 class _CellPosition {
   /// Whether the cell is in the leftmost column
   final bool isLeftmostColumn;
-  
+
   /// Whether the cell is in the rightmost column
   final bool isRightmostColumn;
 

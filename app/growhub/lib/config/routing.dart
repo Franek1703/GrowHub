@@ -32,8 +32,8 @@ class GHRouter {
         routes: [
           GoRoute(
             path: GHRoutePath.dashboard.path,
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: DashboardPage(),
+            pageBuilder: (context, state) => NoTransitionPage(
+              child: CalendarPage(),
             ),
             routes: [
               GoRoute(
