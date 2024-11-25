@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:growhub/config/constants/colors.dart';
-import 'package:growhub/features/device_dashboard/models/device_model.dart';
+import 'package:growhub/features/api/data/models/device_model.dart';
 
 class DeviceCard extends StatelessWidget {
   final DeviceModel device;
@@ -11,7 +11,7 @@ class DeviceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: ()=>context.push("/dashboard/sensor"),
+      onTap: () => context.push("/dashboard/sensor"),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
         margin: const EdgeInsets.symmetric(horizontal: 35),
@@ -59,7 +59,7 @@ class DeviceCard extends StatelessWidget {
                   children: device.sensors.map(
                     (sensor) {
                       return Text(
-                        "${sensor.lastReading}${sensor.unit}",
+                        "${sensor.lastSensorReading.value}${sensor.unit}",
                         style: const TextStyle(fontSize: 16),
                       );
                     },

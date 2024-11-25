@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:growhub/common/widgets/page_padding.dart';
 import 'package:growhub/config/constants/colors.dart';
+import 'package:growhub/features/api/auth_module.dart';
 import 'package:growhub/features/login/widgets/background_img.dart';
 import 'package:growhub/features/login/widgets/input_filed.dart';
 
@@ -74,12 +75,15 @@ class LoginPage extends HookWidget {
                           children: [
                             InkWell(
                               borderRadius: BorderRadius.circular(20),
-                              onTap: () {
+                              onTap: () async {
                                 if (email.value == "" || password.value == "") {
                                   isErrorVisible.value = true;
-                                } else {
-                                  // TODO: Implement login logic here
+                                  return;
                                 }
+                                final user = await AuthModule.authService
+                                    .login(email.value, password.value);
+
+                                print(user);
                               },
                               child: Container(
                                 height: 40,

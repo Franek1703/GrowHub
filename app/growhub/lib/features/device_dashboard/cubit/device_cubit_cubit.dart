@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:growhub/features/api/data/models/sensor_reading_model.dart';
 import 'package:growhub/features/device_dashboard/entities/device_icon.dart';
 import 'package:growhub/features/api/data/models/sensor_model.dart';
 import 'package:growhub/features/api/data/models/device_model.dart';
@@ -19,76 +20,19 @@ class DeviceCubit extends Cubit<DeviceCubitState> {
       icon: DeviceIcon.flower1,
       sensors: [
         SensorModel(
-            lastReading: 23.4,
-            name: "PH",
-            unit: 'pH',
-            lastReadingTime: 123456,
-            readings: {}),
-        SensorModel(
-          lastReading: 23.4,
-          name: "Temperature",
-          unit: 'C',
-          lastReadingTime: 123456,
-          readings: {},
+          id: 0,
+          name: "PH",
+          unit: 'pH',
+          lastSensorReading:
+              SensorReadingModel(id: 0, recordedAt: DateTime.now(), value: 0),
         ),
         SensorModel(
-            lastReading: 23.4,
-            name: "TDS",
-            unit: 'ppm',
-            lastReadingTime: 123456,
-            readings: {})
-      ],
-    ),
-    DeviceModel(
-      id: 1,
-      name: "SecondDevice",
-      icon: DeviceIcon.cactus,
-      sensors: [
-        SensorModel(
-            lastReading: 23.4,
-            name: "PH",
-            unit: 'pH',
-            lastReadingTime: 123456,
-            readings: {}),
-        SensorModel(
-          lastReading: 23.4,
-          name: "Temperature",
-          unit: 'C',
-          lastReadingTime: 123456,
-          readings: {},
+          id: 0,
+          name: "PH",
+          unit: 'pH',
+          lastSensorReading:
+              SensorReadingModel(id: 0, recordedAt: DateTime.now(), value: 0),
         ),
-        SensorModel(
-            lastReading: 23.4,
-            name: "TDS",
-            unit: 'ppm',
-            lastReadingTime: 123456,
-            readings: {})
-      ],
-    ),
-    DeviceModel(
-      id: 2,
-      name: "ThirdDevice",
-      icon: DeviceIcon.daisy,
-      sensors: [
-        SensorModel(
-            lastReading: 23.4,
-            name: "PH",
-            unit: 'pH',
-            lastReadingTime: 123456,
-            readings: {}),
-        SensorModel(
-          lastReading: 23.4,
-          name: "Temperature",
-          unit: 'C',
-          lastReadingTime: 123456,
-          readings: {},
-        ),
-        SensorModel(
-            lastReading: 23.4,
-            name: "TDS",
-            unit: 'ppm',
-            lastReadingTime: 123456,
-            readings: {})
       ],
     ),
   ];
