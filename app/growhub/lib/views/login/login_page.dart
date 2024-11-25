@@ -31,20 +31,26 @@ class LoginPage extends HookWidget {
                 ),
                 child: BlocListener<UserCubit, UserState>(
                   listener: (context, state) {
+                    print(state);
                     if (state is UserStateLoading) {
+                      print("Loading");
                       showDialog(
                         context: context,
                         barrierDismissible: false,
                         builder: (context) =>
                             const Center(child: CircularProgressIndicator()),
                       );
-                    } else if (state is UserStateLoaded) {
-                      context.push('/dashboard');
-                    } else if (state is UserStateError) {
-                      Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(state.error)),
-                      );
+                    } else {
+                      if (Navigator.of(context).canPop()) {
+                        Navigator.of(context).pop();
+                      }
+                      if (state is UserStateLoaded) {
+                        context.push('/dashboard');
+                      } else if (state is UserStateError) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(state.error)),
+                        );
+                      }
                     }
                   },
                   child: IntrinsicHeight(

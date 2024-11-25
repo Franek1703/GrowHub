@@ -17,11 +17,11 @@ abstract class Tokenizer {
 
 class ApiClient extends Tokenizer {
   Future<http.Response> getUserInfo(String token) async {
-    final response = await http.post(
+    final response = await http.get(
       ApiClientPath.userInfo(),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': token,
+        'Authorization': 'Bearer $token',
       },
     );
     return response;

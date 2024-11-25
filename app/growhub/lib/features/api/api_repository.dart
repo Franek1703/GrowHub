@@ -14,12 +14,11 @@ class ApiRepository {
     required this.secureStorageService,
   });
 
-  Future<UserModel> login(String email, String password) async {
+  Future<String> login(String email, String password) async {
     return await authService.login(email, password);
   }
 
-  Future<UserModel> signUp(
-      String username, String email, String password) async {
+  Future<String> signUp(String username, String email, String password) async {
     return await authService.signUp(username, email, password);
   }
 

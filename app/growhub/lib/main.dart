@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:growhub/common/widgets/loading_screen.dart';
+import 'package:growhub/common/widgets/progress_indicator.dart';
 import 'package:growhub/config/routing.dart';
 import 'package:growhub/config/themes/theme.dart';
 import 'package:growhub/features/api/api_repository.dart';
@@ -48,10 +50,14 @@ class MainApp extends StatelessWidget {
         ),
         BlocProvider(create: (context) => UserCubit(apiRepository)..autoLogin())
       ],
+
+      //Something needs to be changed. I suppose that
+      // We have to get rid of the bloc builder and
+      // Move all of the autologin logic to mainpage
       child: BlocBuilder<UserCubit, UserState>(
         builder: (context, state) {
           if (state is UserStateStartApp) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: const GHProgressIndicator());
           }
 
           final isLoggedIn = state is UserStateLoaded;
