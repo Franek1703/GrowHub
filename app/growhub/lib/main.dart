@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:growhub/config/routing.dart';
 import 'package:growhub/config/themes/theme.dart';
+import 'package:growhub/features/sensors/cubit/sensor_cubit.dart';
+import 'package:growhub/features/bottom_app_bar/cubit/path_cubit.dart';
 import 'package:growhub/features/device_dashboard/cubit/device_cubit_cubit.dart';
 import 'package:growhub/features/calendar/cubit/calendar_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,10 +24,16 @@ class MainApp extends StatelessWidget {
          BlocProvider(
           create: (context) => CalendarCubit(),
         ),
+        BlocProvider(
+          create: (context) => SensorCubit(),
+        ),
+         BlocProvider(
+          create: (context) => PathCubit(),
+        ),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
-        routerConfig: GHRouter(isLoggedIn: false).router,
+        routerConfig: GHRouter(isLoggedIn: true).router,
         theme: GHTheme.theme(context),
       ),
     );
