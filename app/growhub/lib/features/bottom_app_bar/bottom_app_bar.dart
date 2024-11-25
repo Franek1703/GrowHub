@@ -19,16 +19,16 @@ class GHBottomAppBar extends HookWidget {
     }
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 50),
+      margin: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      height: GHSizes().bottomBarHeight,
+      height: GHSizes.bottomBarHeight,
       decoration: BoxDecoration(
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-              color: Colors.grey,
+              color: GHColors.grey,
               blurRadius: 5,
               spreadRadius: 2,
-              offset: Offset(2, 2))
+              offset: const Offset(2, 2))
         ],
         color: GHColors.black,
         borderRadius: const BorderRadius.all(Radius.circular(35)),
