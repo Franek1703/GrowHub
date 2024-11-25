@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:growhub/config/constants/colors.dart';
-import 'package:growhub/config/routing.dart';
 import 'package:growhub/features/device_dashboard/models/device_model.dart';
 
 class DeviceCard extends StatelessWidget {
