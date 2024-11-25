@@ -4,23 +4,24 @@ import 'package:growhub/config/assets.gen.dart';
 import 'package:growhub/config/constants/colors.dart';
 
 class GHInputField extends HookWidget {
+  const GHInputField({
+    super.key,
+    required this.hintText,
+    this.isPassword = false,
+    required this.title,
+    required this.onTitleChange,
+    this.text,
+  });
+
   final Function(String) onTitleChange;
   final String hintText;
   final bool isPassword;
   final String title;
   final String? text;
-  const GHInputField(
-      {super.key,
-      required this.hintText,
-      this.isPassword = false,
-      required this.title,
-      required this.onTitleChange,
-      this.text
-      });
 
   @override
   Widget build(BuildContext context) {
-    final isTextVisible = useState(!isPassword);
+    final isObscure = useState(!isPassword);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -28,46 +29,44 @@ class GHInputField extends HookWidget {
         const SizedBox(
           height: 4,
         ),
-        Container(
-          height: 35,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: GHColors.black, width: 2)),
-          child: Stack(
-            children: [
-              TextFormField(
-                initialValue: text,
-                obscureText: !isTextVisible.value,
-                onChanged: (value) => onTitleChange(value),
-                onTapOutside: (event) {
-                  FocusScopeNode currentFocus = FocusScope.of(context);
+        Stack(
+          children: [
+            TextFormField(
+              initialValue: text,
+              obscureText: !isObscure.value,
+              onChanged: (value) => onTitleChange(value),
+              onTapOutside: (event) {
+                FocusScopeNode currentFocus = FocusScope.of(context);
 
-                  if (!currentFocus.hasPrimaryFocus) {
-                    currentFocus.unfocus();
-                  }
-                },
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
-                  hintText: hintText,
+                if (!currentFocus.hasPrimaryFocus) {
+                  currentFocus.unfocus();
+                }
+              },
+              decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide(color: GHColors.black, width: 2),
                 ),
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: isPassword
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide(color: GHColors.black, width: 3),
+                ),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                hintText: hintText,
+                suffixIcon: isPassword
                     ? IconButton(
-                        onPressed: () =>
-                            isTextVisible.value = !isTextVisible.value,
-                        icon: isTextVisible.value
-                        //TODO: Change this icons
-                            ? Assets.iconsUi.bell.svg(
+                        onPressed: () => isObscure.value = !isObscure.value,
+                        icon: isObscure.value
+                            ? Assets.iconsUi.eyeOpen.svg(
+                                height: 24,
                                 colorFilter: ColorFilter.mode(
                                   GHColors.black,
                                   BlendMode.srcIn,
                                 ),
                               )
-                            : Assets.iconsUi.user.svg(
+                            : Assets.iconsUi.eyeClose.svg(
+                                height: 24,
                                 colorFilter: ColorFilter.mode(
                                   GHColors.black,
                                   BlendMode.srcIn,
@@ -75,8 +74,8 @@ class GHInputField extends HookWidget {
                               ))
                     : const SizedBox.shrink(),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ],
     );
