@@ -28,7 +28,7 @@ class BottomBarIcon extends HookWidget {
         context.go(path);
       },
       icon: AnimatedContainer(
-        duration: Duration(milliseconds: 400),
+        duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
         width: 46,
         height: 46,

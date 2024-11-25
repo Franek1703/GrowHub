@@ -26,11 +26,11 @@ class DashboardPage extends StatelessWidget {
               child: Text.rich(
                 TextSpan(
                   text: 'Hi ',
-                  style: TextStyle(fontSize: 26),
+                  style: const TextStyle(fontSize: 26),
                   children: <TextSpan>[
                     TextSpan(
                       text: profile.name,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const TextSpan(
                       text: ',\nyour plants are doing fine!',
@@ -47,7 +47,7 @@ class DashboardPage extends StatelessWidget {
                 child: DeviceCard(device: device),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             InkWell(
               customBorder: const CircleBorder(),
               onTap: () {

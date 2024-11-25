@@ -20,7 +20,8 @@ class MainApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp.router(
-        routerConfig: GHRouter().router,
+        debugShowCheckedModeBanner: false,
+        routerConfig: GHRouter(isLoggedIn: false).router,
         theme: GHTheme.theme(context),
       ),
     );

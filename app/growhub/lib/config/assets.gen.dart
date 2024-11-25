@@ -25,6 +25,13 @@ class $AssetsIconsUiGen {
   SvgGenImage get checkmark =>
       const SvgGenImage('assets/icons-ui/checkmark.svg');
 
+  /// File path: assets/icons-ui/eye-close.svg
+  SvgGenImage get eyeClose =>
+      const SvgGenImage('assets/icons-ui/eye-close.svg');
+
+  /// File path: assets/icons-ui/eye-open.svg
+  SvgGenImage get eyeOpen => const SvgGenImage('assets/icons-ui/eye-open.svg');
+
   /// File path: assets/icons-ui/leaf.svg
   SvgGenImage get leaf => const SvgGenImage('assets/icons-ui/leaf.svg');
 
@@ -39,8 +46,17 @@ class $AssetsIconsUiGen {
   SvgGenImage get user => const SvgGenImage('assets/icons-ui/user.svg');
 
   /// List of all assets
-  List<SvgGenImage> get values =>
-      [bell, calendar, checkmark, leaf, settings, thermometer, user];
+  List<SvgGenImage> get values => [
+        bell,
+        calendar,
+        checkmark,
+        eyeClose,
+        eyeOpen,
+        leaf,
+        settings,
+        thermometer,
+        user
+      ];
 }
 
 class $AssetsKwiatkiGen {
