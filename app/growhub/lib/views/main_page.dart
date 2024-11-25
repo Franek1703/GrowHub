@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:growhub/config/assets.gen.dart';
 import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/features/bottom_app_bar/bottom_app_bar.dart';
+import 'package:growhub/features/bottom_app_bar/cubit/path_cubit.dart';
+import 'package:growhub/features/top_app_bar/top_app_bar.dart';
 
 class MainPage extends HookWidget {
   final Widget child;
@@ -27,12 +30,40 @@ class MainPage extends HookWidget {
       };
     }
 
+    late String appBarTitle;
+    switch(path){
+      case "/dashboard":
+        appBarTitle = "Dashboard";
+        break;
+      case "/profile":
+        appBarTitle = "Profile";
+        break;
+      case "/notification":
+        appBarTitle = "Notification";
+        break;
+      case "/dashboard/calendar":
+        appBarTitle = "Calendar";
+        break;
+      case "/dashboard/sensor":
+        appBarTitle = "Sensors";
+        break;
+      case "/dashboard/settings":
+        appBarTitle = "Settings";
+        break;
+      default:
+        appBarTitle = "GoGrow!!!!";
+        break;
+    }
+
     return Scaffold(
       backgroundColor: GHColors.background,
-      // appBar: path.contains("/dashboard/") ? AppBar(
-      //   leading: IconButton(onPressed: ()=>
-      //   context.pop(), icon: const Icon(Icons.chevron_left)),
-      // ) : null,
+      appBar: path.contains("/dashboard/") ? GHTopAppBar(
+            title: appBarTitle,
+            onLeadingPressed: () {
+              context.read<PathCubit>().onPathChange("/dashboard");
+              context.pop();},
+            showLeading: true,
+          ) : null,
       body: Stack(
         children: [
           child,

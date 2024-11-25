@@ -20,13 +20,8 @@ class CalendarPage extends StatelessWidget {
           // Close only bubble when clicking outside
           context.read<CalendarCubit>().closeBubble();
         },
-        child: Scaffold(
-          appBar: GHTopAppBar(
-            title: 'Calendar',
-            onLeadingPressed: () => context.pop(),
-            showLeading: true,
-          ),
-          body: const SafeArea(
+        child: const Scaffold(
+          body: SafeArea(
             child: Padding(
               padding: EdgeInsets.only(
                 left: 24.0,
