@@ -9,8 +9,8 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      username: json['username'],
-      email: json['email'],
+      username: json['user']['username'],
+      email: json['user']['email'],
     );
   }
 }

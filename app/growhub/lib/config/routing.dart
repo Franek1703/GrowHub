@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:growhub/views/calendar/calendar_page.dart';
+import 'package:growhub/views/dashboard/dashboard_page.dart';
 import 'package:growhub/views/login/login_page.dart';
 import 'package:growhub/views/login/signup_page.dart';
 import 'package:growhub/views/main_page.dart';
@@ -52,8 +53,8 @@ class GHRouter {
         routes: [
           GoRoute(
             path: GHRoutePath.dashboard.path,
-            pageBuilder: (context, state) => NoTransitionPage(
-              child: CalendarPage(),
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: DashboardPage(),
             ),
             routes: [
               GoRoute(
@@ -74,15 +75,17 @@ class GHRouter {
             ],
           ),
           GoRoute(
-              path: GHRoutePath.notification.path,
-              pageBuilder: (context, state) => const NoTransitionPage(
-                    child: NotificationPage(),
-                  )),
+            path: GHRoutePath.notification.path,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: NotificationPage(),
+            ),
+          ),
           GoRoute(
-              path: GHRoutePath.profile.path,
-              pageBuilder: (context, state) => const NoTransitionPage(
-                    child: ProfilePage(),
-                  )),
+            path: GHRoutePath.profile.path,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: ProfilePage(),
+            ),
+          ),
         ],
       ),
     ],

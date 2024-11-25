@@ -5,14 +5,12 @@ import 'package:http/http.dart' as http;
 
 class AuthClient {
   Future<http.Response> login(String email, String password) async {
-    print("elo");
-    print(jsonEncode({'email': email, 'password': password}));
     final response = await http.post(
       AuthClientPath.login(),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email, 'password': password}),
     );
-    print(response.statusCode);
+
     return response;
   }
 
