@@ -1,129 +1,133 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_portal/flutter_portal.dart';
 import '../../../config/constants/colors.dart';
 
-// A widget that displays dosage information in bubble.
+/// A widget that displays a customizable bubble tooltip with dosage information
+/// in a calendar context.
+///
+/// The bubble includes a pointer (arrow) that can be positioned to point to
+/// different locations relative to the target widget. The bubble's appearance
+/// and positioning can be customized through various parameters.
 class CalendarBubble extends StatelessWidget {
-  // The dosage information to display
+  /// The dosage information to display in the bubble.
   final String dosage;
 
-  // The timestamp to display
+  /// The timestamp to display below the dosage.
   final String timestamp;
 
-  // The background color of the bubble
-  final Color backgroundColor;
+  /// Controls the visibility of the bubble.
+  final bool isVisible;
 
-  // The border color of the bubble
-  final Color borderColor;
+  /// The widget that triggers the bubble's display.
+  final Widget child;
 
-  // The color of the dosage text
-  final Color dosageTextColor;
+  /// If true, displays the bubble's pointer towards the left side.
+  final bool displayOnLeft;
 
-  // The color of the timestamp text
-  final Color timestampTextColor;
+  /// If true, displays the bubble's pointer towards the right side.
+  final bool displayOnRight;
 
-  // The width of the bubble's border
-  final double borderWidth;
+  /// Constants for bubble styling
+  static const double _padding = 30.0;
+  static const double _topPadding = 20.0;
+  static const double _bottomPadding = 40.0;
+  static const double _borderWidth = 2.0;
+  static const double _cornerRadius = 16.0;
+  static const double _pointerHeight = 20.0;
+  static const double _pointerWidth = 30.0;
+  static const double _verticalOffset = 16.0;
+  static const double _horizontalOffset = 8.0;
 
-  // The radius of the bubble's corners
-  final double cornerRadius;
-
-  // The height of the bubble's pointer
-  final double pointerHeight;
-
-  // The width of the bubble's pointer
-  final double pointerWidth;
-
-  // Default padding values for the bubble content
-  static const _defaultContentPadding = EdgeInsets.only(
-    left: 30.0,
-    right: 30.0,
-    top: 20.0,
-    bottom: 40.0,
-  );
-
-  // Default text style for the dosage
-  static const _defaultDosageStyle = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.bold,
-  );
-
-  // Default text style for the timestamp
-  static const _defaultTimestampStyle = TextStyle(
-    fontSize: 12,
-  );
-
-  // Default spacing between dosage and timestamp
-  static const _defaultSpacing = 4.0;
-
-  CalendarBubble({
+  const CalendarBubble({
     super.key,
     required this.dosage,
     required this.timestamp,
-    Color? backgroundColor,
-    Color? borderColor,
-    Color? dosageTextColor,
-    Color? timestampTextColor,
-    this.borderWidth = 2.0,
-    this.cornerRadius = 16.0,
-    this.pointerHeight = 20.0,
-    this.pointerWidth = 30.0,
-  }) : backgroundColor = backgroundColor ?? GHColors.white,
-        borderColor = borderColor ?? GHColors.black,
-        dosageTextColor = dosageTextColor ?? GHColors.black,
-        timestampTextColor = timestampTextColor ?? GHColors.grey;
+    required this.isVisible,
+    required this.child,
+    this.displayOnLeft = false,
+    this.displayOnRight = false,
+  }) : assert(
+          !(displayOnLeft && displayOnRight),
+          'Cannot display on both left and right simultaneously',
+        );
 
   @override
   Widget build(BuildContext context) {
+    return PortalTarget(
+      visible: isVisible,
+      anchor: Aligned(
+        follower: Alignment.bottomCenter,
+        target: _determineTargetAlignment(),
+        offset: _determineOffset(),
+      ),
+      portalFollower: _buildBubbleContent(),
+      child: child,
+    );
+  }
+
+  /// Determines the target alignment based on display preferences
+  Alignment _determineTargetAlignment() {
+    if (displayOnLeft) return Alignment.topLeft;
+    if (displayOnRight) return Alignment.topRight;
+    return Alignment.topCenter;
+  }
+
+  /// Calculates the offset based on display preferences
+  Offset _determineOffset() {
+    if (displayOnLeft) return const Offset(-_horizontalOffset, _verticalOffset);
+    if (displayOnRight) return const Offset(_horizontalOffset, _verticalOffset);
+    return const Offset(0, _verticalOffset);
+  }
+
+  /// Builds the content of the bubble
+  Widget _buildBubbleContent() {
     return CustomPaint(
       painter: _BubblePainter(
-        backgroundColor: backgroundColor,
-        borderColor: borderColor,
-        borderWidth: borderWidth,
-        cornerRadius: cornerRadius,
-        pointerHeight: pointerHeight,
-        pointerWidth: pointerWidth,
+        backgroundColor: GHColors.white,
+        borderColor: GHColors.black,
+        borderWidth: _borderWidth,
+        cornerRadius: _cornerRadius,
+        pointerHeight: _pointerHeight,
+        pointerWidth: _pointerWidth,
+        displayOnLeft: displayOnLeft,
+        displayOnRight: displayOnRight,
       ),
       child: Padding(
-        padding: _defaultContentPadding,
-        child: _buildContent(),
-      ),
-    );
-  }
-
-  // Builds the content of the bubble
-  Widget _buildContent() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _buildDosageText(),
-        const SizedBox(height: _defaultSpacing),
-        _buildTimestampText(),
-      ],
-    );
-  }
-
-  // Builds the dosage text widget
-  Widget _buildDosageText() {
-    return Text(
-      'Dosage: $dosage',
-      style: _defaultDosageStyle.copyWith(
-        color: dosageTextColor,
-      ),
-    );
-  }
-
-  // Builds the timestamp text widget
-  Widget _buildTimestampText() {
-    return Text(
-      timestamp,
-      style: _defaultTimestampStyle.copyWith(
-        color: timestampTextColor,
+        padding: const EdgeInsets.only(
+          left: _padding,
+          right: _padding,
+          top: _topPadding,
+          bottom: _bottomPadding,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Dosage: $dosage',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              timestamp,
+              style: TextStyle(
+                fontSize: 12,
+                color: GHColors.grey,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-// A custom painter that draws the bubble shape with a pointer
+/// A custom painter that draws a bubble shape with a customizable pointer.
+///
+/// The bubble includes rounded corners and a triangular pointer that can be
+/// positioned at different locations along the bottom edge.
 class _BubblePainter extends CustomPainter {
   final Color backgroundColor;
   final Color borderColor;
@@ -131,6 +135,11 @@ class _BubblePainter extends CustomPainter {
   final double cornerRadius;
   final double pointerHeight;
   final double pointerWidth;
+  final bool displayOnLeft;
+  final bool displayOnRight;
+
+  /// The factor used to calculate pointer position offset
+  static const double _pointerOffsetFactor = 4.63;
 
   const _BubblePainter({
     required this.backgroundColor,
@@ -139,15 +148,12 @@ class _BubblePainter extends CustomPainter {
     required this.cornerRadius,
     required this.pointerHeight,
     required this.pointerWidth,
+    this.displayOnLeft = false,
+    this.displayOnRight = false,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    _drawBubble(canvas, size);
-  }
-
-  // Draws the bubble shape with background and border
-  void _drawBubble(Canvas canvas, Size size) {
     final paint = Paint()..color = backgroundColor;
     final borderPaint = Paint()
       ..color = borderColor
@@ -160,49 +166,67 @@ class _BubblePainter extends CustomPainter {
     canvas.drawPath(path, borderPaint);
   }
 
-  // Creates the bubble path with rounded corners and pointer
+  /// Creates the bubble path with rounded corners and a pointer
   Path _createBubblePath(Size size) {
     final path = Path();
     final bubbleHeight = size.height - pointerHeight;
 
-    // Top left corner
-    path.moveTo(cornerRadius, 0);
+    _addTopEdge(path, size, bubbleHeight);
+    _addPointer(path, size, bubbleHeight);
+    _addBottomEdge(path, bubbleHeight);
 
-    // Top edge and top right corner
+    path.close();
+    return path;
+  }
+
+  /// Adds the top edge of the bubble including corners
+  void _addTopEdge(Path path, Size size, double bubbleHeight) {
+    path.moveTo(cornerRadius, 0);
     path.lineTo(size.width - cornerRadius, 0);
     path.arcToPoint(
       Offset(size.width, cornerRadius),
       radius: Radius.circular(cornerRadius),
     );
-
-    // Right edge and bottom right corner
     path.lineTo(size.width, bubbleHeight - cornerRadius);
     path.arcToPoint(
       Offset(size.width - cornerRadius, bubbleHeight),
       radius: Radius.circular(cornerRadius),
     );
+  }
 
-    // Bottom edge with pointer
-    path.lineTo(size.width / 2 + pointerWidth / 2, bubbleHeight);
-    path.lineTo(size.width / 2, size.height);
-    path.lineTo(size.width / 2 - pointerWidth / 2, bubbleHeight);
+  /// Adds the pointer to the bubble path
+  void _addPointer(Path path, Size size, double bubbleHeight) {
+    final centerX = _calculatePointerCenterX(size);
+    const overlap = 1.0; // Slight overlap for smooth rendering
 
-    // Bottom left corner
+    path.lineTo(centerX + pointerWidth / 2 - overlap, bubbleHeight);
+    path.lineTo(centerX, size.height);
+    path.lineTo(centerX - pointerWidth / 2 + overlap, bubbleHeight);
+  }
+
+  /// Calculates the x-coordinate for the pointer's center
+  double _calculatePointerCenterX(Size size) {
+    if (displayOnRight) {
+      return size.width / 2 - size.width / _pointerOffsetFactor;
+    }
+    if (displayOnLeft) {
+      return size.width / 2 + size.width / _pointerOffsetFactor;
+    }
+    return size.width / 2;
+  }
+
+  /// Adds the bottom edge of the bubble including corners
+  void _addBottomEdge(Path path, double bubbleHeight) {
     path.lineTo(cornerRadius, bubbleHeight);
     path.arcToPoint(
       Offset(0, bubbleHeight - cornerRadius),
       radius: Radius.circular(cornerRadius),
     );
-
-    // Left edge and close the path
     path.lineTo(0, cornerRadius);
     path.arcToPoint(
       Offset(cornerRadius, 0),
       radius: Radius.circular(cornerRadius),
     );
-    path.close();
-
-    return path;
   }
 
   @override
@@ -212,6 +236,8 @@ class _BubblePainter extends CustomPainter {
         oldDelegate.borderWidth != borderWidth ||
         oldDelegate.cornerRadius != cornerRadius ||
         oldDelegate.pointerHeight != pointerHeight ||
-        oldDelegate.pointerWidth != pointerWidth;
+        oldDelegate.pointerWidth != pointerWidth ||
+        oldDelegate.displayOnLeft != displayOnLeft ||
+        oldDelegate.displayOnRight != displayOnRight;
   }
 }

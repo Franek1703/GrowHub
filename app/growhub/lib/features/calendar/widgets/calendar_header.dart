@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:growhub/config/constants/colors.dart';
 import '../cubit/calendar_cubit.dart';
 import '../cubit/calendar_state.dart';
 import '../models/month_enum.dart';
@@ -48,6 +49,7 @@ class CalendarHeader extends StatelessWidget {
           width: _navigationButtonWidth,
           child: _buildNavigationButton(
             icon: Icons.chevron_left,
+            color: GHColors.black,
             onPressed: () => _onPreviousMonth(context),
           ),
         ),
@@ -59,12 +61,17 @@ class CalendarHeader extends StatelessWidget {
         SizedBox(
           width: _navigationButtonWidth,
           child: isCurrentMonth
-              ? const SizedBox.shrink() // Empty space to maintain layout
+              ? _buildNavigationButton(
+                  icon: Icons.chevron_right,
+                  color: GHColors.grey,
+                  onPressed: () {},
+                )
               : _buildNavigationButton(
                   icon: Icons.chevron_right,
+                  color: GHColors.black,
                   onPressed: () => _onNextMonth(context),
-                ),
-        ),
+                ),   
+        )
       ],
     );
   }
@@ -91,10 +98,12 @@ class CalendarHeader extends StatelessWidget {
   // Builds a navigation button with the specified icon and action
   Widget _buildNavigationButton({
     required IconData icon,
+    required Color color,
     required VoidCallback onPressed,
   }) {
     return IconButton(
       icon: Icon(icon),
+      color: color,
       onPressed: onPressed,
       padding: EdgeInsets.zero,
       constraints: const BoxConstraints(),
