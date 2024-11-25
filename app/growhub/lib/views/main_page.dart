@@ -29,10 +29,10 @@ class MainPage extends HookWidget {
 
     return Scaffold(
       backgroundColor: GHColors.background,
-      appBar: path.contains("/dashboard/") ? AppBar(
-        leading: IconButton(onPressed: ()=>
-        context.pop(), icon: const Icon(Icons.chevron_left)),
-      ) : null,
+      // appBar: path.contains("/dashboard/") ? AppBar(
+      //   leading: IconButton(onPressed: ()=>
+      //   context.pop(), icon: const Icon(Icons.chevron_left)),
+      // ) : null,
       body: Stack(
         children: [
           child,

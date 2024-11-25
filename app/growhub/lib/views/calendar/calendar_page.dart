@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:growhub/config/routing.dart';
 import '../../features/calendar/cubit/calendar_cubit.dart';
 import 'package:growhub/features/calendar/widgets/calendar_grid.dart';
 import 'package:growhub/features/calendar/widgets/calendar_header.dart';
@@ -18,13 +20,13 @@ class CalendarPage extends StatelessWidget {
           // Close only bubble when clicking outside
           context.read<CalendarCubit>().closeBubble();
         },
-        child: const Scaffold(
+        child: Scaffold(
           appBar: GHTopAppBar(
             title: 'Calendar',
-            // onLeadingPressed: () => context.go('/dashboard'),
+            onLeadingPressed: () => context.pop(),
             showLeading: true,
           ),
-          body: SafeArea(
+          body: const SafeArea(
             child: Padding(
               padding: EdgeInsets.only(
                 left: 24.0,
