@@ -4,14 +4,19 @@ import 'package:growhub/config/assets.gen.dart';
 import 'package:growhub/config/constants/colors.dart';
 
 class GHInputField extends HookWidget {
+  final Function(String) onTitleChange;
   final String hintText;
   final bool isPassword;
   final String title;
+  final String? text;
   const GHInputField(
       {super.key,
       required this.hintText,
       this.isPassword = false,
-      required this.title});
+      required this.title,
+      required this.onTitleChange,
+      this.text
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +36,9 @@ class GHInputField extends HookWidget {
           child: Stack(
             children: [
               TextFormField(
+                initialValue: text,
                 obscureText: !isTextVisible.value,
+                onChanged: (value) => onTitleChange(value),
                 onTapOutside: (event) {
                   FocusScopeNode currentFocus = FocusScope.of(context);
 

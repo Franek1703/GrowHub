@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/features/login/widgets/background_img.dart';
 import 'package:growhub/features/login/widgets/input_filed.dart';
 
-class SignupPage extends StatelessWidget {
+class SignupPage extends HookWidget {
   const SignupPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final name = useState<String>("");
+    final email = useState<String>("");
+    final password = useState<String>("");
+    final repeatPassword = useState<String>("");
+    final isErrorVisible = useState(false);
     return Scaffold(
       body: SingleChildScrollView(
         child: BackgroundImage(
@@ -24,20 +30,57 @@ class SignupPage extends StatelessWidget {
                   style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 40),
-                const GHInputField(hintText: "Your name", title: "Your name",),
-              const SizedBox(height: 16),
-              const GHInputField(hintText: "Email", title: "Email",),
-              const SizedBox(height: 16),
-              const GHInputField(hintText: "Password", title: "Password", isPassword: true),
-              const SizedBox(height: 16),
-              const GHInputField(hintText: "Repeat password", title: "Repeat password", isPassword: true),
-              const SizedBox(height: 32),
-                const SizedBox(height: 32),
+                GHInputField(
+                  hintText: "Your name",
+                  title: "Your name",
+                  text: name.value != "" ? name.value : null,
+                  onTitleChange: (p0) => name.value = p0,
+                ),
+                const SizedBox(height: 16),
+                GHInputField(
+                  hintText: "Email",
+                  title: "Email",
+                  text: email.value != "" ? email.value : null,
+                  onTitleChange: (p0) => email.value = p0,
+                ),
+                const SizedBox(height: 16),
+                GHInputField(
+                    hintText: "Password",
+                    title: "Password",
+                    isPassword: true,
+                    text: password.value != "" ? password.value : null,
+                    onTitleChange: (p0) => password.value = p0),
+                const SizedBox(height: 16),
+                GHInputField(
+                    hintText: "Repeat password",
+                    title: "Repeat password",
+                    isPassword: true,
+                    text: repeatPassword.value != ""
+                        ? repeatPassword.value
+                        : null,
+                    onTitleChange: (p0) => repeatPassword.value = p0),
+                SizedBox(
+                  height: 32,
+                  child: Visibility(
+                      visible: isErrorVisible.value,
+                      child: const Center(
+                        child: Text(
+                          "All inputs must be provided!",
+                          style: TextStyle(color: Colors.red, fontSize: 15),
+                        ),
+                      )),
+                ),
                 Center(
                   child: InkWell(
                     borderRadius: BorderRadius.circular(20),
                     onTap: () {
-                      // TODO: Implement login logic here
+                      if (name.value == "" ||
+                          email.value == "" ||
+                          password.value == "" ||
+                          repeatPassword.value == "") {
+                        isErrorVisible.value = true;
+                      }
+                      // TODO: Implement signup logic here
                     },
                     child: Container(
                         height: 40,
@@ -59,6 +102,7 @@ class SignupPage extends StatelessWidget {
                 Center(
                   child: GestureDetector(
                     onTap: () {
+                      isErrorVisible.value = false;
                       context.pop();
                     },
                     child: RichText(

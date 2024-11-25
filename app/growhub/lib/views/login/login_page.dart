@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/features/login/widgets/background_img.dart';
 import 'package:growhub/features/login/widgets/input_filed.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends HookWidget {
   const LoginPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final email = useState<String>("");
+    final password = useState<String>("");
+    final isErrorVisible = useState(false);
     return Scaffold(
       body: SingleChildScrollView(
         child: BackgroundImage(
@@ -24,19 +28,41 @@ class LoginPage extends StatelessWidget {
                   style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 40),
-                const GHInputField(
+                GHInputField(
+                  text: email.value != "" ? email.value : null,
                   hintText: "Email",
                   title: "Email",
+                  onTitleChange: (p0) => email.value = p0,
                 ),
                 const SizedBox(height: 30),
-                const GHInputField(
-                    hintText: "Password", title: "Password", isPassword: true),
-                const SizedBox(height: 32),
+                GHInputField(
+                    text: password.value != "" ? password.value : null,
+                    onTitleChange: (p0) => password.value = p0,
+                    hintText: "Password",
+                    title: "Password",
+                    isPassword: true),
+                SizedBox(
+                  height: 32,
+                  child: Visibility(
+                      visible: isErrorVisible.value,
+                      child: const Center(
+                        child: Text(
+                          "All inputs must be provided!",
+                          style: TextStyle(color: Colors.red, fontSize: 15),
+                        ),
+                      )),
+                ),
                 Center(
                   child: InkWell(
                     borderRadius: BorderRadius.circular(20),
                     onTap: () {
-                      // TODO: Implement login logic here
+                      if(email.value == "" || password.value == ""){
+                        isErrorVisible.value = true;
+                      }
+                      else{
+                        // TODO: Implement login logic here
+                      }
+                      
                     },
                     child: Container(
                         height: 40,
@@ -58,7 +84,9 @@ class LoginPage extends StatelessWidget {
                 Center(
                   child: GestureDetector(
                     onTap: () {
+                      isErrorVisible.value = false;
                       context.push("/signup");
+                      
                     },
                     child: RichText(
                       text: TextSpan(
