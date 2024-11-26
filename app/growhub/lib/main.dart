@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:growhub/common/widgets/loading_screen.dart';
-import 'package:growhub/common/widgets/progress_indicator.dart';
 import 'package:growhub/config/routing.dart';
 import 'package:growhub/config/themes/theme.dart';
 import 'package:growhub/features/api/api_repository.dart';
@@ -10,7 +9,6 @@ import 'package:growhub/features/api/cubit/user/user_cubit.dart';
 import 'package:growhub/features/api/services/api_service.dart';
 import 'package:growhub/features/api/services/auth_service.dart';
 import 'package:growhub/features/api/services/secure_storage_service.dart';
-import 'package:growhub/features/api/storage/token_storage.dart';
 import 'package:growhub/features/device_dashboard/cubit/device_cubit_cubit.dart';
 import 'package:growhub/features/calendar/cubit/calendar_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -57,7 +55,9 @@ class MainApp extends StatelessWidget {
       child: BlocBuilder<UserCubit, UserState>(
         builder: (context, state) {
           if (state is UserStateStartApp) {
-            return Center(child: const GHProgressIndicator());
+            return const MaterialApp(
+              home: LoadingScreen(),
+            );
           }
 
           final isLoggedIn = state is UserStateLoaded;

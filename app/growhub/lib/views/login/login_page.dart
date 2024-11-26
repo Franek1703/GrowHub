@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:growhub/common/widgets/page_padding.dart';
+import 'package:growhub/common/widgets/progress_indicator_small.dart';
 import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/features/api/cubit/user/user_cubit.dart';
 import 'package:growhub/features/login/widgets/background_img.dart';
@@ -16,6 +17,8 @@ class LoginPage extends HookWidget {
     final email = useState<String>("");
     final password = useState<String>("");
     final isErrorVisible = useState(false);
+
+    final userState = context.watch<UserCubit>().state;
 
     return Scaffold(
       resizeToAvoidBottomInset:
@@ -34,18 +37,12 @@ class LoginPage extends HookWidget {
                     print(state);
                     if (state is UserStateLoading) {
                       print("Loading");
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (context) =>
-                            const Center(child: CircularProgressIndicator()),
-                      );
                     } else {
                       if (Navigator.of(context).canPop()) {
-                        Navigator.of(context).pop();
+                        // Navigator.of(context).pop();
                       }
                       if (state is UserStateLoaded) {
-                        context.push('/dashboard');
+                        //context.push('/dashboard');
                       } else if (state is UserStateError) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text(state.error)),
@@ -95,6 +92,8 @@ class LoginPage extends HookWidget {
                               ),
                             ),
                           ),
+                          if (userState is UserStateLoading)
+                            const GHProgressIndicatorSmall(),
                           const Spacer(),
                           Column(
                             children: [

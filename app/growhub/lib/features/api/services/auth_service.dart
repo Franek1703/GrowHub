@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:growhub/features/api/core/auth_client.dart';
-import 'package:growhub/features/api/data/models/user_model.dart';
 
 class AuthService {
   final AuthClient authClient;

@@ -11,7 +11,6 @@ class UserCubit extends Cubit<UserState> {
 
   Future<void> login(String email, String password) async {
     emit(UserStateLoading());
-    await Future.delayed(const Duration(seconds: 5));
 
     try {
       final token = await apiRepository.login(email, password);
@@ -26,8 +25,25 @@ class UserCubit extends Cubit<UserState> {
     }
   }
 
+  Future<void> signUp(String username, String email, String password) async {
+    emit(UserStateLoading());
+
+    try {
+      final token = await apiRepository.signUp(username, email, password);
+
+      final user = await apiRepository.getUserData(token);
+
+      await apiRepository.saveToken(token);
+
+      emit(UserStateSignedUp(user: user));
+    } catch (e) {
+      emit(UserStateError(error: e.toString()));
+    }
+  }
+
   Future<void> autoLogin() async {
     emit(UserStateStartApp());
+    await Future.delayed(const Duration(seconds: 5));
     try {
       final token = await apiRepository.getToken();
       print(token);

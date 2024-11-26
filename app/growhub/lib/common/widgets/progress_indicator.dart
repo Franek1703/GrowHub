@@ -17,7 +17,7 @@ class GHProgressIndicator extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    const progressIndicatorColor = Colors.grey;
+    const progressIndicatorColor = Color.fromARGB(255, 68, 67, 67);
     AnimationController controller =
         useAnimationController(duration: const Duration(seconds: 1))..repeat();
 
@@ -25,7 +25,7 @@ class GHProgressIndicator extends HookWidget {
       turns: Tween(begin: 0.0, end: 1.0).animate(controller),
       child: GradientCircularProgressIndicator(
         radius: radius,
-        gradientColors: [Colors.white, progressIndicatorColor],
+        gradientColors: const [Colors.white, progressIndicatorColor],
         strokeWidth: strokeWidth,
       ),
     );

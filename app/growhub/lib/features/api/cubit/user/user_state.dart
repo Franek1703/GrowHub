@@ -19,3 +19,9 @@ final class UserStateLoaded extends UserState {
 
   UserStateLoaded({required this.user});
 }
+
+final class UserStateSignedUp extends UserState {
+  final UserModel user;
+
+  UserStateSignedUp({required this.user});
+}
