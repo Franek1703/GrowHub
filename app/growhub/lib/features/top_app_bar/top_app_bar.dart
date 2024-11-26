@@ -19,6 +19,7 @@ class GHTopAppBar extends StatelessWidget implements PreferredSizeWidget{
   Widget build(BuildContext context) {
     return AppBar(
       toolbarHeight: GHSizes.topBarHeight,
+      backgroundColor: GHColors.background,
       centerTitle: true,
       title: Text(
         title,

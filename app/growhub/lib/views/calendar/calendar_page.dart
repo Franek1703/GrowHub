@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/config/routing.dart';
 import '../../features/calendar/cubit/calendar_cubit.dart';
 import 'package:growhub/features/calendar/widgets/calendar_grid.dart';
@@ -20,8 +21,9 @@ class CalendarPage extends StatelessWidget {
           // Close only bubble when clicking outside
           context.read<CalendarCubit>().closeBubble();
         },
-        child: const Scaffold(
-          body: SafeArea(
+        child: Scaffold(
+          backgroundColor: GHColors.background,
+          body: const SafeArea(
             child: Padding(
               padding: EdgeInsets.only(
                 left: 24.0,
