@@ -14,17 +14,20 @@ class SensorPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SensorCubit, SensorState>(
-      builder: (context, state) {
-        return ListView.builder(
-          padding: const EdgeInsets.only(bottom: 90),
-          itemCount: state.sensors.length,
-          itemBuilder: (context, index) {
-            final sensor = state.sensors[index];
-            return SensorCard(sensor: sensor, index: index,);
-          },
-        );
-      },
+    return RefreshIndicator(
+      onRefresh: () => context.read<SensorCubit>().updateSensors(),
+      child: BlocBuilder<SensorCubit, SensorState>(
+        builder: (context, state) {
+          return ListView.builder(
+            padding: const EdgeInsets.only(bottom: 90),
+            itemCount: state.sensors.length,
+            itemBuilder: (context, index) {
+              final sensor = state.sensors[index];
+              return SensorCard(sensor: sensor, index: index,);
+            },
+          );
+        },
+      ),
     );
   }
 }

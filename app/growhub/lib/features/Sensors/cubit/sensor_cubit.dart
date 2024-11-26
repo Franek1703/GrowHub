@@ -19,7 +19,7 @@ class SensorCubit extends Cubit<SensorState> {
     emit(SensorReadingsLoaded(sensors: sensors));
   }
 
-  void updateSensors(){
+  Future<void> updateSensors() async{
     //TODO: Add logic for updating sensors
   }
 }
