@@ -17,15 +17,13 @@ class NotificationTile extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
-        color: tile.isResolved
-            ? GHColors.white
-            : GHColors.transparent,
+        color: tile.isResolved ? GHColors.white : GHColors.transparent,
         boxShadow: [
           CustomBoxShadow(
-                  color: GHColors.grey.withOpacity(0.1),
-                  blurRadius: 6,
-                  offset: const Offset(2, 2),
-                  blurStyle: BlurStyle.outer)
+              color: GHColors.grey.withOpacity(0.5),
+              blurRadius: 6,
+              offset: const Offset(2, 2),
+              blurStyle: BlurStyle.outer)
         ],
         borderRadius: const BorderRadius.all(Radius.circular(15)),
       ),
@@ -68,10 +66,27 @@ class NotificationTile extends StatelessWidget {
                     height: 3,
                   ),
                   Text(
-                    // "${duration.inHours.toString()} godzin temu",
                     _getNotificationTimeMessage(duration.inHours),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: GHColors.primary.withOpacity(0.7)),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(color: GHColors.black),
+                  ),
+                  Builder(
+                    builder: (context) {
+                      if (tile.isResolved && tile.resolvedTime != null) {
+                        final resolvedDuration =
+                            now.difference(tile.resolvedTime!);
+                        return Text(
+                          "Resolved: ${_getNotificationTimeMessage(resolvedDuration.inHours)}",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(color: GHColors.grey),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
                   )
                 ],
               )),
@@ -85,19 +100,17 @@ class NotificationTile extends StatelessWidget {
                     onPressed: () {
                       onTileMenuOpen();
                     },
-                    icon: Icon(Icons.more_horiz, color: GHColors.primary,)
-                    // Assets.icons.navigation.moreHorizontal.svg(
-                    //     width: 20.sp,
-                    //     height: 20.sp,
-                    //     colorFilter: ColorFilter.mode(
-                    //         context.colors.primary, BlendMode.srcIn))
-                            ),
+                    icon: Icon(
+                      Icons.more_horiz,
+                      color: GHColors.black,
+                    )),
               ))
         ],
       ),
     );
   }
 }
+
 String _getNotificationTimeMessage(int hours) {
   if (hours == 0) {
     return 'less than an hour ago';
@@ -130,8 +143,7 @@ class CustomBoxShadow extends BoxShadow {
       ..color = color
       ..maskFilter = MaskFilter.blur(this.blurStyle, blurSigma);
     assert(() {
-      if (debugDisableShadows)
-        result.maskFilter = null;
+      if (debugDisableShadows) result.maskFilter = null;
       return true;
     }());
     return result;

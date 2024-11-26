@@ -36,20 +36,24 @@ class NotificationPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: GHColors.background,
       body: Padding(
-        padding: EdgeInsets.only(bottom: 70),
+        padding: const EdgeInsets.only(bottom: 70),
         child: ListView(
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 40),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 40),
           scrollDirection: Axis.vertical,
           children: [
             Builder(builder: (context) {
               if (newTiles.isNotEmpty) {
                 return Padding(
-                  padding: EdgeInsets.only(bottom: 40),
+                  padding: const EdgeInsets.only(bottom: 40),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         "New",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: GHColors.black),
                       ),
                       Divider(
                         color: GHColors.grey,
@@ -60,7 +64,7 @@ class NotificationPage extends StatelessWidget {
                               showModalBottomSheet<void>(
                                   clipBehavior: Clip.hardEdge,
                                   barrierColor:
-                                      GHColors.primary.withOpacity(0.8),
+                                      GHColors.black.withOpacity(0.8),
                                   context: context,
                                   builder: (BuildContext context) {
                                     return NotificationMenu(
@@ -86,6 +90,10 @@ class NotificationPage extends StatelessWidget {
                       children: [
                         Text(
                           "Today",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: GHColors.black),
                         ),
                         Divider(
                           color: GHColors.grey,
@@ -95,7 +103,7 @@ class NotificationPage extends StatelessWidget {
                               onTileMenuOpen: () {
                                 showModalBottomSheet<void>(
                                     barrierColor:
-                                        GHColors.primary.withOpacity(0.8),
+                                        GHColors.black.withOpacity(0.8),
                                     context: context,
                                     builder: (BuildContext context) {
                                       return NotificationMenu(
@@ -123,6 +131,10 @@ class NotificationPage extends StatelessWidget {
                       children: [
                         Text(
                           "Previous",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: GHColors.black),
                         ),
                         Divider(
                           color: GHColors.grey,
@@ -132,7 +144,7 @@ class NotificationPage extends StatelessWidget {
                               onTileMenuOpen: () {
                                 showModalBottomSheet<void>(
                                     barrierColor:
-                                        GHColors.primary.withOpacity(0.8),
+                                        GHColors.black.withOpacity(0.8),
                                     context: context,
                                     builder: (BuildContext context) {
                                       return NotificationMenu(

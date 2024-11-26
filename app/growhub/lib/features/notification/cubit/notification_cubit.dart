@@ -34,10 +34,14 @@ class NotificationCubit extends Cubit<NotificationState> {
     //TODO: Add function to send delete notification to server
   }
 
+  void refreshNotification(NotificationModel notification) {
+    
+  }
+
   List<NotificationModel> testNotification = List.generate(30, (index) {
     bool isResolved = index % 2 == 0;
     DateTime now = DateTime.now();
-    DateTime time = now.subtract(Duration(minutes: index * 10));
+    DateTime time = now.subtract(Duration(minutes: index * 15));
     DateTime? resolvedTime = isResolved ? now.subtract(Duration(minutes: index * 5)) : null;
 
     return NotificationModel(

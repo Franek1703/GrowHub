@@ -5,7 +5,6 @@ import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/features/notification/cubit/notification_cubit.dart';
 import 'package:growhub/features/notification/model/notification_model.dart';
 
-
 class NotificationMenu extends StatelessWidget {
   final NotificationModel model;
   final void Function() hideMenu;
@@ -18,18 +17,22 @@ class NotificationMenu extends StatelessWidget {
     final List<(String, dynamic, IconData, Color)> menuTile = [
       (
         "Mark as resolved",
-        () {
-          context.read<NotificationCubit>().markAsResolved(model);
-        },
-        Icons.abc,
-        GHColors.primary,
+        model.isResolved
+            ? () {}
+            : () {
+                context.read<NotificationCubit>().markAsResolved(model);
+                hideMenu();
+              },
+        Icons.done,
+        model.isResolved ? GHColors.grey.withOpacity(0.6) : GHColors.black,
       ),
       (
         "Delete",
         () {
           context.read<NotificationCubit>().deleteNotification(model);
+          hideMenu();
         },
-        Icons.abc,
+        Icons.delete,
         Colors.red,
       ),
     ];
@@ -61,15 +64,16 @@ class NotificationMenu extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   tile.$2();
-                  hideMenu();
                 },
                 child: Row(
                   children: [
                     SizedBox(
-                      width: 17,
-                      height: 17,
-                      child: Icon(tile.$3, color: tile.$4,)
-                    ),
+                        width: 17,
+                        height: 17,
+                        child: Icon(
+                          tile.$3,
+                          color: tile.$4,
+                        )),
                     SizedBox(
                       width: 10,
                     ),
@@ -84,7 +88,7 @@ class NotificationMenu extends StatelessWidget {
               SizedBox(
                 height: 10,
               ),
-              menuTile.indexOf(tile)  == menuTile.length -1
+              menuTile.indexOf(tile) == menuTile.length - 1
                   ? const SizedBox.shrink()
                   : Divider(
                       color: GHColors.grey,
