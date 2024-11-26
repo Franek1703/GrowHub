@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:growhub/config/constants/colors.dart';
+import 'package:growhub/features/sensors/cubit/sensor_cubit.dart';
+import 'package:growhub/features/bottom_app_bar/cubit/path_cubit.dart';
+
 import 'package:growhub/features/device_dashboard/models/device_model.dart';
 
 class DeviceCard extends StatelessWidget {
@@ -11,7 +16,11 @@ class DeviceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: ()=>context.push("/dashboard/sensor"),
+      onTap: () {
+        context.read<PathCubit>().onPathChange("/dashboard/sensor");
+        context.read<SensorCubit>().initSensors(device.sensors);
+        context.push("/dashboard/sensor");
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
         margin: const EdgeInsets.symmetric(horizontal: 35),
