@@ -22,7 +22,7 @@ class SlidingDateRange extends HookWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 35),
+      padding: const EdgeInsets.symmetric(horizontal: 45),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -38,8 +38,8 @@ class SlidingDateRange extends HookWidget {
           ),
           Column(
             children: [
-              Text(getDateRange(selectedDate.value)),
-              Text('${selectedDate.value.year}'),
+              Text(getDateRange(selectedDate.value), style: TextStyle(fontWeight: FontWeight.bold),),
+              // Text('${selectedDate.value.year}'),
             ],
           ),
           IconButton(
