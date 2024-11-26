@@ -81,9 +81,10 @@ class SensorChart extends StatelessWidget {
         gridData: const FlGridData(
           show: false,
         ),
+        
         lineTouchData: LineTouchData(
           touchTooltipData: LineTouchTooltipData(
-            getTooltipColor: (touchedSpot) => GHColors.primary,
+            getTooltipColor: (touchedSpot) => gradientColor,
             tooltipPadding: EdgeInsets.symmetric(vertical: 7, horizontal: 5),
             getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
               return touchedBarSpots.map((LineBarSpot spot) {
