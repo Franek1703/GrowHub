@@ -10,13 +10,15 @@ class SensorCubit extends Cubit<SensorState> {
 
   void initSensors(List<Sensor> sensors) {
     emit(SensorReadingsLoading(sensors: sensors));
-
+    Future.delayed(const Duration(seconds: 2), () {
     //Load all sensor readings
     //TODO: Add logic for loading sesor readings
     for (var sensor in sensors) {
       sensor.updateReadings(testReadings);
     }
     emit(SensorReadingsLoaded(sensors: sensors));
+    }
+    );
   }
 
   Future<void> updateSensors() async{

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/features/Sensors/widgets/date_change_widget.dart';
+import 'package:growhub/features/all_purpose_widgets/widgets/progress_idicator.dart';
 import 'package:growhub/features/sensors/models/sensor_model.dart';
 import 'package:growhub/features/sensors/widgets/chart.dart';
 import 'package:growhub/features/sensors/cubit/sensor_cubit.dart';
@@ -45,11 +46,12 @@ class SensorCard extends HookWidget {
     String formattedLastReading =
         DateFormat('dd.MM.yyyy, HH:mm').format(sensor.lastReadingTime);
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       decoration: BoxDecoration(
           color: GHColors.white, borderRadius: BorderRadius.circular(30),
           boxShadow: [BoxShadow(color: GHColors.black.withOpacity(0.4), blurRadius: 6, offset: Offset(2,2))]
           ),
-      margin: EdgeInsets.symmetric(vertical: 16, horizontal: 30),
+      margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 30),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -63,15 +65,19 @@ class SensorCard extends HookWidget {
             subtitle: Center(
                 child: Text('Last measurement: $formattedLastReading')),
           ),
-          Container(
-            height: 150,
-            padding: EdgeInsets.all(16),
-            child: SensorChart(
-              dataPoints: getChartSpots(
-                  sensor.readings, startDate.value, endDate.value),
-              unit: sensor.unit,
-              index: index,
+          AnimatedCrossFade(
+            firstChild: const Center(child: GHProgressIndicator()),
+            secondChild: SizedBox(
+              height: 150,
+              child: SensorChart(
+                dataPoints: getChartSpots(
+                    sensor.readings, startDate.value, endDate.value),
+                unit: sensor.unit,
+                index: index,
+              ),
             ),
+            crossFadeState: sensor.readings.isEmpty ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+            duration: Duration(milliseconds: 500),
           ),
           SlidingDateRange(
             onDateRangeChange: (newStartDate, newEndDate) {
