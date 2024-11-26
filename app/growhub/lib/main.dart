@@ -4,6 +4,7 @@ import 'package:growhub/config/themes/theme.dart';
 import 'package:growhub/features/device_dashboard/cubit/device_cubit_cubit.dart';
 import 'package:growhub/features/calendar/cubit/calendar_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:growhub/features/notification/cubit/notification_cubit.dart';
 
 void main() {
   runApp(const MainApp());
@@ -22,10 +23,13 @@ class MainApp extends StatelessWidget {
          BlocProvider(
           create: (context) => CalendarCubit(),
         ),
+        BlocProvider(
+          create: (context) => NotificationCubit()..init(),
+        ),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
-        routerConfig: GHRouter(isLoggedIn: false).router,
+        routerConfig: GHRouter(isLoggedIn: true).router,
         theme: GHTheme.theme(context),
       ),
     );
