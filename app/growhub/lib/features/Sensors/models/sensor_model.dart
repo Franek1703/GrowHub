@@ -2,8 +2,8 @@ class Sensor {
   final String name;
   final String unit;
   final double lastReading;
-  final String lastReadingTime;
-  Map<String, double> readings;
+  final DateTime lastReadingTime;
+  Map<DateTime, double> readings;
 
   Sensor({
     required this.name,
@@ -13,7 +13,7 @@ class Sensor {
     required this.readings,
   });
 
-  void updateReadings(Map<String, double> newReadings) {
+  void updateReadings(Map<DateTime, double> newReadings) {
     readings = newReadings;
   }
 }

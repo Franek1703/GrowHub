@@ -14,18 +14,7 @@ class SensorChart extends StatelessWidget {
 
     return LineChart(
       LineChartData(
-        // borderData: FlBorderData(
-        //   border: Border(
-        //     bottom: BorderSide(
-        //       width: 1.6,
-        //       color: context.colors.primary.withOpacity(0.5),
-        //     ),
-        //     left: BorderSide(
-        //       width: 1.6,
-        //       color: context.colors.primary.withOpacity(0.5),
-        //     ),
-        //   ),
-        // ),
+        borderData: FlBorderData(show: false),
         titlesData: FlTitlesData(
           topTitles: const AxisTitles(
             sideTitles: SideTitles(showTitles: false),
@@ -35,7 +24,7 @@ class SensorChart extends StatelessWidget {
           ),
           leftTitles: AxisTitles(
             sideTitles: SideTitles(
-              showTitles: true,
+              showTitles: false,
               reservedSize: 36,
               getTitlesWidget: (value, meta) {
                 shownYLabels.add(value.floor().toString());
@@ -54,7 +43,7 @@ class SensorChart extends StatelessWidget {
           ),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
-              showTitles: true,
+              showTitles: false,
               reservedSize: 22,
               getTitlesWidget: (value, meta) {
                 DateTime dateTime =
@@ -76,7 +65,7 @@ class SensorChart extends StatelessWidget {
           ),
         ),
         gridData: const FlGridData(
-          show: true,
+          show: false,
         ),
         lineTouchData: LineTouchData(
           touchTooltipData: LineTouchTooltipData(
@@ -86,6 +75,7 @@ class SensorChart extends StatelessWidget {
                 EdgeInsets.symmetric(vertical: 7, horizontal: 5),
             getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
               return touchedBarSpots.map((LineBarSpot spot) {
+                
                 return LineTooltipItem(
                   '${spot.y.toStringAsFixed(1)}$unit', TextStyle()
                 );
@@ -95,11 +85,12 @@ class SensorChart extends StatelessWidget {
         ),
         lineBarsData: [
           LineChartBarData(
-            color: GHColors.primary,
+            
+            color: GHColors.black,
             show: true,
             isStrokeCapRound: true,
             dotData: const FlDotData(show: false),
-            belowBarData: BarAreaData(show: false),
+            belowBarData: BarAreaData(show: true, gradient: LinearGradient(stops: [0.2, 0.3, 0.95], begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.green,Colors.green, GHColors.white])),
             barWidth: 2,
             spots: dataPoints,
           ),
@@ -108,22 +99,4 @@ class SensorChart extends StatelessWidget {
     );
   }
 }
-    // LineChart(
-    //   LineChartData(
-    //     lineBarsData: [
-    //       LineChartBarData(
-    //         spots: dataPoints,
-    //         isCurved: true,
-    //         color: GHColors.black,
-    //         barWidth: 4,
-    //         belowBarData: BarAreaData(show: false),
-    //       ),
-    //     ],
-    //     titlesData: FlTitlesData(
-    //       bottomTitles: SideTitles(showTitles: true),
-    //       leftTitles: SideTitles(showTitles: true),
-    //     ),
-    //   ),
-    // );
-//   }
-// }
+    

@@ -2,9 +2,13 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:growhub/config/constants/colors.dart';
+import 'package:growhub/features/Sensors/widgets/date_change_widget.dart';
 import 'package:growhub/features/sensors/models/sensor_model.dart';
 import 'package:growhub/features/sensors/widgets/chart.dart';
 import 'package:growhub/features/sensors/cubit/sensor_cubit.dart';
+import 'package:intl/intl.dart';
+
 class SensorPage extends StatelessWidget {
   const SensorPage({super.key});
 
@@ -31,101 +35,72 @@ class SensorCard extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    var startDate = useState(DateTime.now().subtract(const Duration(days: 15)));
+    var startDate = useState(DateTime.now().subtract(const Duration(days: 6)));
     var endDate = useState(DateTime.now());
-    return Card(
-      margin: EdgeInsets.all(16),
+    String formattedLastReading = DateFormat('dd.MM.yyyy, HH:mm').format(sensor.lastReadingTime);
+    return Container(
+
+      decoration: BoxDecoration(
+        color: GHColors.white,
+        borderRadius: BorderRadius.circular(30)
+      ),
+      margin: EdgeInsets.symmetric(vertical: 16, horizontal: 30),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ListTile(
-            title: Text(sensor.name),
-            subtitle: Text('Last Reading: ${sensor.lastReading} ${sensor.unit}'),
-            trailing: Text(sensor.lastReadingTime),
+            titleAlignment: ListTileTitleAlignment.center,
+            title: Center(
+                child: Text(
+                    "${sensor.name}: ${sensor.lastReading} ${sensor.unit}", style: const TextStyle(fontWeight: FontWeight.bold),)),
+            subtitle: Center(
+                child: Text('Last measurement: ${formattedLastReading}')),
           ),
           Container(
-            height: 200,
+            height: 150,
             padding: EdgeInsets.all(16),
             child: SensorChart(
-              dataPoints: getChartSpots(sensor.readings, startDate.value, endDate.value),
+              dataPoints: getChartSpots(
+                  sensor.readings, startDate.value, endDate.value),
               unit: sensor.unit,
             ),
           ),
+          SlidingDateRange(onDateRangeChange: (newStartDate, newEndDate) {
+            startDate.value = newStartDate;
+            endDate.value = newEndDate;
+          },)
         ],
       ),
     );
   }
 
-  
-
-  List<FlSpot> getConvertedChartSpots(List<MapEntry<DateTime, double>> datapoints) {
-  List<FlSpot> points = List<FlSpot>.generate(
-    datapoints.length,
-    (i) {
+  List<FlSpot> getConvertedChartSpots(
+      List<MapEntry<DateTime, double>> datapoints) {
+    List<FlSpot> points = List<FlSpot>.generate(datapoints.length, (i) {
       final point = datapoints[i];
       final x = point.key.millisecondsSinceEpoch.toDouble();
       final y = point.value;
 
       return FlSpot(x, y);
-    }
-  );
+    });
 
-  return points;
-}
+    return points;
+  }
 
-// List<DeimicChartDataPoint> getHourlyAveragedDataPoints(
-//     List<DeimicChartDataPoint> datapoints) {
-//   Map<DateTime, List<DeimicChartDataPoint>> hourlyData = {};
+  List<MapEntry<DateTime, double>> getRangedDataPoints(
+      Map<DateTime, double> readings, DateTime startDate, DateTime endDate) {
+    List<MapEntry<DateTime, double>> rangedDataPoints =
+        readings.entries.where((point) {
+      return point.key.isAfter(startDate) &&
+          point.key.isBefore(endDate.add(const Duration(days: 1)));
+    }).toList();
 
-//   for (var point in datapoints) {
-//     DateTime hourKey = DateTime(
-//       point.timestamp.year,
-//       point.timestamp.month,
-//       point.timestamp.day,
-//       point.timestamp.hour,
-//     );
+    return rangedDataPoints;
+  }
 
-//     if (!hourlyData.containsKey(hourKey)) {
-//       hourlyData[hourKey] = [];
-//     }
-
-//     hourlyData[hourKey]!.add(point);
-//   }
-
-//   List<DeimicChartDataPoint> averagedPoints = [];
-
-//   hourlyData.forEach((hour, points) {
-//     double avgValue =
-//         points.map((p) => p.value).reduce((a, b) => a + b) / points.length;
-
-//     averagedPoints.add(DeimicChartDataPoint(
-//       hour,
-//       avgValue,
-//     ));
-//   });
-
-//   return averagedPoints;
-// }
-
-List<MapEntry<DateTime, double>> getRangedDataPoints(
-    Map<String, double> readings,
-    DateTime startDate,
-    DateTime endDate) {
-    Map<DateTime, double> convertedReadings =  readings.map((dateName,value)=> MapEntry(DateTime.parse(dateName), value));
-  List<MapEntry<DateTime, double>> rangedDataPoints = convertedReadings.entries.where((point) {
-    return point.key.isAfter(startDate) &&
-        point.key.isBefore(
-            endDate.add(const Duration(days: 1)));
-  }).toList();
-
-  return rangedDataPoints;
-}
-
-List<FlSpot> getChartSpots(
-    Map<String, double> readings, DateTime startDate, DateTime endDate) {
-
-  return getConvertedChartSpots(
-    getRangedDataPoints(readings, startDate, endDate));
-      
-}
+  List<FlSpot> getChartSpots(
+      Map<DateTime, double> readings, DateTime startDate, DateTime endDate) {
+    return getConvertedChartSpots(
+        getRangedDataPoints(readings, startDate, endDate));
+  }
 }
