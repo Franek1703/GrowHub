@@ -37,7 +37,7 @@ class NotificationMenu extends StatelessWidget {
       ),
     ];
     return Container(
-      height: 245,
+      height: 180,
       padding: EdgeInsets.symmetric(horizontal: 19),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
