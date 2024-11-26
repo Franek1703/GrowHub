@@ -35,21 +35,60 @@ class NotificationPage extends StatelessWidget {
     );
     return RefreshIndicator(
       onRefresh: () => context.read<NotificationCubit>().refreshNotifications(),
-      child: Scaffold(
-        backgroundColor: GHColors.background,
-        body: ListView(
-          padding: const EdgeInsets.only(left: 10, right: 10, bottom: 90, top: 10),
-          scrollDirection: Axis.vertical,
-          children: [
-            Builder(builder: (context) {
-              if (newTiles.isNotEmpty) {
+      child: ListView(
+        padding:
+            const EdgeInsets.only(left: 10, right: 10, bottom: 90, top: 10),
+        scrollDirection: Axis.vertical,
+        children: [
+          Builder(builder: (context) {
+            if (newTiles.isNotEmpty) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 40),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "New",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: GHColors.black),
+                    ),
+                    Divider(
+                      color: GHColors.grey,
+                    ),
+                    ...newTiles.map((tile) => NotificationTile(
+                          tile: tile,
+                          onTileMenuOpen: () {
+                            showModalBottomSheet<void>(
+                                useRootNavigator: true,
+                                clipBehavior: Clip.hardEdge,
+                                barrierColor: GHColors.black.withOpacity(0.8),
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return NotificationMenu(
+                                      model: tile,
+                                      hideMenu: () => Navigator.pop(context));
+                                });
+                          },
+                        ))
+                  ],
+                ),
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
+          }),
+          Builder(
+            builder: (context) {
+              if (todaysTiles.isNotEmpty) {
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: 40),
+                  padding: EdgeInsets.only(bottom: 16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "New",
+                        "Today",
                         style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
@@ -58,13 +97,12 @@ class NotificationPage extends StatelessWidget {
                       Divider(
                         color: GHColors.grey,
                       ),
-                      ...newTiles.map((tile) => NotificationTile(
+                      ...todaysTiles.map((tile) => NotificationTile(
                             tile: tile,
                             onTileMenuOpen: () {
                               showModalBottomSheet<void>(
-                                  clipBehavior: Clip.hardEdge,
-                                  barrierColor:
-                                      GHColors.black.withOpacity(0.8),
+                                  useRootNavigator: true,
+                                  barrierColor: GHColors.black.withOpacity(0.8),
                                   context: context,
                                   builder: (BuildContext context) {
                                     return NotificationMenu(
@@ -79,91 +117,49 @@ class NotificationPage extends StatelessWidget {
               } else {
                 return const SizedBox.shrink();
               }
-            }),
-            Builder(
-              builder: (context) {
-                if (todaysTiles.isNotEmpty) {
-                  return Padding(
-                    padding: EdgeInsets.only(bottom: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Today",
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w700,
-                              color: GHColors.black),
-                        ),
-                        Divider(
-                          color: GHColors.grey,
-                        ),
-                        ...todaysTiles.map((tile) => NotificationTile(
-                              tile: tile,
-                              onTileMenuOpen: () {
-                                showModalBottomSheet<void>(
-                                    barrierColor:
-                                        GHColors.black.withOpacity(0.8),
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return NotificationMenu(
-                                          model: tile,
-                                          hideMenu: () =>
-                                              Navigator.pop(context));
-                                    });
-                              },
-                            ))
-                      ],
-                    ),
-                  );
-                } else {
-                  return const SizedBox.shrink();
-                }
-              },
-            ),
-            Builder(
-              builder: (context) {
-                if (oldTiles.isNotEmpty) {
-                  return Padding(
-                    padding: EdgeInsets.only(bottom: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Previous",
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w700,
-                              color: GHColors.black),
-                        ),
-                        Divider(
-                          color: GHColors.grey,
-                        ),
-                        ...oldTiles.map((tile) => NotificationTile(
-                              tile: tile,
-                              onTileMenuOpen: () {
-                                showModalBottomSheet<void>(
-                                    barrierColor:
-                                        GHColors.black.withOpacity(0.8),
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return NotificationMenu(
-                                          model: tile,
-                                          hideMenu: () =>
-                                              Navigator.pop(context));
-                                    });
-                              },
-                            ))
-                      ],
-                    ),
-                  );
-                } else {
-                  return const SizedBox.shrink();
-                }
-              },
-            )
-          ],
-        ),
+            },
+          ),
+          Builder(
+            builder: (context) {
+              if (oldTiles.isNotEmpty) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Previous",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: GHColors.black),
+                      ),
+                      Divider(
+                        color: GHColors.grey,
+                      ),
+                      ...oldTiles.map((tile) => NotificationTile(
+                            tile: tile,
+                            onTileMenuOpen: () {
+                              showModalBottomSheet<void>(
+                                  useRootNavigator: true,
+                                  barrierColor: GHColors.black.withOpacity(0.8),
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return NotificationMenu(
+                                        model: tile,
+                                        hideMenu: () => Navigator.pop(context));
+                                  });
+                            },
+                          ))
+                    ],
+                  ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            },
+          )
+        ],
       ),
     );
   }
