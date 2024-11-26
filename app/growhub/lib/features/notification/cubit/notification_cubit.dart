@@ -34,8 +34,10 @@ class NotificationCubit extends Cubit<NotificationState> {
     //TODO: Add function to send delete notification to server
   }
 
-  void refreshNotification(NotificationModel notification) {
-    
+  Future<void> refreshNotifications() async{
+    //TODO: Add function to fetch new notifications from server
+    await Future.delayed(Duration(seconds: 2));
+    emit(NotificationLoaded(notifications: testNotification));
   }
 
   List<NotificationModel> testNotification = List.generate(30, (index) {

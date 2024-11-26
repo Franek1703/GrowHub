@@ -57,12 +57,12 @@ class MainPage extends HookWidget {
 
     return Scaffold(
       backgroundColor: GHColors.background,
-      appBar: path.contains("/dashboard/") ? GHTopAppBar(
+      appBar: path != "/dashboard" ? GHTopAppBar(
             title: appBarTitle,
             onLeadingPressed: () {
               context.read<PathCubit>().onPathChange("/dashboard");
               context.pop();},
-            showLeading: true,
+            showLeading: path.contains("/dashboard/"),
           ) : null,
       body: Stack(
         children: [
