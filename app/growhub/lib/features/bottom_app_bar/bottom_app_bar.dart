@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:growhub/config/assets.gen.dart';
 import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/config/constants/sizes.dart';
 import 'package:growhub/features/bottom_app_bar/bottom_bar_icon.dart';
+import 'package:growhub/features/bottom_app_bar/cubit/path_cubit.dart';
+import 'package:growhub/main.dart';
 
-class GHBottomAppBar extends HookWidget {
+class GHBottomAppBar extends StatelessWidget {
   final Map<String, SvgGenImage> items;
   const GHBottomAppBar({super.key, required this.items});
 
   @override
   Widget build(BuildContext context) {
-    final currentPath = useState(items.entries.elementAt(1).key);
+    final currentPath = context.watch<PathCubit>().state;
     void onTap(String path) {
-      currentPath.value = path;
+      context.read<PathCubit>().onPathChange(path);
       context.go(path);
     }
 
@@ -44,7 +47,7 @@ class GHBottomAppBar extends HookWidget {
                   .map((item) => BottomBarIcon(
                         icon: item.value,
                         path: item.key,
-                        isTapped: currentPath.value == item.key,
+                        isTapped: currentPath == item.key,
                         onTap: () => onTap(item.key),
                       ))
                   .toList(),
