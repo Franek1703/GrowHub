@@ -6,6 +6,7 @@ import 'package:growhub/features/bottom_app_bar/cubit/path_cubit.dart';
 import 'package:growhub/features/device_dashboard/cubit/device_cubit_cubit.dart';
 import 'package:growhub/features/calendar/cubit/calendar_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:growhub/features/notification/cubit/notification_cubit.dart';
 
 void main() {
   runApp(const MainApp());
@@ -29,6 +30,9 @@ class MainApp extends StatelessWidget {
         ),
          BlocProvider(
           create: (context) => PathCubit(),
+        ),
+        BlocProvider(
+          create: (context) => NotificationCubit()..init(),
         ),
       ],
       child: MaterialApp.router(
