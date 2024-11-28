@@ -12,7 +12,7 @@ COPY . /app
 WORKDIR /app
 
 # Install dependencies
-RUN pip install --no-cache-dir -r flask-device/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose the port that the Flask app will run on
 EXPOSE 5001
@@ -22,4 +22,4 @@ ENV FLASK_APP=device_server.py
 ENV FLASK_RUN_PORT=5001
 
 # Run the Flask app
-CMD ["python", "/app/flask-device/device_server.py"]
+CMD ["python", "device_server.py"]

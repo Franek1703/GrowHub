@@ -16,8 +16,18 @@ services:
     image: adminer
     ports:
       - 8080:8080
+  flask-app:
+    build:
+      context: ./flask-app
+      dockerfile: Dockerfile
+    ports:
+      - "5002:5002"
+    environment:
+      - FLASK_ENV=development
   flask-device:
-    build: .
+    build:
+      context: ./flask-device
+      dockerfile: Dockerfile
     ports:
       - "5001:5001"
     environment:
