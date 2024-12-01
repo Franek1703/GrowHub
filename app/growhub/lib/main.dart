@@ -48,10 +48,6 @@ class MainApp extends StatelessWidget {
         ),
         BlocProvider(create: (context) => UserCubit(apiRepository)..autoLogin())
       ],
-
-      //Something needs to be changed. I suppose that
-      // We have to get rid of the bloc builder and
-      // Move all of the autologin logic to mainpage
       child: BlocBuilder<UserCubit, UserState>(
         builder: (context, state) {
           if (state is UserStateStartApp) {

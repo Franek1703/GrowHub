@@ -9,6 +9,10 @@ class UserCubit extends Cubit<UserState> {
 
   UserCubit(this.apiRepository) : super(UserStateInitial());
 
+  void loadUser(UserModel user) {
+    emit(UserStateLoaded(user: user));
+  }
+
   Future<void> login(String email, String password) async {
     emit(UserStateLoading());
 
@@ -43,10 +47,10 @@ class UserCubit extends Cubit<UserState> {
 
   Future<void> autoLogin() async {
     emit(UserStateStartApp());
-    await Future.delayed(const Duration(seconds: 5));
+
     try {
       final token = await apiRepository.getToken();
-      print(token);
+      print("Token: $token");
 
       if (token == null) {
         emit(UserStateInitial());

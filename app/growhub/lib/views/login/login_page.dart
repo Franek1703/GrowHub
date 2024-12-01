@@ -42,7 +42,7 @@ class LoginPage extends HookWidget {
                         // Navigator.of(context).pop();
                       }
                       if (state is UserStateLoaded) {
-                        //context.push('/dashboard');
+                        context.pushReplacement('/dashboard');
                       } else if (state is UserStateError) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text(state.error)),

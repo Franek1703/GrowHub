@@ -18,6 +18,7 @@ class SignupPage extends HookWidget {
     final password = useState<String>("");
     final repeatPassword = useState<String>("");
     final isErrorVisible = useState(false);
+    final isSamePasswordErrorVisible = useState(false);
 
     final userState = context.watch<UserCubit>().state;
 
@@ -33,24 +34,24 @@ class SignupPage extends HookWidget {
                 ),
                 child: BlocListener<UserCubit, UserState>(
                   listener: (context, state) {
-                    if (state is UserStateSignedUp) {
-                      context.go('/login');
-                    }
-                    print(state);
-                    if (state is UserStateLoading) {
-                      print("Loading");
-                    } else {
-                      if (Navigator.of(context).canPop()) {
-                        // Navigator.of(context).pop();
-                      }
-                      if (state is UserStateLoaded) {
-                        //context.push('/dashboard');
-                      } else if (state is UserStateError) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(state.error)),
-                        );
-                      }
-                    }
+                    // if (state is UserStateSignedUp) {
+                    //   context.go('/login');
+                    // }
+                    // print(state);
+                    // if (state is UserStateLoading) {
+                    //   print("Loading");
+                    // } else {
+                    //   if (Navigator.of(context).canPop()) {
+                    //     // Navigator.of(context).pop();
+                    //   }
+                    //   if (state is UserStateLoaded) {
+                    //     //context.push('/dashboard');
+                    //   } else if (state is UserStateError) {
+                    //     ScaffoldMessenger.of(context).showSnackBar(
+                    //       SnackBar(content: Text(state.error)),
+                    //     );
+                    //   }
+                    // }
                   },
                   child: IntrinsicHeight(
                     child: Padding(
@@ -100,19 +101,16 @@ class SignupPage extends HookWidget {
                                 : null,
                             onTitleChange: (p0) => repeatPassword.value = p0,
                           ),
-                          SizedBox(
-                            height: 32,
-                            child: Visibility(
-                              visible: isErrorVisible.value,
-                              child: const Center(
-                                child: Text(
-                                  "All inputs must be provided!",
-                                  style: TextStyle(
-                                      color: Colors.red, fontSize: 15),
-                                ),
-                              ),
+                          if (isErrorVisible.value)
+                            _errorText(
+                              isErrorVisible.value,
+                              "All inputs must be provided!",
                             ),
-                          ),
+                          if (isSamePasswordErrorVisible.value)
+                            _errorText(
+                              isSamePasswordErrorVisible.value,
+                              "Passwords are not the same!",
+                            ),
                           if (userState is UserStateLoading)
                             const GHProgressIndicatorSmall(),
                           const Spacer(),
@@ -133,10 +131,15 @@ class SignupPage extends HookWidget {
                                     isErrorVisible.value = true;
                                     return;
                                   }
+
+                                  if (password.value != repeatPassword.value) {
+                                    isSamePasswordErrorVisible.value = true;
+                                    return;
+                                  }
+
                                   final userCubit = context.read<UserCubit>();
                                   userCubit.signUp(
                                       name.value, email.value, password.value);
-                                  // TODO: Implement signup logic here
                                 },
                                 child: Container(
                                   height: 40,
@@ -161,6 +164,7 @@ class SignupPage extends HookWidget {
                               GestureDetector(
                                 onTap: () {
                                   isErrorVisible.value = false;
+                                  isSamePasswordErrorVisible.value = false;
                                   context.pop();
                                 },
                                 child: RichText(
@@ -192,6 +196,21 @@ class SignupPage extends HookWidget {
               ),
             );
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _errorText(bool isVisible, String text) {
+    return SizedBox(
+      height: 32,
+      child: Visibility(
+        visible: isVisible,
+        child: Center(
+          child: Text(
+            text,
+            style: const TextStyle(color: Colors.red, fontSize: 15),
+          ),
         ),
       ),
     );
