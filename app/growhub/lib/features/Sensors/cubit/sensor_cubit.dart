@@ -1,27 +1,35 @@
-import 'package:bloc/bloc.dart';
-import 'package:growhub/features/sensors/models/sensor_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:growhub/features/api/data/models/sensor_model.dart';
+import 'package:growhub/features/api/data/models/sensor_reading_model.dart';
+
 import 'package:growhub/features/sensors/test_data.dart';
-import 'package:meta/meta.dart';
 
 part 'sensor_state.dart';
 
 class SensorCubit extends Cubit<SensorState> {
   SensorCubit() : super(SensorInitial(sensors: const []));
 
-  void initSensors(List<Sensor> sensors) {
+  void initSensors(List<SensorModel> sensors) {
     emit(SensorReadingsLoading(sensors: sensors));
     Future.delayed(const Duration(seconds: 2), () {
-    //Load all sensor readings
-    //TODO: Add logic for loading sesor readings
-    for (var sensor in sensors) {
-      sensor.updateReadings(testReadings);
-    }
-    emit(SensorReadingsLoaded(sensors: sensors));
-    }
-    );
+      //Load all sensor readings
+      //TODO: Add logic for loading sesor readings
+
+      final readings = testReadings.entries.map((entry) {
+        return SensorReadingModel(
+          id: 0,
+          recordedAt: entry.key,
+          value: entry.value,
+        );
+      }).toList();
+      for (var sensor in sensors) {
+        sensor.readings = readings;
+      }
+      emit(SensorReadingsLoaded(sensors: sensors));
+    });
   }
 
-  Future<void> updateSensors() async{
+  Future<void> updateSensors() async {
     //TODO: Add logic for updating sensors
   }
 }

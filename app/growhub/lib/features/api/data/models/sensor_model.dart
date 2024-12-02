@@ -6,14 +6,14 @@ class SensorModel {
   final String unit;
   final SensorReadingModel lastSensorReading;
 
-  final List<SensorReadingModel>? readings;
+  List<SensorReadingModel> readings;
 
   SensorModel({
     required this.id,
     required this.name,
     required this.unit,
     required this.lastSensorReading,
-    this.readings,
+    this.readings = const [],
   });
 
   factory SensorModel.fromJson(Map<String, dynamic> json) {

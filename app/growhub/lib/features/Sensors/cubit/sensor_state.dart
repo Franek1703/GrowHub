@@ -1,8 +1,7 @@
 part of 'sensor_cubit.dart';
 
-@immutable
 sealed class SensorState {
-  final List<Sensor> sensors;
+  final List<SensorModel> sensors;
 
   SensorState({required this.sensors});
 }
@@ -18,4 +17,3 @@ final class SensorReadingsLoading extends SensorState {
 final class SensorReadingsLoaded extends SensorState {
   SensorReadingsLoaded({required super.sensors});
 }
-

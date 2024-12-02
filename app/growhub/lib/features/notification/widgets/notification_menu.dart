@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:growhub/config/assets.gen.dart';
+
 import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/features/notification/cubit/notification_cubit.dart';
 import 'package:growhub/features/notification/model/notification_model.dart';
@@ -38,8 +38,8 @@ class NotificationMenu extends StatelessWidget {
     ];
     return Container(
       height: 180,
-      padding: EdgeInsets.symmetric(horizontal: 19),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(horizontal: 19),
+      decoration: const BoxDecoration(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         color: Colors.white,
       ),
@@ -55,7 +55,7 @@ class NotificationMenu extends StatelessWidget {
             margin: const EdgeInsets.symmetric(vertical: 10),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         ...menuTile.map(
@@ -74,7 +74,7 @@ class NotificationMenu extends StatelessWidget {
                           tile.$3,
                           color: tile.$4,
                         )),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     Text(
@@ -85,7 +85,7 @@ class NotificationMenu extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               menuTile.indexOf(tile) == menuTile.length - 1
@@ -93,7 +93,7 @@ class NotificationMenu extends StatelessWidget {
                   : Divider(
                       color: GHColors.grey,
                     ),
-              SizedBox(
+              const SizedBox(
                 height: 7,
               ),
             ],
