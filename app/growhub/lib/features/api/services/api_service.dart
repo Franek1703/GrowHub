@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:growhub/features/api/core/api_client.dart';
+import 'package:growhub/features/api/core/api_timeout.dart';
 import 'package:growhub/features/api/data/models/user_model.dart';
 
 class ApiService {
@@ -10,7 +11,12 @@ class ApiService {
 
   Future<bool> isUserLoggedIn(String token) async {
     try {
-      final response = await apiClient.getUserInfo(token);
+      final response = await apiClient.getUserInfo(token).timeout(
+        ApiTimeout.timeout,
+        onTimeout: () {
+          throw ApiTimeout.timeoutException;
+        },
+      );
       if (response.statusCode == 200) {
         return true;
       }
@@ -22,7 +28,12 @@ class ApiService {
 
   Future<UserModel> getUserData(String token) async {
     try {
-      final response = await apiClient.getUserInfo(token);
+      final response = await apiClient.getUserInfo(token).timeout(
+        ApiTimeout.timeout,
+        onTimeout: () {
+          throw ApiTimeout.timeoutException;
+        },
+      );
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
 
