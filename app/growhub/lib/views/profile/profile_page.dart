@@ -93,6 +93,7 @@ class ProfilePage extends HookWidget {
                             return 
                             iconButton(Icons.exit_to_app, "Sing out", Colors.red, () async{
                               await context.read<UserCubit>().singOut();
+                              context.read<PathCubit>().onPathChange("/dashboard");
                                   });
                           })
                         ],
