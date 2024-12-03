@@ -36,7 +36,7 @@ class MainPage extends HookWidget {
         appBarTitle = "Dashboard";
         break;
       case "/profile":
-        appBarTitle = "Profile";
+        appBarTitle = "Account";
         break;
       case "/notification":
         appBarTitle = "Notification";
@@ -56,6 +56,7 @@ class MainPage extends HookWidget {
     }
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: GHColors.background,
       appBar: path != "/dashboard" ? GHTopAppBar(
             title: appBarTitle,

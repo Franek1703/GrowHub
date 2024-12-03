@@ -1,9 +1,9 @@
 class AuthClientPath {
   static Uri login() {
-    return Uri.parse("http://172.28.65.153:5000/auth/login");
+    return Uri.parse("http://192.168.0.171:5000/auth/login");
   }
 
   static Uri signUp() {
-    return Uri.parse("http://172.28.65.153:5000/auth/register");
+    return Uri.parse("http://192.168.0.171:5000/auth/register");
   }
 }
