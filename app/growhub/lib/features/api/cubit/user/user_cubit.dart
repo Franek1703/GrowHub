@@ -71,4 +71,14 @@ class UserCubit extends Cubit<UserState> {
       emit(UserStateError(error: e.toString()));
     }
   }
+
+  Future<void> editUser(UserModel user) async {
+    // TODO: Add support for that function
+    emit(UserStateLoaded(user: user));
+  }
+
+  Future<void> singOut() async {
+    await apiRepository.deleteToken();
+    emit(UserStateInitial());
+  }
 }
