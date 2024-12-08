@@ -72,7 +72,7 @@ class DashboardPage extends HookWidget {
                                     ),
                                     TextSpan(
                                       text: devices != null
-                                          ? ',\nyour plants are doing fine!'
+                                          ? ',\nyour plants are doing fine! 🙌'
                                           : ",\nhow is your day going?",
                                     ),
                                   ],
