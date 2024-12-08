@@ -70,6 +70,7 @@ class MainApp extends StatelessWidget {
           }
 
           final isLoggedIn = state is UserStateLoaded;
+
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
             routerConfig: GHRouter(isLoggedIn: isLoggedIn).router,

@@ -21,7 +21,7 @@ class DeviceModel {
       sensors: List<SensorModel>.from(
         json['sensors'].map((x) => SensorModel.fromJson(x)),
       ),
-      icon: DeviceIcon.cactus,
+      icon: DeviceIcon.fromIndex(json['icon']),
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:growhub/common/widgets/page_padding.dart';
+import 'package:growhub/common/widgets/progress_indicator_small.dart';
 import 'package:growhub/common/widgets/refresh_indicator.dart';
 import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/features/api/cubit/device/device_cubit.dart';
@@ -8,7 +10,7 @@ import 'package:growhub/features/api/cubit/user/user_cubit.dart';
 import 'package:growhub/features/api/data/models/device_model.dart';
 import 'package:growhub/features/device_dashboard/widgets/device_card.dart';
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends HookWidget {
   const DashboardPage({super.key});
 
   List<DeviceModel>? getDevices(DeviceState from) {
@@ -27,106 +29,118 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GHRefreshIndicator(
-        onRefresh: () async {
-          context.read<DeviceCubit>().loadData();
-          print("Refreshing data...");
-        },
-        child: GHPagePadding(
-          top: 60,
-          bottom: 100,
-          child: BlocBuilder<DeviceCubit, DeviceState>(
-            builder: (context, state) {
-              final devices = getDevices(state);
-              return ListView(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: BlocBuilder<UserCubit, UserState>(
-                      builder: (context, state) {
-                        return Text.rich(
-                          TextSpan(
-                            text: 'Hi ',
-                            style: const TextStyle(fontSize: 26),
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: state is UserStateLoaded
-                                    ? state.user.username
-                                    : "",
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              TextSpan(
-                                text: devices != null
-                                    ? ',\nyour plants are doing fine!'
-                                    : ",\nhow is your day going?",
-                              ),
-                            ],
-                          ),
-                          textAlign: TextAlign.center,
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  // This maps the devices from your state into a list of DeviceCard widgets
+    final isFirstLoaded = useState(false);
 
-                  devices != null
-                      ? Column(
-                          children: [
-                            ...devices.map(
-                              (device) => Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 10),
-                                child: DeviceCard(device: device),
+    useMemoized(
+      () async {
+        await context.read<DeviceCubit>().loadData();
+        isFirstLoaded.value = true;
+      },
+    );
+
+    return Scaffold(
+      body: isFirstLoaded.value == false
+          ? const GHProgressIndicatorSmall()
+          : GHRefreshIndicator(
+              onRefresh: () async {
+                context.read<DeviceCubit>().loadData();
+                print("Refreshing data...");
+              },
+              child: GHPagePadding(
+                top: 60,
+                bottom: 100,
+                child: BlocBuilder<DeviceCubit, DeviceState>(
+                  builder: (context, state) {
+                    final devices = getDevices(state);
+                    return ListView(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: BlocBuilder<UserCubit, UserState>(
+                            builder: (context, state) {
+                              return Text.rich(
+                                TextSpan(
+                                  text: 'Hi ',
+                                  style: const TextStyle(fontSize: 26),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                      text: state is UserStateLoaded
+                                          ? state.user.username
+                                          : "",
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    TextSpan(
+                                      text: devices != null
+                                          ? ',\nyour plants are doing fine!'
+                                          : ",\nhow is your day going?",
+                                    ),
+                                  ],
+                                ),
+                                textAlign: TextAlign.center,
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        // This maps the devices from your state into a list of DeviceCard widgets
+
+                        devices != null
+                            ? Column(
+                                children: [
+                                  ...devices.map(
+                                    (device) => Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10),
+                                      child: DeviceCard(device: device),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Container(
+                                margin: const EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 10),
+                                child: Center(
+                                  child: Text(
+                                    textAlign: TextAlign.center,
+                                    "It seems like you don't have any devices yet 😕",
+                                    style: TextStyle(
+                                      fontSize: 22,
+                                      color: GHColors.black,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
                               ),
+
+                        const SizedBox(height: 20),
+                        InkWell(
+                          customBorder: const CircleBorder(),
+                          onTap: () {
+                            // TODO: Add add new device logic here
+                          },
+                          child: Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              shape: BoxShape.circle,
+                              border:
+                                  Border.all(color: GHColors.black, width: 4),
                             ),
-                          ],
-                        )
-                      : Container(
-                          margin: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 10),
-                          child: Center(
-                            child: Text(
-                              textAlign: TextAlign.center,
-                              "It seems like you don't have any devices yet 😕",
-                              style: TextStyle(
-                                fontSize: 22,
-                                color: GHColors.black,
-                                fontWeight: FontWeight.w600,
-                              ),
+                            child: Icon(
+                              Icons.add,
+                              size: 30,
+                              color: GHColors.black,
                             ),
                           ),
                         ),
-
-                  const SizedBox(height: 20),
-                  InkWell(
-                    customBorder: const CircleBorder(),
-                    onTap: () {
-                      // TODO: Add add new device logic here
-                    },
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: GHColors.black, width: 4),
-                      ),
-                      child: Icon(
-                        Icons.add,
-                        size: 30,
-                        color: GHColors.black,
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
-      ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ),
     );
   }
 }
