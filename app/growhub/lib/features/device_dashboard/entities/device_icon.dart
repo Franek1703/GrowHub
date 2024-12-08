@@ -1,11 +1,5 @@
 import 'package:growhub/config/assets.gen.dart';
 
-class AssetIcon {
-  static String getPath() {
-    return Assets.kwiatki.cactusSvgrepoCom.path;
-  }
-}
-
 enum DeviceIcon {
   cactus,
   daisy,
@@ -31,6 +25,14 @@ enum DeviceIcon {
         return Assets.kwiatki.plantSvgrepoCom.path;
       case DeviceIcon.sprout:
         return Assets.kwiatki.sproutPlantSvgrepoCom.path;
+    }
+  }
+
+  static DeviceIcon fromIndex(int index) {
+    if (index >= 0 && index < DeviceIcon.values.length) {
+      return DeviceIcon.values[index];
+    } else {
+      return DeviceIcon.cactus;
     }
   }
 }

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:growhub/features/api/core/api_client.dart';
 import 'package:growhub/features/api/core/api_timeout.dart';
+import 'package:growhub/features/api/data/models/device_model.dart';
 import 'package:growhub/features/api/data/models/user_model.dart';
 
 class ApiService {
@@ -40,6 +41,30 @@ class ApiService {
         return UserModel.fromJson(body);
       }
 
+      throw Exception('Failed to fetch data');
+    } catch (e) {
+      throw Exception('Error: $e');
+    }
+  }
+
+  Future<Set<DeviceModel>> getConfiguration(String token) async {
+    try {
+      final response = await apiClient.getAppConfiguration(token).timeout(
+        ApiTimeout.timeout,
+        onTimeout: () {
+          throw ApiTimeout.timeoutException;
+        },
+      );
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body);
+
+        Set<DeviceModel> devices = {};
+        for (var device in body["devices"]) {
+          devices.add(DeviceModel.fromJson(device));
+        }
+
+        return devices;
+      }
       throw Exception('Failed to fetch data');
     } catch (e) {
       throw Exception('Error: $e');
