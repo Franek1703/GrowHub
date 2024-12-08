@@ -51,8 +51,10 @@ class SensorCard extends HookWidget {
   Widget build(BuildContext context) {
     var startDate = useState(DateTime.now().subtract(const Duration(days: 6)));
     var endDate = useState(DateTime.now());
-    String formattedLastReading = DateFormat('dd.MM.yyyy, HH:mm')
-        .format(sensor.lastSensorReading.recordedAt);
+    String formattedLastReading = sensor.lastSensorReading != null
+        ? DateFormat('dd.MM.yyyy, HH:mm')
+            .format(sensor.lastSensorReading!.recordedAt)
+        : "No data available";
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       decoration: BoxDecoration(
@@ -72,7 +74,9 @@ class SensorCard extends HookWidget {
             titleAlignment: ListTileTitleAlignment.center,
             title: Center(
                 child: Text(
-              "${sensor.name}: ${sensor.lastSensorReading.value} ${sensor.unit}",
+              sensor.lastSensorReading != null
+                  ? "${sensor.name}: ${sensor.lastSensorReading!.value} ${sensor.unit}"
+                  : "No data available",
               style: const TextStyle(fontWeight: FontWeight.bold),
             )),
             subtitle:

@@ -16,7 +16,7 @@ class DeviceModel {
 
   factory DeviceModel.fromJson(Map<String, dynamic> json) {
     return DeviceModel(
-      id: json['id'],
+      id: json['device_id'],
       name: json['name'],
       sensors: List<SensorModel>.from(
         json['sensors'].map((x) => SensorModel.fromJson(x)),

@@ -22,7 +22,7 @@ class DeviceCard extends StatelessWidget {
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-        margin: const EdgeInsets.symmetric(horizontal: 35),
+        margin: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
           color: GHColors.primary,
           borderRadius: BorderRadius.circular(40),
@@ -67,7 +67,7 @@ class DeviceCard extends StatelessWidget {
                   children: device.sensors.map(
                     (sensor) {
                       return Text(
-                        "${sensor.lastSensorReading.value}${sensor.unit}",
+                        "${sensor.lastSensorReading?.value ?? "No data"}${sensor.unit}",
                         style: const TextStyle(fontSize: 16),
                       );
                     },

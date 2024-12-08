@@ -5,13 +5,13 @@ import 'package:growhub/config/themes/theme.dart';
 import 'package:growhub/features/api/api_repository.dart';
 import 'package:growhub/features/api/core/api_client.dart';
 import 'package:growhub/features/api/core/auth_client.dart';
+import 'package:growhub/features/api/cubit/device/device_cubit.dart';
 import 'package:growhub/features/api/cubit/user/user_cubit.dart';
 import 'package:growhub/features/api/services/api_service.dart';
 import 'package:growhub/features/api/services/auth_service.dart';
 import 'package:growhub/features/api/services/secure_storage_service.dart';
 import 'package:growhub/features/sensors/cubit/sensor_cubit.dart';
 import 'package:growhub/features/bottom_app_bar/cubit/path_cubit.dart';
-import 'package:growhub/features/device_dashboard/cubit/device_cubit_cubit.dart';
 import 'package:growhub/features/calendar/cubit/calendar_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:growhub/features/notification/cubit/notification_cubit.dart';
@@ -44,9 +44,6 @@ class MainApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => DeviceCubit()..loadDevices(),
-        ),
-        BlocProvider(
           create: (context) => CalendarCubit(),
         ),
         BlocProvider(
@@ -60,6 +57,9 @@ class MainApp extends StatelessWidget {
         BlocProvider(
           create: (context) => NotificationCubit()..init(),
         ),
+        BlocProvider(
+          create: (context) => DeviceCubit(apiRepository),
+        )
       ],
       child: BlocBuilder<UserCubit, UserState>(
         builder: (context, state) {

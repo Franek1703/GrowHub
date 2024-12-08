@@ -32,7 +32,7 @@ class ApiClient extends Tokenizer {
       ApiClientPath.appConfiguration(),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': token,
+        'Authorization': 'Bearer $token',
       },
     );
     return response;
