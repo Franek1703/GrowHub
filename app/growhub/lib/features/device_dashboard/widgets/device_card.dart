@@ -4,10 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:growhub/config/constants/colors.dart';
+import 'package:growhub/features/api/data/models/device_model.dart';
 import 'package:growhub/features/sensors/cubit/sensor_cubit.dart';
 import 'package:growhub/features/bottom_app_bar/cubit/path_cubit.dart';
-
-import 'package:growhub/features/device_dashboard/models/device_model.dart';
 
 class DeviceCard extends StatelessWidget {
   final DeviceModel device;
@@ -68,7 +67,7 @@ class DeviceCard extends StatelessWidget {
                   children: device.sensors.map(
                     (sensor) {
                       return Text(
-                        "${sensor.lastReading}${sensor.unit}",
+                        "${sensor.lastSensorReading.value}${sensor.unit}",
                         style: const TextStyle(fontSize: 16),
                       );
                     },

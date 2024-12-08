@@ -2,10 +2,11 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:growhub/common/widgets/progress_indicator.dart';
 import 'package:growhub/config/constants/colors.dart';
-import 'package:growhub/features/Sensors/widgets/date_change_widget.dart';
-import 'package:growhub/features/all_purpose_widgets/widgets/progress_idicator.dart';
-import 'package:growhub/features/sensors/models/sensor_model.dart';
+import 'package:growhub/features/api/data/models/sensor_model.dart';
+import 'package:growhub/features/sensors/widgets/date_change_widget.dart';
+
 import 'package:growhub/features/sensors/widgets/chart.dart';
 import 'package:growhub/features/sensors/cubit/sensor_cubit.dart';
 import 'package:intl/intl.dart';
@@ -24,7 +25,10 @@ class SensorPage extends StatelessWidget {
             itemCount: state.sensors.length,
             itemBuilder: (context, index) {
               final sensor = state.sensors[index];
-              return SensorCard(sensor: sensor, index: index,);
+              return SensorCard(
+                sensor: sensor,
+                index: index,
+              );
             },
           );
         },
@@ -34,23 +38,32 @@ class SensorPage extends StatelessWidget {
 }
 
 class SensorCard extends HookWidget {
-  final Sensor sensor;
+  final SensorModel sensor;
   final int index;
 
-  SensorCard({required this.sensor, required this.index});
+  const SensorCard({
+    super.key,
+    required this.sensor,
+    required this.index,
+  });
 
   @override
   Widget build(BuildContext context) {
     var startDate = useState(DateTime.now().subtract(const Duration(days: 6)));
     var endDate = useState(DateTime.now());
-    String formattedLastReading =
-        DateFormat('dd.MM.yyyy, HH:mm').format(sensor.lastReadingTime);
+    String formattedLastReading = DateFormat('dd.MM.yyyy, HH:mm')
+        .format(sensor.lastSensorReading.recordedAt);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       decoration: BoxDecoration(
-          color: GHColors.white, borderRadius: BorderRadius.circular(30),
-          boxShadow: [BoxShadow(color: GHColors.black.withOpacity(0.4), blurRadius: 6, offset: Offset(2,2))]
-          ),
+          color: GHColors.white,
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+                color: GHColors.black.withOpacity(0.4),
+                blurRadius: 6,
+                offset: Offset(2, 2))
+          ]),
       margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 30),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,11 +72,11 @@ class SensorCard extends HookWidget {
             titleAlignment: ListTileTitleAlignment.center,
             title: Center(
                 child: Text(
-              "${sensor.name}: ${sensor.lastReading} ${sensor.unit}",
+              "${sensor.name}: ${sensor.lastSensorReading.value} ${sensor.unit}",
               style: const TextStyle(fontWeight: FontWeight.bold),
             )),
-            subtitle: Center(
-                child: Text('Last measurement: $formattedLastReading')),
+            subtitle:
+                Center(child: Text('Last measurement: $formattedLastReading')),
           ),
           AnimatedCrossFade(
             firstChild: const Center(child: GHProgressIndicator()),
@@ -71,12 +84,18 @@ class SensorCard extends HookWidget {
               height: 150,
               child: SensorChart(
                 dataPoints: getChartSpots(
-                    sensor.readings, startDate.value, endDate.value),
+                    Map.fromEntries(sensor.readings.map(
+                      (reading) => MapEntry(reading.recordedAt, reading.value),
+                    )),
+                    startDate.value,
+                    endDate.value),
                 unit: sensor.unit,
                 index: index,
               ),
             ),
-            crossFadeState: sensor.readings.isEmpty ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+            crossFadeState: sensor.readings.isEmpty
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
             duration: Duration(milliseconds: 500),
           ),
           SlidingDateRange(

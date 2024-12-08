@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/features/notification/cubit/notification_cubit.dart';
-import 'package:growhub/features/notification/widgets/notification_manu.dart';
+import 'package:growhub/features/notification/widgets/notification_menu.dart';
 import 'package:growhub/features/notification/widgets/notification_tile.dart';
 
 class NotificationPage extends StatelessWidget {

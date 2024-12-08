@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:growhub/views/calendar/calendar_page.dart';
@@ -76,15 +75,17 @@ class GHRouter {
             ],
           ),
           GoRoute(
-              path: GHRoutePath.notification.path,
-              pageBuilder: (context, state) => const NoTransitionPage(
-                    child: NotificationPage(),
-                  )),
+            path: GHRoutePath.notification.path,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: NotificationPage(),
+            ),
+          ),
           GoRoute(
-              path: GHRoutePath.profile.path,
-              pageBuilder: (context, state) => const NoTransitionPage(
-                    child: ProfilePage(),
-                  )),
+            path: GHRoutePath.profile.path,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: ProfilePage(),
+            ),
+          ),
         ],
       ),
     ],

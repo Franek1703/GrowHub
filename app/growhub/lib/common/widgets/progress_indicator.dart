@@ -2,16 +2,47 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-class GradientCircularProgressIndicator extends StatelessWidget {
+import 'package:flutter_hooks/flutter_hooks.dart';
+
+class GHProgressIndicator extends HookWidget {
+  const GHProgressIndicator({
+    super.key,
+    this.radius = 40,
+    this.strokeWidth = 14,
+  });
+
   final double radius;
-  final List<Color> gradientColors;
+
   final double strokeWidth;
 
+  @override
+  Widget build(BuildContext context) {
+    const progressIndicatorColor = Color.fromARGB(255, 68, 67, 67);
+    AnimationController controller =
+        useAnimationController(duration: const Duration(seconds: 1))..repeat();
+
+    return RotationTransition(
+      turns: Tween(begin: 0.0, end: 1.0).animate(controller),
+      child: GradientCircularProgressIndicator(
+        radius: radius,
+        gradientColors: const [Colors.white, progressIndicatorColor],
+        strokeWidth: strokeWidth,
+      ),
+    );
+  }
+}
+
+class GradientCircularProgressIndicator extends StatelessWidget {
   const GradientCircularProgressIndicator({
     required this.radius,
     required this.gradientColors,
     this.strokeWidth = 10.0,
+    super.key,
   });
+
+  final double radius;
+  final List<Color> gradientColors;
+  final double strokeWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +76,7 @@ class GradientCircularProgressPainter extends CustomPainter {
     var paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth;
+    // ignore: cascade_invocations
     paint.shader =
         SweepGradient(colors: gradientColors, startAngle: 0.0, endAngle: 2 * pi)
             .createShader(rect);
@@ -61,7 +93,6 @@ class GradientCircularProgressPainter extends CustomPainter {
       center.dx + radius * cos(endAngle) - strokeWidth / 2,
       center.dy + radius * sin(endAngle),
     );
-    canvas.drawCircle(circleCenter, strokeWidth / 2, circlePaint);
     canvas.drawCircle(circleCenter, strokeWidth / 2, circlePaint);
   }
 
