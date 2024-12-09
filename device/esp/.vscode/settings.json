@@ -22,6 +22,7 @@
         "esp_log.h": "c",
         "esp_err.h": "c",
         "adc_cali.h": "c",
-        "esp_check.h": "c"
+        "esp_check.h": "c",
+        "esp_adc_cal.h": "c"
     }
 }

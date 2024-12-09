@@ -18,7 +18,6 @@ void app_main() {
         float ph_value = read_ph();   // Odczyt pH
         float temp_value = read_temperature(); // Odczyt temperatury
 
-        // Logowanie wyników
         ESP_LOGI(TAG, "Testowanie czujników:");
         ESP_LOGI(TAG, "TDS: %.2f ppm", tds_value);
         ESP_LOGI(TAG, "pH: %.2f", ph_value);

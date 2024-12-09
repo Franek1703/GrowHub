@@ -13,6 +13,11 @@ int ds18b20_device_num = 0;
 // Uchwyt dla ADC
 adc_oneshot_unit_handle_t adc_handle;
 
+// Parametry do zbierania próbek pH
+#define PH_SAMPLES 40
+int pHArray[PH_SAMPLES]; // Tablica do przechowywania próbek
+int pHArrayIndex = 0;    // Indeks tablicy próbek
+
 // Inicjalizacja jednostki ADC
 void init_adc() {
     // Konfiguracja jednostki ADC
@@ -29,7 +34,7 @@ void init_adc() {
 
     // Konfiguracja kanałów ADC
     adc_oneshot_chan_cfg_t adc_chan_cfg = {
-        .atten = ADC_ATTEN_DB_0,    // Ustawienia wzmocnienia
+        .atten = ADC_ATTEN_DB_12,    // Ustawienia wzmocnienia
         .bitwidth = ADC_BITWIDTH_12, // Rozdzielczość 12 bitów
     };
 
@@ -37,6 +42,7 @@ void init_adc() {
     adc_oneshot_config_channel(adc_handle, TDS_SENSOR_PIN, &adc_chan_cfg);  // GPIO36
     adc_oneshot_config_channel(adc_handle, PH_SENSOR_PIN, &adc_chan_cfg);   // GPIO34
 }
+
 
 // Funkcja inicjalizująca OneWire i wyszukująca czujniki DS18B20
 void init_onewire() {
@@ -81,6 +87,7 @@ void init_onewire() {
     }
 }
 
+
 float read_tds() {
     int sensor_value;
     esp_err_t ret = adc_oneshot_read(adc_handle, TDS_SENSOR_PIN, &sensor_value);
@@ -95,6 +102,30 @@ float read_tds() {
     return tds_value;
 }
 
+// Funkcja do obliczania średniej z próbek pH, eliminując wartości ekstremalne
+double average_ph_samples(int* arr, int number) {
+    int i;
+    int max = arr[0], min = arr[0];
+    long sum = 0;
+
+    // Znajdź maksymalną i minimalną wartość
+    for (i = 0; i < number; i++) {
+        if (arr[i] > max) max = arr[i];
+        if (arr[i] < min) min = arr[i];
+    }
+
+    // Oblicz sumę, pomijając maksimum i minimum
+    for (i = 0; i < number; i++) {
+        if (arr[i] != max && arr[i] != min) {
+            sum += arr[i];
+        }
+    }
+
+    // Średnia z pozostałych wartości
+    return (double)sum / (number - 2);
+}
+
+
 float read_ph() {
     int sensor_value;
     esp_err_t ret = adc_oneshot_read(adc_handle, PH_SENSOR_PIN, &sensor_value);
@@ -102,9 +133,27 @@ float read_ph() {
         ESP_LOGE(TAG, "Failed to read pH sensor: %s", esp_err_to_name(ret));
         return -1.0; // Błąd odczytu
     }
-    ESP_LOGI(TAG, "pH: %d", sensor_value);
-    float voltage = (sensor_value / 4095.0) * VREF; // Skalowanie napięcia
-    float ph_value = 3.5 * voltage + 0.00; // Wzór na pH, offset = 0.00
+    ESP_LOGI(TAG, "PH Sensor data: %d", sensor_value);
+    // Zapisz próbkowanie pH do tablicy
+    pHArray[pHArrayIndex++] = sensor_value;
+    if (pHArrayIndex == PH_SAMPLES) {
+        pHArrayIndex = 0; // Przepełnienie tablicy
+    }
+
+    // Oblicz średnią z próbek
+    double avg = average_ph_samples(pHArray, PH_SAMPLES);
+
+
+    // Przekształć średnią wartość na napięcie
+    float voltage = (avg / 4095.0) * VREF;  // Skalowanie napięcia
+
+    // Dostosowanie napięcia do zakresu pH
+    float ph_value = (voltage * 14.0) / 5.0;   // Wzór na pH: przekształcenie napięcia na pH
+
+    // Zapewniamy, że pH nie wykracza poza zakres 0-14
+    if (ph_value > 14.0) ph_value = 14.0;
+    if (ph_value < 0.0) ph_value = 0.0;
+
     ESP_LOGI(TAG, "pH: %.2f", ph_value);
     return ph_value;
 }
