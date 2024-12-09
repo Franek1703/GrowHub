@@ -12,7 +12,6 @@ class SensorReadingModel {
   });
 
   factory SensorReadingModel.fromJson(Map<String, dynamic> json) {
-    print(json);
     return SensorReadingModel(
       id: json["reading_id"],
       recordedAt: HttpDate.parse(json["recorded_at"]),

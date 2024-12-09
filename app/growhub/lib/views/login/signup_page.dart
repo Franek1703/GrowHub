@@ -33,26 +33,7 @@ class SignupPage extends HookWidget {
                   minHeight: constraints.maxHeight, // Dopasowanie do ekranu
                 ),
                 child: BlocListener<UserCubit, UserState>(
-                  listener: (context, state) {
-                    // if (state is UserStateSignedUp) {
-                    //   context.go('/login');
-                    // }
-                    // print(state);
-                    // if (state is UserStateLoading) {
-                    //   print("Loading");
-                    // } else {
-                    //   if (Navigator.of(context).canPop()) {
-                    //     // Navigator.of(context).pop();
-                    //   }
-                    //   if (state is UserStateLoaded) {
-                    //     //context.push('/dashboard');
-                    //   } else if (state is UserStateError) {
-                    //     ScaffoldMessenger.of(context).showSnackBar(
-                    //       SnackBar(content: Text(state.error)),
-                    //     );
-                    //   }
-                    // }
-                  },
+                  listener: (context, state) {},
                   child: IntrinsicHeight(
                     child: Padding(
                       padding: const EdgeInsets.only(

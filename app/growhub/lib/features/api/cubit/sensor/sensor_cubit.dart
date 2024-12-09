@@ -28,10 +28,8 @@ class SensorCubit extends Cubit<SensorState> {
       final sensors =
           await apiRepository.getSensorsWithReadings(token, deviceId);
 
-      print(sensors);
       emit(SensorStateLoaded(sensors));
     } catch (e) {
-      print(e);
       emit(SensorStateError(error: e.toString()));
     }
   }

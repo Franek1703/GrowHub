@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:growhub/config/constants/colors.dart';
+import 'package:growhub/features/api/cubit/config_data/config_data_cubit.dart';
 import 'package:growhub/features/api/data/models/device_model.dart';
 import 'package:growhub/features/bottom_app_bar/cubit/path_cubit.dart';
 
@@ -16,6 +17,7 @@ class DeviceCard extends StatelessWidget {
     return InkWell(
       onTap: () {
         context.read<PathCubit>().onPathChange("/dashboard/sensor");
+        context.read<ConfigDataCubit>().setCurrentDeviceId(device.id);
 
         context.push("/dashboard/sensor", extra: device.id);
       },

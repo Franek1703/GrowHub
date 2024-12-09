@@ -5,6 +5,7 @@ import 'package:growhub/config/themes/theme.dart';
 import 'package:growhub/features/api/api_repository.dart';
 import 'package:growhub/features/api/core/api_client.dart';
 import 'package:growhub/features/api/core/auth_client.dart';
+import 'package:growhub/features/api/cubit/config_data/config_data_cubit.dart';
 import 'package:growhub/features/api/cubit/device/device_cubit.dart';
 import 'package:growhub/features/api/cubit/user/user_cubit.dart';
 import 'package:growhub/features/api/services/api_service.dart';
@@ -59,7 +60,10 @@ class MainApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => DeviceCubit(apiRepository),
-        )
+        ),
+        BlocProvider(
+          create: (context) => ConfigDataCubit(),
+        ),
       ],
       child: BlocBuilder<UserCubit, UserState>(
         builder: (context, state) {
