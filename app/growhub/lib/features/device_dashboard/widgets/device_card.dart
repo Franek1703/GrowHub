@@ -4,10 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:growhub/config/constants/colors.dart';
-import 'package:growhub/features/sensors/cubit/sensor_cubit.dart';
+import 'package:growhub/features/api/cubit/config_data/config_data_cubit.dart';
+import 'package:growhub/features/api/data/models/device_model.dart';
 import 'package:growhub/features/bottom_app_bar/cubit/path_cubit.dart';
-
-import 'package:growhub/features/device_dashboard/models/device_model.dart';
 
 class DeviceCard extends StatelessWidget {
   final DeviceModel device;
@@ -18,12 +17,13 @@ class DeviceCard extends StatelessWidget {
     return InkWell(
       onTap: () {
         context.read<PathCubit>().onPathChange("/dashboard/sensor");
-        context.read<SensorCubit>().initSensors(device.sensors);
-        context.push("/dashboard/sensor");
+        context.read<ConfigDataCubit>().setCurrentDeviceId(device.id);
+
+        context.push("/dashboard/sensor", extra: device.id);
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-        margin: const EdgeInsets.symmetric(horizontal: 35),
+        margin: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
           color: GHColors.primary,
           borderRadius: BorderRadius.circular(40),
@@ -68,7 +68,7 @@ class DeviceCard extends StatelessWidget {
                   children: device.sensors.map(
                     (sensor) {
                       return Text(
-                        "${sensor.lastReading}${sensor.unit}",
+                        "${sensor.lastSensorReading?.value ?? "No data"}${sensor.unit}",
                         style: const TextStyle(fontSize: 16),
                       );
                     },
