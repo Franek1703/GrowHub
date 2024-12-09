@@ -36,7 +36,7 @@ class SensorCard extends HookWidget {
                 blurRadius: 6,
                 offset: const Offset(2, 2))
           ]),
-      margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 30),
+      margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

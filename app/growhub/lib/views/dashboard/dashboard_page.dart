@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:growhub/common/widgets/no_data_information.dart';
 import 'package:growhub/common/widgets/page_padding.dart';
 import 'package:growhub/common/widgets/progress_indicator_small.dart';
 import 'package:growhub/common/widgets/refresh_indicator.dart';
@@ -100,16 +101,8 @@ class DashboardPage extends HookWidget {
                             : Container(
                                 margin: const EdgeInsets.symmetric(
                                     vertical: 10, horizontal: 10),
-                                child: Center(
-                                  child: Text(
-                                    textAlign: TextAlign.center,
-                                    "It seems like you don't have any devices yet 😕",
-                                    style: TextStyle(
-                                      fontSize: 22,
-                                      color: GHColors.black,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
+                                child: const NoDataInformation(
+                                  title: NoDataInformationText.noDevices,
                                 ),
                               ),
 
