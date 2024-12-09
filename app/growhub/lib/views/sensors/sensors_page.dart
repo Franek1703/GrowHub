@@ -3,38 +3,86 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:growhub/common/widgets/progress_indicator.dart';
+import 'package:growhub/common/widgets/progress_indicator_small.dart';
 import 'package:growhub/common/widgets/refresh_indicator.dart';
 import 'package:growhub/config/constants/colors.dart';
+
 import 'package:growhub/features/api/data/models/sensor_model.dart';
 import 'package:growhub/features/sensors/widgets/date_change_widget.dart';
 
 import 'package:growhub/features/sensors/widgets/chart.dart';
-import 'package:growhub/features/sensors/cubit/sensor_cubit.dart';
+import 'package:growhub/features/api/cubit/sensor/sensor_cubit.dart';
 import 'package:intl/intl.dart';
 
-class SensorPage extends StatelessWidget {
-  const SensorPage({super.key});
+class SensorPage extends HookWidget {
+  const SensorPage({
+    super.key,
+    required this.deviceId,
+  });
+
+  final int deviceId;
+
+  List<SensorModel>? getSensors(SensorState from) {
+    final state = from;
+
+    if (state is SensorStateLoaded) {
+      return state.sensors;
+    }
+
+    if (state is SensorStateLoading) {
+      return state.sensors;
+    }
+
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return GHRefreshIndicator(
-      onRefresh: () => context.read<SensorCubit>().updateSensors(),
-      child: BlocBuilder<SensorCubit, SensorState>(
-        builder: (context, state) {
-          return ListView.builder(
-            padding: const EdgeInsets.only(bottom: 90),
-            itemCount: state.sensors.length,
-            itemBuilder: (context, index) {
-              final sensor = state.sensors[index];
-              return SensorCard(
-                sensor: sensor,
-                index: index,
-              );
-            },
-          );
-        },
-      ),
+    final isFirstLoaded = useState(false);
+
+    useMemoized(
+      () async {
+        await context.read<SensorCubit>().loadSensorReadings(deviceId);
+        isFirstLoaded.value = true;
+      },
     );
+
+    return isFirstLoaded.value == false
+        ? const GHProgressIndicatorSmall()
+        : GHRefreshIndicator(
+            onRefresh: () async {
+              context.read<SensorCubit>().loadSensorReadings(deviceId);
+            },
+            child: BlocBuilder<SensorCubit, SensorState>(
+              builder: (context, state) {
+                final sensors = getSensors(state);
+                return ListView(
+                  padding: const EdgeInsets.only(bottom: 90),
+                  children: [
+                    sensors != null
+                        ? Column(
+                            children: [
+                              ...sensors.map(
+                                (sensor) => SensorCard(
+                                  sensor: sensor,
+                                  index: sensor.id,
+                                ),
+                              )
+                            ],
+                          )
+                        : Text("hehehe")
+                  ],
+                  // itemBuilder: (context, index) {
+                  //   final sensor = state.sensors[index];
+                  //   return SensorCard(
+                  //     sensor: sensor,
+                  //     index: index,
+                  //   );
+                  // },
+                );
+              },
+            ),
+          );
   }
 }
 
@@ -65,7 +113,7 @@ class SensorCard extends HookWidget {
             BoxShadow(
                 color: GHColors.black.withOpacity(0.4),
                 blurRadius: 6,
-                offset: Offset(2, 2))
+                offset: const Offset(2, 2))
           ]),
       margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 30),
       child: Column(

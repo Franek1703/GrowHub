@@ -1,4 +1,5 @@
 import 'package:growhub/features/api/data/models/device_model.dart';
+import 'package:growhub/features/api/data/models/sensor_model.dart';
 import 'package:growhub/features/api/data/models/user_model.dart';
 import 'package:growhub/features/api/services/api_service.dart';
 import 'package:growhub/features/api/services/auth_service.dart';
@@ -42,6 +43,11 @@ class ApiRepository {
   /// Return every `device` that the user owns.
   Future<Set<DeviceModel>> getConfiguration(String token) async {
     return await apiService.getConfiguration(token);
+  }
+
+  Future<List<SensorModel>> getSensorsWithReadings(
+      String token, int deviceId) async {
+    return await apiService.getSensorReadings(token, deviceId);
   }
 
   /// Save auth token into the `secure storage`.

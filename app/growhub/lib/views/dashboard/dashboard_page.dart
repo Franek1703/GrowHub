@@ -43,7 +43,7 @@ class DashboardPage extends HookWidget {
           ? const GHProgressIndicatorSmall()
           : GHRefreshIndicator(
               onRefresh: () async {
-                context.read<DeviceCubit>().loadData();
+                await context.read<DeviceCubit>().loadData();
                 print("Refreshing data...");
               },
               child: GHPagePadding(

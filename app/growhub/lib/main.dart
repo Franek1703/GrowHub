@@ -10,7 +10,7 @@ import 'package:growhub/features/api/cubit/user/user_cubit.dart';
 import 'package:growhub/features/api/services/api_service.dart';
 import 'package:growhub/features/api/services/auth_service.dart';
 import 'package:growhub/features/api/services/secure_storage_service.dart';
-import 'package:growhub/features/sensors/cubit/sensor_cubit.dart';
+import 'package:growhub/features/api/cubit/sensor/sensor_cubit.dart';
 import 'package:growhub/features/bottom_app_bar/cubit/path_cubit.dart';
 import 'package:growhub/features/calendar/cubit/calendar_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,7 +49,7 @@ class MainApp extends StatelessWidget {
         BlocProvider(
             create: (context) => UserCubit(apiRepository)..autoLogin()),
         BlocProvider(
-          create: (context) => SensorCubit(),
+          create: (context) => SensorCubit(apiRepository),
         ),
         BlocProvider(
           create: (context) => PathCubit(),
