@@ -1,18 +1,23 @@
 ---
 tags:
   - Sensor Readings
-summary: Get sensor readings by device
-description: Returns sensor readings for all sensors of a specific device, grouped by sensor.
-operationId: getSensorReading
+summary: Get sensor readings grouped by device
+description: Returns sensor readings for all sensors associated with a specific device.
+operationId: getSensorReadings
 parameters:
   - in: path
     name: device_id
     required: true
     type: integer
-    description: The ID of the device for which sensor readings are to be retrieved
+    description: The ID of the device.
+  - in: query
+    name: last_reading
+    required: false
+    type: boolean
+    description: Whether to return only the last reading for each sensor.
 responses:
   200:
-    description: List of sensor readings grouped by sensor
+    description: List of sensors with their readings.
     schema:
       type: object
       properties:
@@ -21,33 +26,31 @@ responses:
           items:
             type: object
             properties:
-              sensor:
-                type: object
-                properties:
-                  sensor_id:
-                    type: integer
-                    example: 1
-                  device_id:
-                    type: integer
-                    example: 101
-                  sensor_type:
-                    type: string
-                    example: "Temperature"
-                  unit:
-                    type: string
-                    example: "Celsius"
-                  created_at:
-                    type: string
-                    example: "2024-11-01T12:00:00Z"
-                  min_value:
-                    type: number
-                    example: 10
-                  max_value:
-                    type: number
-                    example: 50
-                  measurement_frequency:
-                    type: integer
-                    example: 10
+              sensor_id:
+                type: integer
+                example: 1
+              device_id:
+                type: integer
+                example: 101
+              sensor_type:
+                type: string
+                example: "Temperature"
+              unit:
+                type: string
+                example: "Celsius"
+              min_value:
+                type: number
+                example: 10.0
+              max_value:
+                type: number
+                example: 50.0
+              measurement_frequency:
+                type: integer
+                example: 10
+              created_at:
+                type: string
+                format: date-time
+                example: "2024-11-01T12:00:00Z"
               readings:
                 type: array
                 items:
@@ -58,12 +61,13 @@ responses:
                       example: 50.5
                     recorded_at:
                       type: string
+                      format: date-time
                       example: "2024-11-11T12:00:00Z"
                     sensor_type:
                       type: string
                       example: "Temperature"
   404:
-    description: User not found
+    description: User not found.
     schema:
       type: object
       properties:

@@ -255,58 +255,33 @@ def get_sensor_reading(device_id):
 
     is_last_reading = request.args.get('last_reading', 'false').lower() in ['true', '1']
     
-    if is_last_reading:
-        # Exclude readings where recorded_at is NULL
-        # Get the last sensor reading for each sensor associated with the given device_id
-        sensors = Sensor.query.filter_by(device_id=device_id).all()
-        
-        sensor_readings_grouped = []
-        
-        for sensor in sensors:
+    # Get all sensors for the device
+    sensors = Sensor.query.filter_by(device_id=device_id).all()
+
+    sensor_readings_grouped = []
+
+    for sensor in sensors:
+        if is_last_reading:
+            # Fetch the latest reading for the sensor
             sensor_reading = SensorReading.query.filter(
                 SensorReading.sensor_id == sensor.sensor_id,
                 SensorReading.recorded_at.isnot(None)
             ).order_by(desc(SensorReading.recorded_at)).first()
 
-            if sensor_reading:
-                sensor_readings_grouped.append({
-                    "sensor": sensor.to_dict(),  # Using to_dict() for sensor details
-                    "value": sensor_reading.value,
-                    "recorded_at": sensor_reading.recorded_at,
-                    "sensor_type": sensor_reading.sensor_type
-                })
-            else:
-                sensor_readings_grouped.append({
-                    "sensor": sensor.to_dict(),  # Using to_dict() for sensor details
-                    "message": "No valid readings"
-                })
-        
-        return jsonify({"sensor_readings": sensor_readings_grouped}), 200
-
-    else:
-        # Get all sensors for the device
-        sensors = Sensor.query.filter_by(device_id=device_id).all()
-        
-        # Group the readings for each sensor
-        sensor_readings_grouped = []
-        
-        for sensor in sensors:
-            # Get all readings for the current sensor
+            # Build the sensor object with the last reading
+            sensor_dict = sensor.to_dict()
+            sensor_dict["readings"] = [sensor_reading.to_dict()] if sensor_reading else []
+        else:
+            # Fetch all readings for the sensor
             sensor_readings = SensorReading.query.filter_by(sensor_id=sensor.sensor_id).order_by(asc(SensorReading.recorded_at)).all()
-            
-            # Create a list of readings for the current sensor
-            sensor_readings_list = [{
-                "value": reading.value,
-                "recorded_at": reading.recorded_at,
-                "sensor_type": reading.sensor_type
-            } for reading in sensor_readings]
 
-            sensor_readings_grouped.append({
-                "sensor": sensor.to_dict(),  # Using to_dict() for sensor details
-                "readings": sensor_readings_list
-            })
-        
-        return jsonify({"sensor_readings": sensor_readings_grouped}), 200
+            # Build the sensor object with all readings
+            sensor_dict = sensor.to_dict()
+            sensor_dict["readings"] = [reading.to_dict() for reading in sensor_readings]
+
+        sensor_readings_grouped.append(sensor_dict)
+
+    return jsonify({"sensor_readings": sensor_readings_grouped}), 200
 
 # Updating values (min, max, measurement frequency) of the user's particular sensor
 @api.route('sensor-values/<int:sensor_id>', methods = ["PATCH"])
