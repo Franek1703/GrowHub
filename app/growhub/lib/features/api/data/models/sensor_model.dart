@@ -25,6 +25,11 @@ class SensorModel {
           json['last_reading'] != null && json['last_reading'].isNotEmpty
               ? SensorReadingModel.fromJson(json['last_reading'])
               : null,
+      readings: json['readings'] != null
+          ? (json['readings'] as List)
+              .map((reading) => SensorReadingModel.fromJson(reading))
+              .toList()
+          : [],
     );
   }
 }
