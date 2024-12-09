@@ -1,27 +1,20 @@
 import 'dart:convert';
 
 import 'package:growhub/features/api/core/auth_client_path.dart';
+import 'package:growhub/features/api/core/base_client.dart';
 import 'package:http/http.dart' as http;
 
-class AuthClient {
+class AuthClient extends GHBaseClient {
   Future<http.Response> login(String email, String password) async {
-    final response = await http.post(
-      AuthClientPath.login(),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email, 'password': password}),
-    );
-
-    return response;
+    return super.post(AuthClientPath.login(),
+        jsonEncode({'email': email, 'password': password}));
   }
 
   Future<http.Response> signUp(
       String username, String email, String password) async {
-    final response = await http.post(
-      AuthClientPath.signUp(),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(
-          {'username': username, 'email': email, 'password': password}),
-    );
-    return response;
+    return super.post(
+        AuthClientPath.signUp(),
+        jsonEncode(
+            {'username': username, 'email': email, 'password': password}));
   }
 }

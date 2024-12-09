@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:growhub/common/widgets/progress_indicator.dart';
+import 'package:growhub/common/widgets/refresh_indicator.dart';
 import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/features/api/data/models/sensor_model.dart';
 import 'package:growhub/features/sensors/widgets/date_change_widget.dart';
@@ -16,7 +17,7 @@ class SensorPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
+    return GHRefreshIndicator(
       onRefresh: () => context.read<SensorCubit>().updateSensors(),
       child: BlocBuilder<SensorCubit, SensorState>(
         builder: (context, state) {

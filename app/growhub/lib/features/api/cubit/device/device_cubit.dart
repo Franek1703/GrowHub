@@ -31,4 +31,8 @@ class DeviceCubit extends Cubit<DeviceState> {
       emit(DeviceStateError(error: e.toString()));
     }
   }
+
+  // Future<void> loadSensorReadings() {
+
+  // }
 }
