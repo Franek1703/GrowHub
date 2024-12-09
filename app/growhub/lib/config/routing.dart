@@ -59,9 +59,14 @@ class GHRouter {
             routes: [
               GoRoute(
                   path: GHRoutePath.sensor.path,
-                  pageBuilder: (context, state) =>  const NoTransitionPage(
-                        child: SensorPage(),
-                      )),
+                  pageBuilder: (context, state) {
+                    int deviceId = state.extra as int;
+                    return NoTransitionPage(
+                      child: SensorPage(
+                        deviceId: deviceId,
+                      ),
+                    );
+                  }),
               GoRoute(
                   path: GHRoutePath.calendar.path,
                   pageBuilder: (context, state) => const NoTransitionPage(
