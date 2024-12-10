@@ -56,7 +56,7 @@ class SensorPage extends HookWidget {
                   return ListView(
                     padding: const EdgeInsets.only(bottom: 90),
                     children: [
-                      sensors != null
+                      sensors != null && sensors.isNotEmpty
                           ? Column(
                               children: [
                                 ...sensors.map(
