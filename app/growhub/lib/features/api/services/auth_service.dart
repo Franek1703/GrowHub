@@ -15,6 +15,10 @@ class AuthService {
           throw ApiTimeout.timeoutException;
         },
       );
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
 

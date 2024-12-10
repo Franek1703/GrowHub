@@ -45,6 +45,10 @@ responses:
                 type: string
                 example: "Living Room"
                 description: The location where the device is used.
+              icon:
+                type: integer
+                example: 1
+                description: Identifier for the device icon.
   404:
     description: User not found.
     schema:
