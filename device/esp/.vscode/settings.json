@@ -23,6 +23,12 @@
         "esp_err.h": "c",
         "adc_cali.h": "c",
         "esp_check.h": "c",
-        "esp_adc_cal.h": "c"
+        "esp_adc_cal.h": "c",
+        "http_client.h": "c",
+        "esp_wifi.h": "c",
+        "array": "c",
+        "string": "c",
+        "string_view": "c",
+        "span": "c"
     }
 }

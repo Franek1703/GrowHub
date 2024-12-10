@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "D:/franz/Documents/studia/eity/PBL5/projekt/GrowHub/device/esp"
+    "cmake.sourceDirectory": "D:/franz/Documents/studia/eity/PBL5/projekt/GrowHub/device/esp",
+    "idf.flashType": "UART"
 }
