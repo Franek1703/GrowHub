@@ -71,7 +71,8 @@ class DashboardPage extends HookWidget {
                                           fontWeight: FontWeight.bold),
                                     ),
                                     TextSpan(
-                                      text: devices != null
+                                      text: devices != null &&
+                                              devices.isNotEmpty
                                           ? ',\nyour plants are doing fine! 🙌'
                                           : ",\nhow is your day going?",
                                     ),
@@ -85,7 +86,7 @@ class DashboardPage extends HookWidget {
                         const SizedBox(height: 10),
                         // This maps the devices from your state into a list of DeviceCard widgets
 
-                        devices != null
+                        devices != null && devices.isNotEmpty
                             ? Column(
                                 children: [
                                   ...devices.map(
