@@ -34,9 +34,7 @@ class LoginPage extends HookWidget {
                 ),
                 child: BlocListener<UserCubit, UserState>(
                   listener: (context, state) {
-                    print(state);
                     if (state is UserStateLoading) {
-                      print("Loading");
                     } else {
                       if (Navigator.of(context).canPop()) {
                         // Navigator.of(context).pop();

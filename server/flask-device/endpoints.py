@@ -100,6 +100,7 @@ def add_device():
     ssid = data.get('ssid')
     device_name = data.get('device_name')
     location = data.get('location', '')
+    icon = data.get('icon')
 
     # Check if device exists
     existing_device = Device.query.filter_by(ssid=ssid).first()

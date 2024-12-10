@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:growhub/config/assets.gen.dart';
 import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/config/constants/sizes.dart';
+import 'package:growhub/features/api/cubit/config_data/config_data_cubit.dart';
 import 'package:growhub/features/bottom_app_bar/bottom_bar_icon.dart';
 import 'package:growhub/features/bottom_app_bar/cubit/path_cubit.dart';
 
@@ -16,7 +17,8 @@ class GHBottomAppBar extends StatelessWidget {
     final currentPath = context.watch<PathCubit>().state;
     void onTap(String path) {
       context.read<PathCubit>().onPathChange(path);
-      context.go(path);
+      context.go(path,
+          extra: context.read<ConfigDataCubit>().state.currentDeviceId);
     }
 
     return Container(

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 class SensorReadingModel {
   int id;
   DateTime recordedAt;
@@ -12,7 +14,7 @@ class SensorReadingModel {
   factory SensorReadingModel.fromJson(Map<String, dynamic> json) {
     return SensorReadingModel(
       id: json["reading_id"],
-      recordedAt: json["recorded_at"],
+      recordedAt: HttpDate.parse(json["recorded_at"]),
       value: json["value"],
     );
   }

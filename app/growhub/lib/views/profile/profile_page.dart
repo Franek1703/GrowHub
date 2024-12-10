@@ -26,11 +26,11 @@ class ProfilePage extends HookWidget {
         user = null;
         break;
     }
-    final nameController = useTextEditingController(text:  user?.username ?? "");
-    final emailController = useTextEditingController(text:  user?.email ?? "");
+    final nameController = useTextEditingController(text: user?.username ?? "");
+    final emailController = useTextEditingController(text: user?.email ?? "");
     final name = useState(nameController.text);
     final email = useState(emailController.text);
-    
+
     nameController.addListener(() => name.value = nameController.text);
     emailController.addListener(() => email.value = emailController.text);
     return LayoutBuilder(builder: (context, constraints) {
@@ -74,27 +74,35 @@ class ProfilePage extends HookWidget {
                               return Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  iconButton(Icons.save, "Save changes", GHColors.black, ()async{
-                                    final newUser = UserModel(username: nameController.text, email: emailController.text);
-                                    await context.read<UserCubit>().editUser(newUser);
-                                    context.read<PathCubit>().onPathChange("/dashboard");
+                                  iconButton(Icons.save, "Save changes",
+                                      GHColors.black, () async {
+                                    final newUser = UserModel(
+                                        username: nameController.text,
+                                        email: emailController.text);
+                                    await context
+                                        .read<UserCubit>()
+                                        .editUser(newUser);
+                                    context
+                                        .read<PathCubit>()
+                                        .onPathChange("/dashboard");
                                   }),
                                   const SizedBox(width: 15),
-                                  iconButton(Icons.cancel, "Discard changes", GHColors.black, (){
-                                    
+                                  iconButton(Icons.cancel, "Discard changes",
+                                      GHColors.black, () {
                                     nameController.text = user!.username;
                                     emailController.text = user.email;
-                                    
-                                    
                                   }),
                                 ],
                               );
                             }
-                            return 
-                            iconButton(Icons.exit_to_app, "Sing out", Colors.red, () async{
+                            return iconButton(
+                                Icons.exit_to_app, "Sing out", Colors.red,
+                                () async {
                               await context.read<UserCubit>().singOut();
-                              context.read<PathCubit>().onPathChange("/dashboard");
-                                  });
+                              context
+                                  .read<PathCubit>()
+                                  .onPathChange("/dashboard");
+                            });
                           })
                         ],
                       ),
@@ -111,7 +119,8 @@ class ProfilePage extends HookWidget {
     });
   }
 
-  Widget iconButton(IconData icon, String label, Color color, Function() onTap) {
+  Widget iconButton(
+      IconData icon, String label, Color color, Function() onTap) {
     return GestureDetector(
         onTap: onTap,
         child: Column(
