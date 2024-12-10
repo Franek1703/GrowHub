@@ -1,3 +1,5 @@
+import 'package:growhub/features/api/core/ip_path.dart';
+
 class ApiClientPath {
   static Uri userInfo() {
     return Uri.parse("http://192.168.0.171:5000/api/user/info");

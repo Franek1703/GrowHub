@@ -1,9 +1,11 @@
+import 'package:growhub/features/api/core/ip_path.dart';
+
 class AuthClientPath {
   static Uri login() {
-    return Uri.parse("http://192.168.0.171:5000/auth/login");
+    return Uri.parse("${IpPath.ip}/auth/login");
   }
 
   static Uri signUp() {
-    return Uri.parse("http://192.168.0.171:5000/auth/register");
+    return Uri.parse("${IpPath.ip}/auth/register");
   }
 }
