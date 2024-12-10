@@ -37,7 +37,6 @@ class ApiService {
         },
       );
 
-      print('Response status: ${response.statusCode}');
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
 
