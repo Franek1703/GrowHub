@@ -61,7 +61,7 @@ class ApiRepository {
   }
 
   // Delete a value from secure storage
-  Future<void> deleteToken(String key) async {
+  Future<void> deleteToken() async {
     await secureStorageService.deleteToken();
   }
 

@@ -11,6 +11,7 @@ class GHInputField extends HookWidget {
     required this.title,
     required this.onTitleChange,
     this.text,
+    this.controller
   });
 
   final Function(String) onTitleChange;
@@ -18,6 +19,7 @@ class GHInputField extends HookWidget {
   final bool isPassword;
   final String title;
   final String? text;
+  final TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +34,7 @@ class GHInputField extends HookWidget {
         Stack(
           children: [
             TextFormField(
+              controller: controller,
               initialValue: text,
               obscureText: !isObscure.value,
               onChanged: (value) => onTitleChange(value),

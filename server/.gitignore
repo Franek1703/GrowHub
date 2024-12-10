@@ -1,3 +1,4 @@
 /venv
 /flask-device/__pycache__
 /flask-app/__pycache__
+pyvenv.cfg
