@@ -5,11 +5,10 @@ import 'package:growhub/common/widgets/no_data_information.dart';
 import 'package:growhub/common/widgets/page_padding.dart';
 import 'package:growhub/common/widgets/progress_indicator_small.dart';
 import 'package:growhub/common/widgets/refresh_indicator.dart';
-import 'package:growhub/common/widgets/progress_indicator.dart';
 import 'package:growhub/config/constants/colors.dart';
+import 'package:growhub/features/api/cubit/device/device_cubit.dart';
 import 'package:growhub/features/api/cubit/user/user_cubit.dart';
-import 'package:growhub/features/api/data/models/user_model.dart';
-import 'package:growhub/features/device_dashboard/cubit/device_cubit_cubit.dart';
+import 'package:growhub/features/api/data/models/device_model.dart';
 import 'package:growhub/features/device_dashboard/widgets/device_card.dart';
 
 class DashboardPage extends HookWidget {
