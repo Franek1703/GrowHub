@@ -6,7 +6,7 @@
 #include "ds18b20.h"
 
 // Definicje kanałów ADC dla czujników analogowych
-#define TDS_SENSOR_PIN ADC_CHANNEL_0
+#define TDS_SENSOR_PIN ADC_CHANNEL_7
 #define PH_SENSOR_PIN ADC_CHANNEL_6
 
 // Definicje dla OneWire

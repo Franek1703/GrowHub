@@ -96,7 +96,7 @@ float read_tds() {
         return -1.0; // Błąd odczytu
     }
     ESP_LOGI(TAG, "TDS: %d", sensor_value);
-    float voltage = (sensor_value / 4095.0) * VREF;
+    float voltage = (sensor_value / 4095.0) * 3.3;
     float tds_value = (133.42 * voltage * voltage * voltage - 255.86 * voltage * voltage + 857.39 * voltage) * 0.5; // Wzór na TDS w ppm
     ESP_LOGI(TAG, "TDS: %.2f ppm", tds_value);
     return tds_value;

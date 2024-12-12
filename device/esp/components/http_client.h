@@ -6,10 +6,15 @@
 #include "esp_http_client.h"
 
 typedef struct {
-    int activation_time;        // Czas aktywacji w sekundach
+    int sensor_id;
     int frequency;              // Częstotliwość w minutach
-    bool needs_fertilization;   // Informacja, czy wymaga nawożenia
 } sensor_data_t;
+
+typedef struct {
+    int device_id;
+    int activation_time;        // Czas aktywacji w sekundach
+    bool needs_fertilization;   // Informacja, czy wymaga nawożenia
+} device_data_t;
 
 
 // Funkcja inicjalizująca połączenie WiFi
@@ -28,7 +33,7 @@ esp_err_t send_get_request(const char *endpoint);
 esp_err_t send_post_request(const char *data);
 
 // Funkcja do wysyłania odczytów z czujników w formacie JSON
-esp_err_t send_sensor_data(int sensor_id, const char *sensor_type, float value, sensor_data_t *response_data);
+esp_err_t send_sensor_data(int sensor_id, const char *sensor_type, float value, sensor_data_t *sensor_data, device_data_t *device_data);
 
 esp_err_t check_wifi_connection(void);
 

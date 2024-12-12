@@ -13,6 +13,10 @@
 // Adres URL serwera (przykład z protokołem HTTP)
 #define SERVER_URL "http://192.168.163.55:5000"
 
+#define RESPONSE_BUFFER_SIZE 1024
+char response_buffer[RESPONSE_BUFFER_SIZE];
+int response_len = 0;
+
 // Tag do logowania
 static const char *TAG = "HTTP_CLIENT";
 
@@ -45,16 +49,72 @@ esp_err_t wifi_init_sta(void)
     return ESP_OK;
 }
 
+void clear_response_buffer() {
+    memset(response_buffer, 0, sizeof(response_buffer));
+    response_len = 0;
+}
+
+
+esp_err_t _http_event_handle(esp_http_client_event_t *evt)
+{
+    switch(evt->event_id) {
+        case HTTP_EVENT_ERROR:
+            ESP_LOGI(TAG, "HTTP_EVENT_ERROR");
+            break;
+        case HTTP_EVENT_ON_CONNECTED:
+            clear_response_buffer();
+            ESP_LOGI(TAG, "HTTP_EVENT_ON_CONNECTED");
+            break;
+        case HTTP_EVENT_HEADER_SENT:
+            ESP_LOGI(TAG, "HTTP_EVENT_HEADER_SENT");
+            break;
+        case HTTP_EVENT_ON_HEADER:
+            ESP_LOGI(TAG, "HTTP_EVENT_ON_HEADER");
+            printf("%.*s", evt->data_len, (char*)evt->data);
+            break;
+        case HTTP_EVENT_ON_DATA:
+            ESP_LOGI(TAG, "HTTP_EVENT_ON_DATA, len=%d", evt->data_len);
+            if (!esp_http_client_is_chunked_response(evt->client)) {
+                if (response_len + evt->data_len < RESPONSE_BUFFER_SIZE) {
+                    memcpy(response_buffer + response_len, evt->data, evt->data_len);
+                    response_len += evt->data_len;
+                } else {
+                    ESP_LOGE(TAG, "Response buffer overflow!");
+                }
+            }
+            break;
+        case HTTP_EVENT_ON_FINISH:
+            ESP_LOGI(TAG, "HTTP_EVENT_ON_FINISH");
+            // Null-terminate the response for safety
+            if (response_len < RESPONSE_BUFFER_SIZE) {
+                response_buffer[response_len] = '\0';
+            } else {
+                response_buffer[RESPONSE_BUFFER_SIZE - 1] = '\0';
+            }
+            ESP_LOGI(TAG, "Full response: %s", response_buffer);
+            break;
+        case HTTP_EVENT_DISCONNECTED:
+            ESP_LOGI(TAG, "HTTP_EVENT_DISCONNECTED");
+            break;
+        case HTTP_EVENT_REDIRECT:
+            ESP_LOGI(TAG, "HTTP_EVENT_REDIRECT");
+            break;
+    }
+    return ESP_OK;
+}
+
 // Funkcja do inicjalizacji połączenia z serwerem HTTP
 esp_err_t http_init(void)
 {
+    esp_err_t err;
     esp_http_client_config_t config = {
         .url = SERVER_URL, // Adres URL serwera HTTP
-        // .event_handler = NULL, // Możesz dodać odpowiednie obsługi zdarzeń, jeśli potrzebujesz
+        .event_handler = _http_event_handle,
         .timeout_ms = 10000};
 
     // Inicjalizowanie klienta HTTP
     client = esp_http_client_init(&config);
+    esp_http_client_perform(client);
 
     return ESP_OK;
 }
@@ -83,11 +143,24 @@ esp_err_t reconnect_wifi(void)
 
     // Rozłącz WiFi przed ponownym połączeniem
     esp_wifi_disconnect();
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    esp_wifi_init(&cfg);
+
+    wifi_config_t wifi_config = {
+        .sta = {
+            .ssid = WIFI_SSID,
+            .password = WIFI_PASSWORD,
+        },
+    };
+    esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config);
+    esp_wifi_start();
     esp_wifi_connect();
+
+    ESP_LOGI(TAG, "Łączenie z siecią WiFi...");
 
     // Czekaj, aż WiFi się połączy przez maksymalnie 60 sekund
     int retries = 0;
-    int max_retries = 30; // 30 prób, co 2 sekundy
+    int max_retries = 10; // 30 prób, co 2 sekundy
     while (check_wifi_connection() != ESP_OK && retries < max_retries)
     {
         retries++;
@@ -109,7 +182,7 @@ esp_err_t reconnect_wifi(void)
 esp_err_t wait_for_wifi_connection(void)
 {
     int retries = 0;
-    int max_retries = 30; // Maksymalnie 30 prób, po 2 sekundy
+    int max_retries = 10; // Maksymalnie 30 prób, po 2 sekundy
     while (check_wifi_connection() != ESP_OK)
     {
         retries++;
@@ -154,13 +227,14 @@ esp_err_t send_get_request(const char *endpoint)
     // Tworzymy pełny URL
     char url[256];
     snprintf(url, sizeof(url), "%s%s", SERVER_URL, endpoint);
-
+    ESP_LOGI(TAG, "Endpoint: %s", url);
     // Ustawiamy pełny URL do klienta HTTP
     esp_http_client_set_url(client, url);
+    esp_http_client_set_method(client, HTTP_METHOD_GET);
     esp_err_t err = esp_http_client_perform(client);
     if (err == ESP_OK)
     {
-        ESP_LOGI(TAG, "Odpowiedź z serwera: %d", esp_http_client_get_status_code(client));
+        // esp_http_client_set_method(client, HTTP_METHOD_POST);
     }
     else
     {
@@ -189,7 +263,7 @@ esp_err_t send_post_request(const char *data)
 }
 
 // Funkcja do wysyłania danych z czujników i odbierania odpowiedzi
-esp_err_t send_sensor_data(int sensor_id, const char *sensor_type, float value, sensor_data_t *response_data)
+esp_err_t send_sensor_data(int sensor_id, const char *sensor_type, float value, sensor_data_t *sensor_data, device_data_t *device_data)
 {
     // Tworzymy obiekt JSON
     cJSON *root = cJSON_CreateObject();
@@ -221,45 +295,33 @@ esp_err_t send_sensor_data(int sensor_id, const char *sensor_type, float value, 
 
         if (status_code == 200)
         {
-            // Przydzielamy bufor na odpowiedź
-            char response[1024]; // Przydzielamy 1024 bajty na odpowiedź (można dostosować)
-            int read_len = esp_http_client_read_response(client, response, sizeof(response) - 1);
-            ESP_LOGI(TAG, "Response: %s", response);
-            ESP_LOGI(TAG, "Response length: %d", read_len);
-            if (read_len >= 0)
+            if (strlen(response_buffer) > 0)
             {
-                // Null-terminate the response
-                response[read_len] = '\0';
-                ESP_LOGI(TAG, "Odpowiedź serwera: %s", response);
-
                 // Odczytanie odpowiedzi JSON
-                cJSON *response_json = cJSON_Parse(response);
+                cJSON *response_json = cJSON_Parse(response_buffer);
                 // ESP_LOGI(TAG, "Response JSON: %s", response_json->string);
                 if (response_json != NULL)
                 {
                     // Bezpieczne wyciąganie danych z odpowiedzi JSON
-                    response_data->activation_time = 5;         // Domyślna wartość, gdy brak
-                    response_data->frequency = 10;              // Domyślna wartość, gdy brak
-                    response_data->needs_fertilization = false; // Domyślna wartość, gdy brak
 
                     cJSON *item = cJSON_GetObjectItem(response_json, "activation_time");
 
                     if (item && cJSON_IsNumber(item))
                     {
-                        response_data->activation_time = item->valueint;
+                        device_data->activation_time = item->valueint;
                     }
 
                     item = cJSON_GetObjectItem(response_json, "frequency");
                     if (item && cJSON_IsNumber(item))
                     {
-                        response_data->frequency = item->valueint;
+                        sensor_data->frequency = item->valueint;
                     }
 
                     item = cJSON_GetObjectItem(response_json, "needs_fertilization");
                     if (item && cJSON_IsBool(item))
                     {
                         // Poprawione: Boolean jest przechowywany jako int (0 = false, 1 = true)
-                        response_data->needs_fertilization = item->valueint == 1;
+                        device_data->needs_fertilization = item->valueint == 1;
                     }
 
                     cJSON_Delete(response_json);
@@ -296,7 +358,7 @@ esp_err_t get_sensor_frequency(int sensor_id, sensor_data_t *response_data)
 {
     // Tworzymy pełny URL dla endpointu pobierającego częstotliwość czujnika
     char endpoint[128];
-    snprintf(endpoint, sizeof(endpoint), "/device-service-api/get_sensor_frequency?id=%d", sensor_id);
+    snprintf(endpoint, sizeof(endpoint), "/device-service-api/get_sensor_frequency?sensor_id=%d", sensor_id);
 
     // Wysyłamy zapytanie GET do serwera
     esp_err_t err = send_get_request(endpoint);
@@ -310,23 +372,16 @@ esp_err_t get_sensor_frequency(int sensor_id, sensor_data_t *response_data)
     int status_code = esp_http_client_get_status_code(client);
     if (status_code == 200)
     {
-        // Przydzielamy bufor na odpowiedź z serwera
-        char response[1024];
-        int read_len = esp_http_client_read_response(client, response, sizeof(response) - 1);
-
-        if (read_len >= 0)
+        if (strlen(response_buffer) > 0)
         {
-            // Null-terminate the response
-            response[read_len] = '\0';
-
-            // Parsujemy odpowiedź JSON
-            cJSON *response_json = cJSON_Parse(response);
+            cJSON *response_json = cJSON_Parse(response_buffer);
             if (response_json != NULL)
             {
                 cJSON *item = cJSON_GetObjectItem(response_json, "frequency");
                 if (item && cJSON_IsNumber(item))
                 {
                     response_data->frequency = item->valueint; // Zaktualizowanie częstotliwości
+                    ESP_LOGI(TAG, "Udało się poprawnie przypisać frequency: %d", response_data->frequency);
                 }
                 else
                 {
@@ -351,3 +406,7 @@ esp_err_t get_sensor_frequency(int sensor_id, sensor_data_t *response_data)
 
     return ESP_OK;
 }
+
+// esp_err_t get_device_id(device_data_t *device_data){
+    
+// }
