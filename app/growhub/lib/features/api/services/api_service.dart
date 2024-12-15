@@ -5,6 +5,7 @@ import 'package:growhub/features/api/core/api_timeout.dart';
 import 'package:growhub/features/api/data/models/device_model.dart';
 import 'package:growhub/features/api/data/models/sensor_model.dart';
 import 'package:growhub/features/api/data/models/user_model.dart';
+import 'package:growhub/features/api/data/models/dosage_history_model.dart';
 
 class ApiService {
   final ApiClient apiClient;
@@ -95,6 +96,32 @@ class ApiService {
       throw Exception('Failed to fetch data');
     } catch (e) {
       throw Exception('Error: $e');
+    }
+  }
+
+  Future<List<DosageHistoryModel>> getDosageHistory(
+      String token, int deviceId) async {
+    try {
+      final response =
+          await apiClient.getDosageHistory(token, deviceId).timeout(
+        ApiTimeout.timeout,
+        onTimeout: () {
+          throw ApiTimeout.timeoutException;
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body);
+        List<dynamic> dosagesJson = body["dosages"];
+        return dosagesJson
+            .map((json) => DosageHistoryModel.fromJson(json))
+            .toList();
+      } else if (response.statusCode == 404) {
+        throw Exception("Device not found.");
+      }
+      throw Exception("Failed to fetch dosage history.");
+    } catch (e) {
+      throw Exception("Error fetching dosage history: $e");
     }
   }
 }
