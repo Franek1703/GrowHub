@@ -7,11 +7,12 @@ import 'package:growhub/config/constants/sizes.dart';
 import '../../../features/api/data/models/dosage_history_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../features/api/cubit/dosage_history/dosage_history_cubit.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
 
 /// A page displaying a calendar with month navigation, date selection, and
 /// interactive data bubbles.
-class CalendarPage extends StatefulWidget {
+class CalendarPage extends HookWidget {
   const CalendarPage({
     super.key,
     required this.deviceId,
@@ -19,64 +20,52 @@ class CalendarPage extends StatefulWidget {
 
   final int deviceId;
 
-  @override
-  State<CalendarPage> createState() => _CalendarPageState();
-}
 
-class _CalendarPageState extends State<CalendarPage> {
-  /// The current month displayed in the calendar.
-  DateTime currentMonth = DateTime.now();
+  @override
+  Widget build(BuildContext context) {
+    
+    /// The current month displayed in the calendar.
+  final currentMonth = useState(DateTime.now());
 
   /// The currently selected date.
-  DateTime? selectedDate;
+  final selectedDate = useState<DateTime?>(null);
 
   /// Whether the bubble tooltip is visible.
-  bool isBubbleVisible = false;
+  final isBubbleVisible = useState(false);
 
   /// Navigates to the next month.
   void _nextMonth() {
-    setState(() {
-      currentMonth = DateTime(currentMonth.year, currentMonth.month + 1);
-      isBubbleVisible = false;
-    });
+    currentMonth.value = DateTime(currentMonth.value.year, currentMonth.value.month + 1);
+    isBubbleVisible.value = false;
   }
 
   /// Navigates to the previous month.
   void _previousMonth() {
-    setState(() {
-      currentMonth = DateTime(currentMonth.year, currentMonth.month - 1);
-      isBubbleVisible = false;
-    });
+    currentMonth.value = DateTime(currentMonth.value.year, currentMonth.value.month - 1);
+    isBubbleVisible.value = false;
   }
 
   /// Selects a date and toggles the visibility of the data bubble.
   void _selectDate(DateTime date) {
-    setState(() {
-      if (selectedDate == date) {
-        isBubbleVisible = !isBubbleVisible;
-      } else {
-        selectedDate = date;
-        isBubbleVisible = true;
-      }
-    });
+    if (selectedDate.value == date) {
+      isBubbleVisible.value = !isBubbleVisible.value;
+    } else {
+      selectedDate.value = date;
+      isBubbleVisible.value = true;
+    }
   }
 
   /// Closes the data bubble.
   void _closeBubble() {
-    setState(() {
-      isBubbleVisible = false;
-    });
+    isBubbleVisible.value = false;
   }
 
-  @override
-  void initState() {
-    super.initState();
-    // Load dosage history for the current device
-    context.read<DosageHistoryCubit>().loadDosageHistory(widget.deviceId);
-  }
+  useEffect(() {
+      // Load dosage history for the current device
+      context.read<DosageHistoryCubit>().loadDosageHistory(deviceId);
+      return null; // No cleanup required
+    }, [deviceId]);
 
-  @override
-  Widget build(BuildContext context) {
     return Portal(
       child: GestureDetector(
         onTap: _closeBubble,
@@ -94,7 +83,7 @@ class _CalendarPageState extends State<CalendarPage> {
                 children: [
                   /// Header displaying the current month and navigation controls.
                   CalendarHeader(
-                    currentMonth: currentMonth,
+                    currentMonth: currentMonth.value,
                     onNextMonth: _nextMonth,
                     onPreviousMonth: _previousMonth,
                   ),
@@ -111,9 +100,9 @@ class _CalendarPageState extends State<CalendarPage> {
 
 
                       return CalendarGrid(
-                        currentMonth: currentMonth,
-                        selectedDate: selectedDate,
-                        isBubbleVisible: isBubbleVisible,
+                        currentMonth: currentMonth.value,
+                        selectedDate: selectedDate.value,
+                        isBubbleVisible: isBubbleVisible.value,
                         onDateSelected: _selectDate, dosageHistory: dosageHistory,
                       );
                     }
