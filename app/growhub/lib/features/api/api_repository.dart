@@ -53,7 +53,7 @@ class ApiRepository {
   }
 
   /// Fetch dosage history for a specific device.
-  Future<List<DosageHistoryModel>> getDosageHistory(
+  Future<List<DosageHistoryModel?>> getDosageHistory(
       String token, int deviceId) async {
     return await apiService.getDosageHistory(token, deviceId);
   }

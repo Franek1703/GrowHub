@@ -99,7 +99,7 @@ class ApiService {
     }
   }
 
-  Future<List<DosageHistoryModel>> getDosageHistory(
+  Future<List<DosageHistoryModel?>> getDosageHistory(
       String token, int deviceId) async {
     try {
       final response =

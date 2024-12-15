@@ -35,8 +35,8 @@ class CalendarBubble extends StatelessWidget {
   static const double _cornerRadius = 16.0;
   static const double _pointerHeight = 20.0;
   static const double _pointerWidth = 30.0;
-  static const double _verticalOffset = 16.0;
-  static const double _horizontalOffset = 8.0;
+  static const double _verticalOffset = -8.0;
+  static const double _horizontalOffset = 30.0;
 
   const CalendarBubble({
     super.key,

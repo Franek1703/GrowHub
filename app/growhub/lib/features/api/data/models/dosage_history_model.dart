@@ -1,4 +1,4 @@
-class DosageHistoryModel {
+class DosageHistoryModel{
   final double dose;
   final DateTime dosedAt;
 
@@ -6,6 +6,7 @@ class DosageHistoryModel {
     required this.dose,
     required this.dosedAt,
   });
+
 
   factory DosageHistoryModel.fromJson(Map<String, dynamic> json) {
     return DosageHistoryModel(
