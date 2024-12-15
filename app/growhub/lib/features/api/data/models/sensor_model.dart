@@ -32,4 +32,13 @@ class SensorModel {
           : [],
     );
   }
+
+  SensorReadingModel? getLatestReading() {
+    if (readings.isEmpty) {
+      return null;
+    }
+    // Sort readings by recordedAt in descending order
+    readings.sort((a, b) => b.recordedAt.compareTo(a.recordedAt));
+    return readings.first;
+  }
 }
