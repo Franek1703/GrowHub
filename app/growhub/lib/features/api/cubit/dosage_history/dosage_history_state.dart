@@ -2,18 +2,22 @@ part of 'dosage_history_cubit.dart';
 
 abstract class DosageHistoryState {}
 
-class DosageHistoryInitial extends DosageHistoryState {}
+final class DosageHistoryInitial extends DosageHistoryState {}
 
-class DosageHistoryLoading extends DosageHistoryState {}
+final class DosageHistoryLoading extends DosageHistoryState {
+  List<DosageHistoryModel>? dosageHistory;
 
-class DosageHistoryLoaded extends DosageHistoryState {
+  DosageHistoryLoading(this.dosageHistory);
+}
+
+final class DosageHistoryLoaded extends DosageHistoryState {
   final List<DosageHistoryModel> dosageHistory;
 
   DosageHistoryLoaded(this.dosageHistory);
 }
 
-class DosageHistoryError extends DosageHistoryState {
-  final String message;
+final class DosageHistoryError extends DosageHistoryState {
+  final String error;
 
-  DosageHistoryError(this.message);
+  DosageHistoryError(this.error);
 }
