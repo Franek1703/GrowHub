@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../config/constants/colors.dart';
 import 'calendar_bubble.dart';
+import '../../../features/api/data/models/dosage_history_model.dart';
 
 /// A widget that displays an interactive calendar grid with date selection
 /// and customizable visual indicators.
@@ -20,6 +21,9 @@ class CalendarGrid extends StatelessWidget {
 
   /// Callback triggered when a date is selected.
   final void Function(DateTime date) onDateSelected;
+
+  /// The dosage history data to display in the grid.
+  final List<DosageHistoryModel> dosageHistory;
 
   /// Visual constants for the grid layout.
   static const double _cellSpacing = 4.0;
@@ -42,6 +46,7 @@ class CalendarGrid extends StatelessWidget {
     required this.selectedDate,
     required this.isBubbleVisible,
     required this.onDateSelected,
+    required this.dosageHistory,
   });
 
   @override
@@ -74,8 +79,7 @@ class CalendarGrid extends StatelessWidget {
             isSelected: selectedDate == date,
             hasData: _hasDataForDate(date),
             bubbleContent: CalendarBubble(
-              dosage: _getDosageForDate(date),
-              timestamp: _formatDateTimestamp(date),
+              dosageHistory: _getDosageHistoryForDate(date),
               isVisible: isBubbleVisible && selectedDate == date,
               displayOnLeft: cellPosition.isRightmostColumn,
               displayOnRight: cellPosition.isLeftmostColumn,
@@ -87,6 +91,17 @@ class CalendarGrid extends StatelessWidget {
     );
   }
 
+  // New method to get dosage history for a specific date
+  DosageHistoryModel _getDosageHistoryForDate(DateTime date) {
+    return dosageHistory.firstWhere(
+      (history) => 
+        history.dosedAt.year == date.year &&
+        history.dosedAt.month == date.month &&
+        history.dosedAt.day == date.day,
+      orElse: () => DosageHistoryModel(dose: 0.0, dosedAt: date)
+    );
+  }
+
   /// Calculates the day number from the grid index.
   int _calculateDayFromIndex(int index, int startOffset) {
     return index - startOffset + 1;
@@ -95,8 +110,13 @@ class CalendarGrid extends StatelessWidget {
   /// Determines if the date has associated data.
   ///
   /// TODO: Replace with actual data check logic.
+  // Modify existing methods
   bool _hasDataForDate(DateTime date) {
-    return date.day % 2 == 0;
+    return dosageHistory.any((history) => 
+      history.dosedAt.year == date.year &&
+      history.dosedAt.month == date.month &&
+      history.dosedAt.day == date.day
+    );
   }
 
   /// Gets the dosage value for a specific date.

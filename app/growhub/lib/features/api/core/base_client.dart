@@ -9,7 +9,6 @@ abstract class GHBaseClient {
         'Authorization': 'Bearer $token',
       },
     );
-
     return response;
   }
 

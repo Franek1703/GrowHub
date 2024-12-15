@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import '../../../config/constants/colors.dart';
+import '../../../features/api/data/models/dosage_history_model.dart';
 
 /// A widget that displays a customizable bubble tooltip with dosage information
 /// in a calendar context.
@@ -9,11 +10,8 @@ import '../../../config/constants/colors.dart';
 /// different locations relative to the target widget. The bubble's appearance
 /// and positioning can be customized through various parameters.
 class CalendarBubble extends StatelessWidget {
-  /// The dosage information to display in the bubble.
-  final String dosage;
-
-  /// The timestamp to display below the dosage.
-  final String timestamp;
+  /// The dosage history model to display in the bubble
+  final DosageHistoryModel dosageHistory;
 
   /// Controls the visibility of the bubble.
   final bool isVisible;
@@ -40,8 +38,7 @@ class CalendarBubble extends StatelessWidget {
 
   const CalendarBubble({
     super.key,
-    required this.dosage,
-    required this.timestamp,
+    required this.dosageHistory,
     required this.isVisible,
     required this.child,
     this.displayOnLeft = false,
@@ -81,6 +78,8 @@ class CalendarBubble extends StatelessWidget {
 
   /// Builds the content of the bubble
   Widget _buildBubbleContent() {
+    // Format the timestamp
+    final formattedTimestamp = _formatTimestamp(dosageHistory.dosedAt);
     return CustomPaint(
       painter: _BubblePainter(
         backgroundColor: GHColors.white,
@@ -103,7 +102,7 @@ class CalendarBubble extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Dosage: $dosage',
+              'Dosage: ${dosageHistory.dose.toStringAsFixed(1)}g',
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
@@ -111,7 +110,7 @@ class CalendarBubble extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              timestamp,
+               formattedTimestamp,
               style: TextStyle(
                 fontSize: 12,
                 color: GHColors.grey,
@@ -123,6 +122,16 @@ class CalendarBubble extends StatelessWidget {
     );
   }
 }
+
+/// Formats the timestamp for display
+String _formatTimestamp(DateTime dateTime) {
+  return "${dateTime.day.toString().padLeft(2, '0')}"
+         ".${dateTime.month.toString().padLeft(2, '0')}"
+         ".${dateTime.year} "
+         "${dateTime.hour.toString().padLeft(2, '0')}:"
+         "${dateTime.minute.toString().padLeft(2, '0')}";
+}
+
 
 /// A custom painter that draws a bubble shape with a customizable pointer.
 ///

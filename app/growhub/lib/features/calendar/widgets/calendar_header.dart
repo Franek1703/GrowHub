@@ -5,7 +5,7 @@ import '../models/month_enum.dart';
 /// A widget that displays the header of a calendar, including month/year
 /// navigation controls and a centered current date display.
 class CalendarHeader extends StatelessWidget {
-  /// The current month being displayed.
+  /// The current month being displayed in the calendar.
   final DateTime currentMonth;
 
   /// Callback triggered when navigating to the next month.
@@ -46,6 +46,7 @@ class CalendarHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        // Left navigation button to go to the previous month
         SizedBox(
           width: _navigationButtonWidth,
           child: _buildNavigationButton(
@@ -54,16 +55,18 @@ class CalendarHeader extends StatelessWidget {
             onPressed: onPreviousMonth,
           ),
         ),
+        // Centered month and year display
         Expanded(
           child: _buildMonthYearDisplay(),
         ),
+        // Right navigation button to go to the next month, disabled for the current month
         SizedBox(
           width: _navigationButtonWidth,
           child: isCurrentMonth
               ? _buildNavigationButton(
                   icon: Icons.chevron_right,
                   color: GHColors.grey,
-                  onPressed: () {}, // Disabled for current month
+                  onPressed: () {}, // Disabled for the current month
                 )
               : _buildNavigationButton(
                   icon: Icons.chevron_right,
@@ -76,16 +79,19 @@ class CalendarHeader extends StatelessWidget {
   }
 
   /// Builds the centered month and year display section.
+  /// Displays the current month name and year.
   Widget _buildMonthYearDisplay() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
+        // Display the month name (e.g., January, February)
         Text(
           _getMonthName(currentMonth.month),
           style: _monthTextStyle,
         ),
         const SizedBox(width: _monthYearSpacing),
+        // Display the year
         Text(
           currentMonth.year.toString(),
           style: _yearTextStyle,
@@ -94,7 +100,8 @@ class CalendarHeader extends StatelessWidget {
     );
   }
 
-  /// Builds a navigation button with the specified icon and action.
+  /// Builds a navigation button with the specified icon, color, and action.
+  /// This method is used to create both the left and right navigation buttons.
   Widget _buildNavigationButton({
     required IconData icon,
     required Color color,
@@ -111,12 +118,13 @@ class CalendarHeader extends StatelessWidget {
   }
 
   /// Gets the name of the month for the given month index.
+  /// Uses the `MonthExtension` to convert a month index into its corresponding name.
   String _getMonthName(int month) {
     return MonthExtension.fromIndex(month - 1).name;
   }
 
-
   /// Checks if the given date represents the current month.
+  /// Compares the year and month of the given date with the current date.
   bool _isCurrentMonth(DateTime date) {
     final currentDate = DateTime.now();
     return date.year == currentDate.year && date.month == currentDate.month;

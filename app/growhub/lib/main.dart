@@ -7,13 +7,13 @@ import 'package:growhub/features/api/core/api_client.dart';
 import 'package:growhub/features/api/core/auth_client.dart';
 import 'package:growhub/features/api/cubit/config_data/config_data_cubit.dart';
 import 'package:growhub/features/api/cubit/device/device_cubit.dart';
+import 'package:growhub/features/api/cubit/dosage_history/dosage_history_cubit.dart';
 import 'package:growhub/features/api/cubit/user/user_cubit.dart';
 import 'package:growhub/features/api/services/api_service.dart';
 import 'package:growhub/features/api/services/auth_service.dart';
 import 'package:growhub/features/api/services/secure_storage_service.dart';
 import 'package:growhub/features/api/cubit/sensor/sensor_cubit.dart';
 import 'package:growhub/features/bottom_app_bar/cubit/path_cubit.dart';
-import 'package:growhub/features/calendar/cubit/calendar_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:growhub/features/notification/cubit/notification_cubit.dart';
 
@@ -45,8 +45,7 @@ class MainApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => CalendarCubit(),
-        ),
+            create: (context) => DosageHistoryCubit(apiRepository)),
         BlocProvider(
             create: (context) => UserCubit(apiRepository)..autoLogin()),
         BlocProvider(

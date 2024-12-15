@@ -1,3 +1,8 @@
+import 'dart:ffi';
+
+import 'package:intl/intl.dart';
+
+
 class DosageHistoryModel{
   final double dose;
   final DateTime dosedAt;
@@ -9,9 +14,14 @@ class DosageHistoryModel{
 
 
   factory DosageHistoryModel.fromJson(Map<String, dynamic> json) {
-    return DosageHistoryModel(
-      dose: json['dose']?.toDouble() ?? 0.0,
-      dosedAt: DateTime.parse(json['dosed_at']),
-    );
+  try {
+    final dose = json['dose']?.toDouble() ?? 0.0;
+    final dateFormat = DateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
+    final dosedAt = dateFormat.parse(json['dosed_at']);
+    return DosageHistoryModel(dose: dose, dosedAt: dosedAt);
+  } catch (e) {
+    throw FormatException('Invalid dosage data: $json');
   }
+}
+
 }
