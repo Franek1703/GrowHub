@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:growhub/common/widgets/checkmark_button.dart';
 import 'package:growhub/config/constants/colors.dart';
 
-class GHDialog extends StatelessWidget {
+class GHDialog extends HookWidget {
   const GHDialog({
     super.key,
     required this.title,
@@ -22,16 +23,16 @@ class GHDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(20),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: GHColors.background,
       child: Container(
-        height: height ?? MediaQuery.of(context).size.height * 0.8,
-        width: width,
-        padding: const EdgeInsets.all(20),
+        height: height ?? MediaQuery.of(context).size.height * 0.7,
+        width: width ?? MediaQuery.of(context).size.width * 1,
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
+          color: GHColors.background,
+          borderRadius: BorderRadius.circular(20),
           boxShadow: const [
             BoxShadow(
               color: Colors.black26,
@@ -47,12 +48,16 @@ class GHDialog extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () => Navigator.of(context).pop(),
-                  child: Icon(Icons.close, color: GHColors.black),
+                  child: Icon(
+                    Icons.close_rounded,
+                    color: GHColors.black,
+                    size: 40,
+                  ),
                 ),
-                const SizedBox(width: 30),
+                const SizedBox(width: 24),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             Text(
               title,
               style: TextStyle(
@@ -61,11 +66,15 @@ class GHDialog extends StatelessWidget {
                 color: GHColors.black,
               ),
             ),
-            body,
+
+            const SizedBox(height: 20),
+            Center(child: body),
             const Spacer(),
             // Mark icon at the very bottom
             CheckmarkButton(
-              onPressed: () => onCheckmarkPressed,
+              onPressed: () {
+                if (onCheckmarkPressed != null) onCheckmarkPressed!();
+              },
             ),
           ],
         ),
