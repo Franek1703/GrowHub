@@ -17,13 +17,13 @@ class SensorChart extends StatelessWidget {
   Widget build(BuildContext context) {
     Set<String> shownYLabels = {};
     final gradientColors = [
-      Colors.red,
+      GHColors.redC,
       GHColors.primary,
-      Colors.purple,
-      Colors.blue,
-      Colors.amber,
-      Colors.cyan,
-      Colors.yellow
+      GHColors.purpleC,
+      GHColors.blueC,
+      GHColors.amberC,
+      GHColors.cyanC,
+      GHColors.yellowC
     ];
     final gradientColor = gradientColors[index % gradientColors.length];
     return LineChart(
