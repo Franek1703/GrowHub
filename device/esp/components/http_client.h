@@ -8,6 +8,7 @@
 typedef struct {
     int sensor_id;
     int frequency;              // Częstotliwość w minutach
+    char sensor_type[20];     // Typ czujnika (np. "Temp", "PH", "TDS")
 } sensor_data_t;
 
 typedef struct {
@@ -15,6 +16,11 @@ typedef struct {
     int activation_time;        // Czas aktywacji w sekundach
     bool needs_fertilization;   // Informacja, czy wymaga nawożenia
 } device_data_t;
+
+typedef struct {
+    sensor_data_t sensor_data;
+    device_data_t device_data;
+} sensor_device_data_t;
 
 
 // Funkcja inicjalizująca połączenie WiFi
