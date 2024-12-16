@@ -50,4 +50,6 @@ esp_err_t get_device_id(device_data_t *device_data);
 
 esp_err_t get_sensor_id(const char *sensor_type, int device_id, sensor_data_t *sensor_data_t);
 
+esp_err_t get_pump_id(int device_id);
+
 #endif // HTTP_CLIENT_H

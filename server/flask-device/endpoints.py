@@ -45,23 +45,23 @@ def add_reading():
             resolved = True
             resolved_at = datetime.utcnow()
             
-        elif sensor_type.lower() == "TNS".lower():
+        elif sensor_type.lower() == "TDS".lower():
             alert_message = AlertMessages.TNS_LOW.value
             needs_fertilization = True
             resolved = True
             resolved_at = datetime.utcnow()
             
-        elif sensor_type.lower() == "Temperature".lower():
+        elif sensor_type.lower() == "Temp".lower():
             alert_message = AlertMessages.TEMP_LOW.value
             
     elif value > sensor.max_value:
         if sensor_type.lower() == "PH".lower():
             alert_message = AlertMessages.PH_HIGH.value
             
-        elif sensor_type.lower() == "TNS".lower():
+        elif sensor_type.lower() == "TDS".lower():
             alert_message = AlertMessages.TNS_HIGH.value
             
-        elif sensor_type.lower() == "Temperature".lower():
+        elif sensor_type.lower() == "Temp".lower():
             alert_message = AlertMessages.TEMP_HIGH.value
 
     if alert_message:

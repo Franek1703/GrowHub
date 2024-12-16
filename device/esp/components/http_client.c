@@ -546,7 +546,7 @@ esp_err_t get_sensor_id(const char *sensor_type, int device_id, sensor_data_t *s
     return ESP_OK;
 }
 
-esp_err_t get_pump_id(const char *sensor_type, int device_id){
+esp_err_t get_pump_id(int device_id){
     // Tworzymy obiekt JSON
     cJSON *root = cJSON_CreateObject();
     cJSON_AddNumberToObject(root, "device_id", device_id);

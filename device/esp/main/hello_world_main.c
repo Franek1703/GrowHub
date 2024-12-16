@@ -82,6 +82,8 @@ void app_main() {
     get_sensor_id("PH", device.device_id, &ph);
     get_sensor_id("TDS", device.device_id, &tds);
 
+    get_pump_id(device.device_id);
+
 
     get_sensor_frequency(temp.sensor_id,&temp);
     get_sensor_frequency(tds.sensor_id,&tds);
