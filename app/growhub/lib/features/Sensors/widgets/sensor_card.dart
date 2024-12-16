@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/features/api/data/models/sensor_model.dart';
+import 'package:growhub/features/api/data/models/sensor_reading_model.dart';
 import 'package:growhub/features/sensors/widgets/chart.dart';
 import 'package:growhub/features/sensors/widgets/date_change_widget.dart';
 import 'package:intl/intl.dart';
@@ -17,13 +18,20 @@ class SensorCard extends HookWidget {
     required this.index,
   });
 
+  SensorReadingModel? getLastSensorReading() {
+    if (sensor.lastSensorReading != null) {
+      return sensor.lastSensorReading;
+    }
+    return sensor.getLatestReading();
+  }
+
   @override
   Widget build(BuildContext context) {
     var startDate = useState(DateTime.now().subtract(const Duration(days: 6)));
     var endDate = useState(DateTime.now());
-    String formattedLastReading = sensor.lastSensorReading != null
+    String formattedLastReading = getLastSensorReading() != null
         ? DateFormat('dd.MM.yyyy, HH:mm')
-            .format(sensor.lastSensorReading!.recordedAt)
+            .format(getLastSensorReading()!.recordedAt)
         : "No data available";
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -43,11 +51,20 @@ class SensorCard extends HookWidget {
           ListTile(
             titleAlignment: ListTileTitleAlignment.center,
             title: Center(
-                child: Text(
-              sensor.lastSensorReading != null
-                  ? "${sensor.name}: ${sensor.lastSensorReading!.value} ${sensor.unit}"
-                  : "No data available",
-              style: const TextStyle(fontWeight: FontWeight.bold),
+                child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "${sensor.name}: ",
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  getLastSensorReading() != null
+                      ? "${getLastSensorReading()!.value} ${sensor.unit}"
+                      : "No data available",
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
             )),
             subtitle:
                 Center(child: Text('Last measurement: $formattedLastReading')),

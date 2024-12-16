@@ -68,7 +68,9 @@ class DeviceCard extends StatelessWidget {
                   children: device.sensors.map(
                     (sensor) {
                       return Text(
-                        "${sensor.lastSensorReading?.value ?? "No data"}${sensor.unit}",
+                        sensor.lastSensorReading?.value != null
+                            ? "${sensor.lastSensorReading!.value} ${sensor.unit}"
+                            : "No data",
                         style: const TextStyle(fontSize: 16),
                       );
                     },

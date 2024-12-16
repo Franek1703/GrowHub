@@ -17,15 +17,15 @@ class SensorChart extends StatelessWidget {
   Widget build(BuildContext context) {
     Set<String> shownYLabels = {};
     final gradientColors = [
-    Colors.green,
-    Colors.red,
-    Colors.purple,
-    Colors.blue,
-    Colors.amber,
-    Colors.cyan,
-    Colors.yellow
-  ];
-  final gradientColor = gradientColors[index%gradientColors.length];
+      GHColors.redC,
+      GHColors.primary,
+      GHColors.purpleC,
+      GHColors.blueC,
+      GHColors.amberC,
+      GHColors.cyanC,
+      GHColors.yellowC
+    ];
+    final gradientColor = gradientColors[index % gradientColors.length];
     return LineChart(
       LineChartData(
         borderData: FlBorderData(show: false),
@@ -81,7 +81,6 @@ class SensorChart extends StatelessWidget {
         gridData: const FlGridData(
           show: false,
         ),
-        
         lineTouchData: LineTouchData(
           touchTooltipData: LineTouchTooltipData(
             getTooltipColor: (touchedSpot) => gradientColor,
@@ -103,7 +102,7 @@ class SensorChart extends StatelessWidget {
             belowBarData: BarAreaData(
                 show: true,
                 gradient: LinearGradient(
-                    stops: [0.3, 0.95],
+                    stops: [0.2, 0.95],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [gradientColor, GHColors.white])),
