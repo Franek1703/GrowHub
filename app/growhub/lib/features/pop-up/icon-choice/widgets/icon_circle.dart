@@ -18,10 +18,15 @@ class IconCircle extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isPressed = useState(false);
+
     return InkWell(
-      onTap: () {
+      onTapDown: (_) => isPressed.value = true,
+      onTapUp: (_) {
+        isPressed.value = false;
         if (onPressed != null) onPressed!();
       },
+      onTapCancel: () => isPressed.value = false,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 100),
         margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),

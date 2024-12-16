@@ -6,6 +6,7 @@ import 'package:growhub/features/pop-up/icon-choice/widgets/icon_circle.dart';
 
 void showIconPopupDialog(BuildContext context, Widget popup) {
   showDialog(
+    barrierColor: Colors.black.withOpacity(0.6),
     context: context,
     builder: (BuildContext context) {
       return popup;
