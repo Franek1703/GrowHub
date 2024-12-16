@@ -7,6 +7,7 @@ environment:
   sdk: ">=3.4.3 <4.0.0"
 
 dependencies:
+  confetti: ^0.8.0
   equatable: ^2.0.5
   fl_chart: ^0.69.2
   flutter:
