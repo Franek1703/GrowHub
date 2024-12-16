@@ -92,22 +92,33 @@ def add_reading():
         
     return jsonify(response)
 
+
 @api.route('/add_new/device', methods=['POST'])
 @swag_from('swagger_templates/add_device.yml')
 def add_device():
-    ssid = request.args.get('ssid', type=int)
+    data = request.get_json()
+    ssid = data.get('ssid')
+    if not ssid or not isinstance(ssid, str):
+        return jsonify({"error": "ssid must be a non-empty string"}), 402
 
     # Check if device exists
     existing_device = Device.query.filter_by(ssid=ssid).first()
     if existing_device:
         return jsonify({"device_id": existing_device.device_id}), 400
 
-    # Add new device
-    new_device = Device(name="Your new device",ssid=ssid)
-    db.session.add(new_device)
-    db.session.commit()
-
-    return jsonify({"device_id": new_device.device_id}), 200
+    try:
+        new_device = Device(
+            ssid=ssid,
+            name="Your new device",
+            location=None,
+            created_at=datetime.utcnow()
+        )
+        db.session.add(new_device)
+        db.session.commit()
+        return jsonify({"device_id": new_device.device_id}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
 # Endpoint to add a new sensor
 @api.route('/add_new/sensor', methods=['POST'])
@@ -143,7 +154,7 @@ def add_fertilizing_device():
     new_fertilizing_device = FertilizingDevice(device_id=device_id, device_type=device_type, activation_time=DefaultValues.ACTIVATION_TIME.value)
     db.session.add(new_fertilizing_device)
     db.session.commit()
-    return jsonify({"fertilizing_device_id": new_fertilizing_device.fertilizing_device_id}), 201
+    return jsonify({"fertilizing_device_id": new_fertilizing_device.fertilizing_device_id}), 200
 
 @api.route('/add_dosage', methods=['POST'])
 @swag_from('swagger_templates/add_dosage.yml')

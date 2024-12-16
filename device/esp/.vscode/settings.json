@@ -29,6 +29,9 @@
         "array": "c",
         "string": "c",
         "string_view": "c",
-        "span": "c"
+        "span": "c",
+        "esp_system.h": "c",
+        "stdio.h": "c",
+        "esp_mac.h": "c"
     }
 }

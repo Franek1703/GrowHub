@@ -5,13 +5,14 @@
 #include "esp_netif.h"
 #include "cJSON.h"
 #include <stdio.h>
+#include "esp_mac.h"
 
 // Konfiguracja WiFi
 #define WIFI_SSID "GalaxyS23"
 #define WIFI_PASSWORD "12345688"
 
 // Adres URL serwera (przykład z protokołem HTTP)
-#define SERVER_URL "http://192.168.163.55:5000"
+#define SERVER_URL "http://192.168.103.55:5000"
 
 #define RESPONSE_BUFFER_SIZE 1024
 char response_buffer[RESPONSE_BUFFER_SIZE];
@@ -407,6 +408,207 @@ esp_err_t get_sensor_frequency(int sensor_id, sensor_data_t *response_data)
     return ESP_OK;
 }
 
-// esp_err_t get_device_id(device_data_t *device_data){
-    
-// }
+esp_err_t get_device_id(device_data_t *device_data){
+    uint8_t base_mac_addr[6] = {0};
+    esp_efuse_mac_get_default(base_mac_addr);
+    char mac_str[23];
+snprintf(mac_str, sizeof(mac_str), "%02x:%02x:%02x:%02x:%02x:%02x",
+         base_mac_addr[0], base_mac_addr[1], base_mac_addr[2],
+         base_mac_addr[3], base_mac_addr[4], base_mac_addr[5]);
+    ESP_LOGI(TAG, "MAC: %s",mac_str);
+
+    cJSON *root = cJSON_CreateObject();
+    cJSON_AddStringToObject(root, "ssid", mac_str);
+
+    // Zamieniamy obiekt JSON na string
+    char *json_data = cJSON_Print(root);
+
+    char endpoint[128];
+    snprintf(endpoint, sizeof(endpoint), "/device-service-api/add_new/device");
+    char url[256];
+    snprintf(url, sizeof(url), "%s%s", SERVER_URL, endpoint);
+    ESP_LOGI(TAG, "Endpoint: %s", url);
+    // Ustawiamy pełny URL do klienta HTTP
+    esp_http_client_set_url(client, url);
+    esp_http_client_set_method(client, HTTP_METHOD_POST);
+    esp_http_client_set_post_field(client, json_data, strlen(json_data));
+
+    esp_http_client_set_header(client, "Content-Type", "application/json");
+    esp_err_t err = esp_http_client_perform(client);
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Błąd podczas wysyłania zapytania GET");
+        return err;
+    }
+     
+    int status_code = esp_http_client_get_status_code(client);
+    if (status_code == 200 || status_code == 400)
+    {
+        if (strlen(response_buffer) > 0)
+        {
+            cJSON *response_json = cJSON_Parse(response_buffer);
+            if (response_json != NULL)
+            {
+                cJSON *item = cJSON_GetObjectItem(response_json, "device_id");
+                if (item && cJSON_IsNumber(item))
+                {
+                    device_data->device_id = item->valueint;
+                    ESP_LOGI(TAG, "Udało się poprawnie przypisać device id: %d", device_data->device_id);
+                }
+                else
+                {
+                    ESP_LOGE(TAG, "Brak pola 'device_id' w odpowiedzi JSON");
+                }
+                cJSON_Delete(response_json);
+            }
+            else
+            {
+                ESP_LOGE(TAG, "Błąd parsowania odpowiedzi JSON");
+            }
+        }
+        else
+        {
+            ESP_LOGE(TAG, "Błąd podczas odczytu odpowiedzi z serwera");
+        }
+    }
+    else
+    {
+        ESP_LOGE(TAG, "Błąd odpowiedzi z serwera, kod: %d", status_code);
+    }
+
+    return ESP_OK;
+}
+
+esp_err_t get_sensor_id(const char *sensor_type, int device_id, sensor_data_t *sensor_data_t){
+    // Tworzymy obiekt JSON
+    cJSON *root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(root, "device_id", device_id);
+    cJSON_AddStringToObject(root, "sensor_type", sensor_type);
+
+    // Zamieniamy obiekt JSON na string
+    char *json_data = cJSON_Print(root);
+
+    char url[256];
+    snprintf(url, sizeof(url), "%s%s", SERVER_URL, "/device-service-api/add_new/sensor");
+    ESP_LOGI(TAG, "Endpoint: %s", url);
+
+    // Ustawiamy dane do wysłania
+    esp_http_client_set_url(client, url);
+    esp_http_client_set_method(client, HTTP_METHOD_POST);
+    esp_http_client_set_post_field(client, json_data, strlen(json_data));
+
+    esp_http_client_set_header(client, "Content-Type", "application/json");
+
+    // Wykonujemy zapytanie POST
+    esp_err_t err = esp_http_client_perform(client);
+    ESP_LOGI(TAG, "JSON: %s", json_data);
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Błąd podczas wysyłania zapytania GET");
+        return err;
+    }
+     
+    int status_code = esp_http_client_get_status_code(client);
+    if (status_code == 200 || status_code == 400)
+    {
+        if (strlen(response_buffer) > 0)
+        {
+            cJSON *response_json = cJSON_Parse(response_buffer);
+            if (response_json != NULL)
+            {
+                cJSON *item = cJSON_GetObjectItem(response_json, "sensor_id");
+                if (item && cJSON_IsNumber(item))
+                {
+                    sensor_data_t->sensor_id = item->valueint;
+                    ESP_LOGI(TAG, "Udało się poprawnie przypisać sensor id: %d", sensor_data_t->sensor_id);
+                }
+                else
+                {
+                    ESP_LOGE(TAG, "Brak pola 'device_id' w odpowiedzi JSON");
+                }
+                cJSON_Delete(response_json);
+            }
+            else
+            {
+                ESP_LOGE(TAG, "Błąd parsowania odpowiedzi JSON");
+            }
+        }
+        else
+        {
+            ESP_LOGE(TAG, "Błąd podczas odczytu odpowiedzi z serwera");
+        }
+    }
+    else
+    {
+        ESP_LOGE(TAG, "Błąd odpowiedzi z serwera, kod: %d", status_code);
+    }
+
+    return ESP_OK;
+}
+
+esp_err_t get_pump_id(const char *sensor_type, int device_id){
+    // Tworzymy obiekt JSON
+    cJSON *root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(root, "device_id", device_id);
+    cJSON_AddStringToObject(root, "device_type", "Pump");
+
+    // Zamieniamy obiekt JSON na string
+    char *json_data = cJSON_Print(root);
+
+    char url[256];
+    snprintf(url, sizeof(url), "%s%s", SERVER_URL, "/device-service-api/add_new/fertilizing_device");
+    ESP_LOGI(TAG, "Endpoint: %s", url);
+
+    // Ustawiamy dane do wysłania
+    esp_http_client_set_url(client, url);
+    esp_http_client_set_method(client, HTTP_METHOD_POST);
+    esp_http_client_set_post_field(client, json_data, strlen(json_data));
+
+    esp_http_client_set_header(client, "Content-Type", "application/json");
+
+    // Wykonujemy zapytanie POST
+    esp_err_t err = esp_http_client_perform(client);
+    ESP_LOGI(TAG, "JSON: %s", json_data);
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Błąd podczas wysyłania zapytania GET");
+        return err;
+    }
+     
+    int status_code = esp_http_client_get_status_code(client);
+    if (status_code == 200 || status_code == 400)
+    {
+        if (strlen(response_buffer) > 0)
+        {
+            cJSON *response_json = cJSON_Parse(response_buffer);
+            if (response_json != NULL)
+            {
+                cJSON *item = cJSON_GetObjectItem(response_json, "fertilizing_device_id");
+                if (item && cJSON_IsNumber(item))
+                {
+                    
+                    ESP_LOGI(TAG, "Udało się poprawnie przypisać fertilizing_device id: %d", item->valueint);
+                }
+                else
+                {
+                    ESP_LOGE(TAG, "Brak pola 'device_id' w odpowiedzi JSON");
+                }
+                cJSON_Delete(response_json);
+            }
+            else
+            {
+                ESP_LOGE(TAG, "Błąd parsowania odpowiedzi JSON");
+            }
+        }
+        else
+        {
+            ESP_LOGE(TAG, "Błąd podczas odczytu odpowiedzi z serwera");
+        }
+    }
+    else
+    {
+        ESP_LOGE(TAG, "Błąd odpowiedzi z serwera, kod: %d", status_code);
+    }
+
+    return ESP_OK;
+}

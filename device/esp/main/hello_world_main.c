@@ -12,11 +12,26 @@ void app_main() {
     init_onewire();
     ESP_ERROR_CHECK(app_init());
     device_data_t device;
-
+    get_device_id(&device);
+    ESP_LOGI(TAG, "Device ID: %d", device.device_id);
     sensor_data_t temp;
     sensor_data_t tds;
     sensor_data_t ph;
-    get_sensor_frequency(1,&temp);
+    get_sensor_id("temperature", device.device_id, &temp);
+    get_sensor_id("PH", device.device_id, &ph);
+    get_sensor_id("TDS", device.device_id, &tds);
+
+
+    get_sensor_frequency(temp.sensor_id,&temp);
+    get_sensor_frequency(tds.sensor_id,&tds);
+    get_sensor_frequency(ph.sensor_id,&ph);
+    ESP_LOGI(TAG, "Temp: id: %d, frequency: %d", temp.sensor_id, temp.frequency);
+    ESP_LOGI(TAG, "PH: id: %d, frequency: %d", ph.sensor_id, ph.frequency);
+    ESP_LOGI(TAG, "TDS: id: %d, frequency: %d", tds.sensor_id, tds.frequency);
+
+    for (int i = 0; i < PH_SAMPLES; i++) {
+        read_ph(); 
+    }
     while (1) {
         // Sprawdzenie Wi-Fi przed wysyłaniem danych
         if (check_wifi_connection() == ESP_OK) {

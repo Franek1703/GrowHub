@@ -40,4 +40,8 @@ esp_err_t check_wifi_connection(void);
 esp_err_t wait_for_wifi_connection(void);
 esp_err_t get_sensor_frequency(int sensor_id, sensor_data_t *response_data);
 
+esp_err_t get_device_id(device_data_t *device_data);
+
+esp_err_t get_sensor_id(const char *sensor_type, int device_id, sensor_data_t *sensor_data_t);
+
 #endif // HTTP_CLIENT_H

@@ -14,7 +14,6 @@ int ds18b20_device_num = 0;
 adc_oneshot_unit_handle_t adc_handle;
 
 // Parametry do zbierania próbek pH
-#define PH_SAMPLES 40
 int pHArray[PH_SAMPLES]; // Tablica do przechowywania próbek
 int pHArrayIndex = 0;    // Indeks tablicy próbek
 
