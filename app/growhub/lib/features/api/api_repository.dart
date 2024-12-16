@@ -4,6 +4,7 @@ import 'package:growhub/features/api/data/models/user_model.dart';
 import 'package:growhub/features/api/services/api_service.dart';
 import 'package:growhub/features/api/services/auth_service.dart';
 import 'package:growhub/features/api/services/secure_storage_service.dart';
+import 'package:growhub/features/api/data/models/dosage_history_model.dart';
 
 class ApiRepository {
   final AuthService authService;
@@ -45,9 +46,16 @@ class ApiRepository {
     return await apiService.getConfiguration(token);
   }
 
+  /// Return sensor readings for a specific device.
   Future<List<SensorModel>> getSensorsWithReadings(
       String token, int deviceId) async {
     return await apiService.getSensorReadings(token, deviceId);
+  }
+
+  /// Fetch dosage history for a specific device.
+  Future<List<DosageHistoryModel?>> getDosageHistory(
+      String token, int deviceId) async {
+    return await apiService.getDosageHistory(token, deviceId);
   }
 
   /// Save auth token into the `secure storage`.
