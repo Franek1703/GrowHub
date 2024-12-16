@@ -340,10 +340,11 @@ def update_device(device_id):
     
     name = data.get('name')
     location = data.get('location')
+    icon = data.get('icon')
 
     
-    if not name and not location:
-        return jsonify({"message": "Name or location must be provided."}), 400
+    if not name and not location and not icon:
+        return jsonify({"message": "Name or location or icon must be provided."}), 400
     
     device = Device.query.filter_by(device_id=device_id).first()
     if not device:
@@ -353,6 +354,8 @@ def update_device(device_id):
         device.name = name
     if location:
         device.location = location
+    if icon:
+        device.icon = icon
     db.session.commit()
 
     return jsonify({"message": "Device updated successfully."}), 200

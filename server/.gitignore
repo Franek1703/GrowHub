@@ -2,3 +2,6 @@
 /flask-device/__pycache__
 /flask-app/__pycache__
 pyvenv.cfg
+docker-compose-dev.yml
+__pycache__/
+*.pyc
