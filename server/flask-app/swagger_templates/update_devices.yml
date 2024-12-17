@@ -25,7 +25,7 @@ parameters:
           example: "Living Room"
           description: The new location of the device.
         icon:
-          type: string
+          type: int
           example: 1
           description: The new icon for the device.
 responses:

@@ -24,6 +24,15 @@ responses:
               name:
                 type: string
                 example: "Smart Inhaler"
+              location:
+                type: string
+                example: "Living Room"
+                description: The new location of the device.
+              icon:
+                type: int
+                example: 1
+                description: The new icon for the device.
+              
   404:
     description: User not found
     schema:
