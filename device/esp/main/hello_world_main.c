@@ -39,7 +39,10 @@ void read_sensor_data_task(void *pvParameters) {
 
             if(device->needs_fertilization) {
                 ESP_LOGI(TAG, "Aktywacja pompy na %d sekund", device->activation_time);
-                activate_pump(device->activation_time);
+                esp_err_t err = activate_pump(device->activation_time);
+                if (err == ESP_OK) {
+                    post_dose(device);
+                }
             }
 
             // Zwalniamy semafor po zakończeniu operacji

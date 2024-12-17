@@ -52,4 +52,6 @@ esp_err_t get_sensor_id(const char *sensor_type, int device_id, sensor_data_t *s
 
 esp_err_t get_pump_id(int device_id);
 
+esp_err_t post_dose(device_data_t *device_data);
+
 #endif // HTTP_CLIENT_H
