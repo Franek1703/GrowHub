@@ -10,8 +10,10 @@ class Device(db.Model):
     ssid = db.Column(db.String, nullable=False)
     name = db.Column(db.String, nullable=False)
     location = db.Column(db.String, nullable=True)
+    icon = db.Column(db.Integer, nullable=True)  # Add the icon column
     created_at = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
     users = db.relationship('User', secondary='user_device', back_populates='devices')
+
     
 class User(db.Model):
     __tablename__ = 'users'

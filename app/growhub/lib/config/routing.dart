@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:growhub/views/calendar/calendar_page.dart';
@@ -60,14 +59,24 @@ class GHRouter {
             routes: [
               GoRoute(
                   path: GHRoutePath.sensor.path,
-                  pageBuilder: (context, state) =>  const NoTransitionPage(
-                        child: SensorPage(),
-                      )),
+                  pageBuilder: (context, state) {
+                    int deviceId = state.extra as int;
+                    return NoTransitionPage(
+                      child: SensorPage(
+                        deviceId: deviceId,
+                      ),
+                    );
+                  }),
               GoRoute(
                   path: GHRoutePath.calendar.path,
-                  pageBuilder: (context, state) => const NoTransitionPage(
-                        child: CalendarPage(),
-                      )),
+                  pageBuilder: (context, state) {
+                    int deviceId = state.extra as int;
+                    return NoTransitionPage(
+                      child: CalendarPage(
+                        deviceId: deviceId,
+                      ),
+                    );
+                  }),
               GoRoute(
                   path: GHRoutePath.settings.path,
                   pageBuilder: (context, state) => const NoTransitionPage(
@@ -76,15 +85,17 @@ class GHRouter {
             ],
           ),
           GoRoute(
-              path: GHRoutePath.notification.path,
-              pageBuilder: (context, state) => const NoTransitionPage(
-                    child: NotificationPage(),
-                  )),
+            path: GHRoutePath.notification.path,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: NotificationPage(),
+            ),
+          ),
           GoRoute(
-              path: GHRoutePath.profile.path,
-              pageBuilder: (context, state) => const NoTransitionPage(
-                    child: ProfilePage(),
-                  )),
+            path: GHRoutePath.profile.path,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: ProfilePage(),
+            ),
+          ),
         ],
       ),
     ],
