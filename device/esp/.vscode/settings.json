@@ -32,6 +32,9 @@
         "span": "c",
         "esp_system.h": "c",
         "stdio.h": "c",
-        "esp_mac.h": "c"
+        "esp_mac.h": "c",
+        "gpio.h": "c",
+        "freertos.h": "c",
+        "rtc_io.h": "c"
     }
 }

@@ -5,6 +5,7 @@
 #include "sensor_reader.h"
 #include "http_client.h"
 #include "freertos/semphr.h"
+#include "pump_control.h"
 
 // Deklaracja semafora
 SemaphoreHandle_t xSemaphore;
@@ -36,6 +37,11 @@ void read_sensor_data_task(void *pvParameters) {
             ESP_LOGI(TAG, "Częstotliwość: %d minut", sensor_data->frequency);
             ESP_LOGI(TAG, "Potrzebuje nawożenia: %s", device->needs_fertilization ? "TAK" : "NIE");
 
+            if(device->needs_fertilization) {
+                ESP_LOGI(TAG, "Aktywacja pompy na %d sekund", device->activation_time);
+                activate_pump(device->activation_time);
+            }
+
             // Zwalniamy semafor po zakończeniu operacji
             xSemaphoreGive(xSemaphore);
         } else {
@@ -66,6 +72,7 @@ void wifi_monitor_task(void *pvParameters)
 void app_main() {
     init_adc();
     init_onewire();
+    pump_init();
     ESP_ERROR_CHECK(app_init());
 
     // Inicjalizacja semafora
