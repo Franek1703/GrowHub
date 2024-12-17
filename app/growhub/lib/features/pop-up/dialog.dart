@@ -11,27 +11,59 @@ class GHDialog extends HookWidget {
     this.onCheckmarkPressed,
     this.height,
     this.width,
+    this.margin,
+    this.backgroundColor,
   });
 
+  /// The title text displayed at the top of the dialog.
+  ///
+  /// Use this to give context or purpose for the dialog.
   final String title;
+
+  /// Optional height of the dialog.
+  ///
+  /// If not provided, the height defaults to 70% of the screen height.
   final double? height;
+
+  /// Optional width of the dialog.
+  ///
+  /// If not provided, the width defaults to the full screen width.
   final double? width;
+
+  /// The main content displayed in the body of the dialog.
+  ///
+  /// This allows you to pass any widget, such as text, forms, or other UI components.
   final Widget body;
+
+  /// Callback function executed when the checkmark button is pressed.
+  ///
+  /// If not provided, the checkmark button will close the dialog without additional action.
   final VoidCallback? onCheckmarkPressed;
+
+  /// Optional margin around the dialog.
+  ///
+  /// Use this to control the dialog's padding relative to the screen edges.
+  final EdgeInsets? margin;
+
+  /// The background color of the dialog.
+  ///
+  /// If not provided, the default color is white
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      insetPadding: margin,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
-      backgroundColor: GHColors.background,
+      backgroundColor: backgroundColor ?? GHColors.background,
       child: Container(
         height: height ?? MediaQuery.of(context).size.height * 0.7,
         width: width ?? MediaQuery.of(context).size.width * 1,
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         decoration: BoxDecoration(
-          color: GHColors.background,
+          color: backgroundColor ?? GHColors.background,
           borderRadius: BorderRadius.circular(20),
           boxShadow: const [
             BoxShadow(
@@ -74,6 +106,7 @@ class GHDialog extends HookWidget {
             CheckmarkButton(
               onPressed: () {
                 if (onCheckmarkPressed != null) onCheckmarkPressed!();
+                Navigator.of(context).pop();
               },
             ),
           ],

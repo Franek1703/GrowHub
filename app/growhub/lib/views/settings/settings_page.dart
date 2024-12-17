@@ -17,7 +17,9 @@ class SettingsPage extends HookWidget {
             context,
             IconPopUp(
               startIcon: DeviceIcon.cactus,
-              onIconSelected: (icon) {},
+              onIconSelected: (icon) {
+                print(icon);
+              },
             ),
           );
         },
