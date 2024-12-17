@@ -1,9 +1,8 @@
-# swagger_templates/update_device.yml
 ---
 tags:
   - Devices
 summary: Update device information
-description: Updates the name and/or location of a specific device.
+description: Updates the name, location, and/or icon of a specific device.
 operationId: updateDevice
 parameters:
   - in: path
@@ -25,6 +24,10 @@ parameters:
           type: string
           example: "Living Room"
           description: The new location of the device.
+        icon:
+          type: string
+          example: 1
+          description: The new icon for the device.
 responses:
   200:
     description: Device updated successfully.
@@ -41,7 +44,7 @@ responses:
       properties:
         message:
           type: string
-          example: "Name or location must be provided."
+          example: "Name, location, or icon must be provided."
   404:
     description: Not found.
     schema:
