@@ -1,3 +1,13 @@
 {
-    "cmake.sourceDirectory": "C:/Users/szymo/Documents/Docker/GrowHub/app/growhub/linux"
+    "cmake.sourceDirectory": "D:/franz/Documents/studia/eity/PBL5/projekt/GrowHub/device/esp",
+    "idf.flashType": "UART",
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./server",
+        "-p",
+        "*test.py"
+    ],
+    "python.testing.pytestEnabled": false,
+    "python.testing.unittestEnabled": true
 }

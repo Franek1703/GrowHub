@@ -45,23 +45,23 @@ def add_reading():
             resolved = True
             resolved_at = datetime.utcnow()
             
-        elif sensor_type.lower() == "TNS".lower():
+        elif sensor_type.lower() == "TDS".lower():
             alert_message = AlertMessages.TNS_LOW.value
             needs_fertilization = True
             resolved = True
             resolved_at = datetime.utcnow()
             
-        elif sensor_type.lower() == "Temperature".lower():
+        elif sensor_type.lower() == "Temp".lower():
             alert_message = AlertMessages.TEMP_LOW.value
             
     elif value > sensor.max_value:
         if sensor_type.lower() == "PH".lower():
             alert_message = AlertMessages.PH_HIGH.value
             
-        elif sensor_type.lower() == "TNS".lower():
+        elif sensor_type.lower() == "TDS".lower():
             alert_message = AlertMessages.TNS_HIGH.value
             
-        elif sensor_type.lower() == "Temperature".lower():
+        elif sensor_type.lower() == "Temp".lower():
             alert_message = AlertMessages.TEMP_HIGH.value
 
     if alert_message:
@@ -92,27 +92,33 @@ def add_reading():
         
     return jsonify(response)
 
+
 @api.route('/add_new/device', methods=['POST'])
 @swag_from('swagger_templates/add_device.yml')
 def add_device():
-    
     data = request.get_json()
     ssid = data.get('ssid')
-    device_name = data.get('device_name')
-    location = data.get('location', '')
-    icon = data.get('icon')
+    if not ssid or not isinstance(ssid, str):
+        return jsonify({"error": "ssid must be a non-empty string"}), 402
 
     # Check if device exists
     existing_device = Device.query.filter_by(ssid=ssid).first()
     if existing_device:
-        return jsonify({"message": "Device with this SSID already exists.", "device_id": existing_device.device_id}), 400
+        return jsonify({"device_id": existing_device.device_id}), 400
 
-    # Add new device
-    new_device = Device(name=device_name, location=location, ssid=ssid)
-    db.session.add(new_device)
-    db.session.commit()
-
-    return jsonify({"message": "Device added successfully.", "device_id": new_device.device_id}), 201
+    try:
+        new_device = Device(
+            ssid=ssid,
+            name="Your new device",
+            location=None,
+            created_at=datetime.utcnow()
+        )
+        db.session.add(new_device)
+        db.session.commit()
+        return jsonify({"device_id": new_device.device_id}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
 # Endpoint to add a new sensor
 @api.route('/add_new/sensor', methods=['POST'])
@@ -125,12 +131,12 @@ def add_sensor():
     # Check if the specified type of sensor already exists for the given device
     existing_sensor = Sensor.query.filter_by(device_id=device_id, sensor_type=sensor_type).first()
     if existing_sensor:
-        return jsonify({"message": f"Sensor of type '{sensor_type}' already exists for device_id '{device_id}'."}), 400
+        return jsonify({"sensor_id": existing_sensor.sensor_id}), 400
 
     new_sensor = Sensor(device_id=device_id, sensor_type=sensor_type, min_value=DefaultValues.get_min(sensor_type.lower()), max_value=DefaultValues.get_max(sensor_type.lower()), measurement_frequency=DefaultValues.SENSOR_FREQUENCY.value, unit = DefaultValues.get_unit(sensor_type.lower()))
     db.session.add(new_sensor)
     db.session.commit()
-    return jsonify({"message": "Sensor added successfully.", "sensor_id": new_sensor.sensor_id}), 201
+    return jsonify({"sensor_id": new_sensor.sensor_id}), 200
 
 # Endpoint to add a new fertilizing device
 @api.route('/add_new/fertilizing_device', methods=['POST'])
@@ -143,12 +149,12 @@ def add_fertilizing_device():
     # Check if a fertilizing device of this type already exists for the specified device
     existing_fertilizing_device = FertilizingDevice.query.filter_by(device_id=device_id, device_type=device_type).first()
     if existing_fertilizing_device:
-        return jsonify({"message": f"Fertilizing device of type '{device_type}' already exists for device_id '{device_id}'."}), 400
+        return jsonify({"fertilizing_device_id": existing_fertilizing_device.fertilizing_device_id}), 400
 
     new_fertilizing_device = FertilizingDevice(device_id=device_id, device_type=device_type, activation_time=DefaultValues.ACTIVATION_TIME.value)
     db.session.add(new_fertilizing_device)
     db.session.commit()
-    return jsonify({"message": "Fertilizing device added successfully.", "fertilizing_device_id": new_fertilizing_device.fertilizing_device_id}), 201
+    return jsonify({"fertilizing_device_id": new_fertilizing_device.fertilizing_device_id}), 200
 
 @api.route('/add_dosage', methods=['POST'])
 @swag_from('swagger_templates/add_dosage.yml')

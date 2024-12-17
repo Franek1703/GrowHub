@@ -1,0 +1,40 @@
+{
+    "C_Cpp.intelliSenseEngine": "default",
+    "idf.adapterTargetName": "esp32",
+    "idf.customExtraPaths": "d:\\aplikacje\\esp32\\tools\\tools\\xtensa-esp-elf-gdb\\12.1_20231023\\xtensa-esp-elf-gdb\\bin;d:\\aplikacje\\esp32\\tools\\tools\\riscv32-esp-elf-gdb\\12.1_20231023\\riscv32-esp-elf-gdb\\bin;d:\\aplikacje\\esp32\\tools\\tools\\xtensa-esp-elf\\esp-13.2.0_20230928\\xtensa-esp-elf\\bin;d:\\aplikacje\\esp32\\tools\\tools\\riscv32-esp-elf\\esp-13.2.0_20230928\\riscv32-esp-elf\\bin;d:\\aplikacje\\esp32\\tools\\tools\\esp32ulp-elf\\2.35_20220830\\esp32ulp-elf\\bin;d:\\aplikacje\\esp32\\tools\\tools\\cmake\\3.24.0\\bin;d:\\aplikacje\\esp32\\tools\\tools\\openocd-esp32\\v0.12.0-esp32-20230921\\openocd-esp32\\bin;d:\\aplikacje\\esp32\\tools\\tools\\ninja\\1.11.1;d:\\aplikacje\\esp32\\tools\\tools\\idf-exe\\1.0.3;d:\\aplikacje\\esp32\\tools\\tools\\ccache\\4.8\\ccache-4.8-windows-x86_64;d:\\aplikacje\\esp32\\tools\\tools\\dfu-util\\0.11\\dfu-util-0.11-win64;d:\\aplikacje\\esp32\\tools\\tools\\esp-rom-elfs\\20230320",
+    "idf.customExtraVars": {
+        "OPENOCD_SCRIPTS": "d:\\aplikacje\\esp32\\tools\\tools\\openocd-esp32\\v0.12.0-esp32-20230921/openocd-esp32/share/openocd/scripts",
+        "IDF_CCACHE_ENABLE": "1",
+        "ESP_ROM_ELF_DIR": "d:\\aplikacje\\esp32\\tools\\tools\\esp-rom-elfs\\20230320/"
+    },
+    "idf.espIdfPathWin": "C:\\Users\\franz\\esp\\v5.2.1\\esp-idf",
+    "idf.openOcdConfigs": [
+        "board/esp32-wrover-kit-1.8v.cfg"
+    ],
+    "idf.portWin": "COM5",
+    "idf.pythonBinPathWin": "d:\\aplikacje\\esp32\\tools\\python_env\\idf5.2_py3.11_env\\Scripts\\python.exe",
+    "idf.toolsPathWin": "d:\\aplikacje\\esp32\\tools",
+    "idf.flashType": "UART",
+    "idf.gitPathWin": "d:\\aplikacje\\esp32\\tools\\tools\\idf-git\\2.39.2\\cmd\\git.exe",
+    "files.associations": {
+        "sensor_reader.h": "c",
+        "adc_oneshot.h": "c",
+        "esp_log.h": "c",
+        "esp_err.h": "c",
+        "adc_cali.h": "c",
+        "esp_check.h": "c",
+        "esp_adc_cal.h": "c",
+        "http_client.h": "c",
+        "esp_wifi.h": "c",
+        "array": "c",
+        "string": "c",
+        "string_view": "c",
+        "span": "c",
+        "esp_system.h": "c",
+        "stdio.h": "c",
+        "esp_mac.h": "c",
+        "gpio.h": "c",
+        "freertos.h": "c",
+        "rtc_io.h": "c"
+    }
+}
