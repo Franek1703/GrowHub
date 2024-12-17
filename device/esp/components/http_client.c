@@ -115,7 +115,7 @@ esp_err_t _http_event_handle(esp_http_client_event_t *evt)
 // Funkcja do inicjalizacji połączenia z serwerem HTTP
 esp_err_t http_init(void)
 {
-    esp_err_t err;
+    esp_err_t err = ESP_FAIL;
     esp_http_client_config_t config = {
         .url = SERVER_URL, // Adres URL serwera HTTP
         .event_handler = _http_event_handle,
@@ -123,8 +123,11 @@ esp_err_t http_init(void)
 
     // Inicjalizowanie klienta HTTP
     client = esp_http_client_init(&config);
-    esp_http_client_perform(client);
-
+    while(err != ESP_OK){
+        err = esp_http_client_perform(client);
+         vTaskDelay(pdMS_TO_TICKS(2000));
+    }
+    
     return ESP_OK;
 }
 
