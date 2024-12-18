@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:growhub/features/qr/data/qr_parser.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class QRScanner extends StatefulWidget {
@@ -27,7 +28,7 @@ class _QRScannerState extends State<QRScanner> {
     }
 
     return Text(
-      value.displayValue ?? 'No display value.',
+      QRParser.parseQRCode(value.displayValue) ?? 'No display value.',
       overflow: TextOverflow.fade,
       style: const TextStyle(color: Colors.white),
     );
@@ -41,9 +42,15 @@ class _QRScannerState extends State<QRScanner> {
         final String? detectedValue = _barcode?.displayValue;
 
         // Check if the value matches the "&code&code" pattern
-        if (detectedValue != null && detectedValue.contains('&code&code')) {
-          widget.onCodeDetected(detectedValue); // Pass the value to the parent
+        if (detectedValue == null) {
+          return;
         }
+
+        String? parsedCode = QRParser.parseQRCode(detectedValue);
+        if (parsedCode == null) {
+          return;
+        }
+        widget.onCodeDetected(parsedCode); // Pass the value to the parent
       });
     }
   }
