@@ -18,4 +18,9 @@ class ApiClient extends GHBaseClient {
   Future<http.Response> getDosageHistory(String token, int deviceId) async {
     return super.getTokenized(ApiClientPath.dosageHistory(deviceId), token);
   }
+
+  Future<http.Response> updateDevice(
+      String token, int deviceId, Map<String, dynamic> body) async {
+    return super.patchTokenized(ApiClientPath.devices(deviceId), token, body);
+  }
 }

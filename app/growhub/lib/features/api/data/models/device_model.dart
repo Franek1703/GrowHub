@@ -24,4 +24,18 @@ class DeviceModel {
       icon: DeviceIcon.fromIndex(json['icon']),
     );
   }
+
+  DeviceModel copyWith({
+    int? id,
+    String? name,
+    List<SensorModel>? sensors,
+    DeviceIcon? icon,
+  }) {
+    return DeviceModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      sensors: sensors ?? this.sensors,
+      icon: icon ?? this.icon,
+    );
+  }
 }
