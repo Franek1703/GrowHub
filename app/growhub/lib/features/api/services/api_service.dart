@@ -137,7 +137,7 @@ class ApiService {
       final Map<String, dynamic> updates = {};
 
       if (icon != null) {
-        updates['icon'] = icon.index;
+        updates['icon'] = icon.adjustedIndex;
       }
       if (location != null) {
         updates['location'] = location;

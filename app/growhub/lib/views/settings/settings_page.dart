@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:growhub/common/widgets/progress_indicator.dart';
+import 'package:growhub/common/widgets/progress_indicator_small.dart';
 import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/features/api/cubit/device/device_cubit.dart';
 import 'package:growhub/features/api/data/models/device_model.dart';
-import 'package:growhub/features/pop-up/icon-choice/widgets/icon_pop_up.dart';
+import 'package:growhub/features/settings/widgets/plant_pop_icon.dart';
 
 class SettingsPage extends HookWidget {
   const SettingsPage({
@@ -32,49 +31,30 @@ class SettingsPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(deviceId);
     return Scaffold(
       backgroundColor: GHColors.background,
       body: BlocBuilder<DeviceCubit, DeviceState>(
         builder: (context, state) {
           if (getDevices(state) == null) {
-            return const GHProgressIndicator();
+            return const GHProgressIndicatorSmall();
           }
           final device = context
               .watch<DeviceCubit>()
               .findDeviceById(getDevices(state)!, deviceId);
 
           if (device == null) {
-            return const GHProgressIndicator();
+            return const GHProgressIndicatorSmall();
           }
 
-          return Center(
-            child: GestureDetector(
-              onTap: () {
-                showIconPopupDialog(
-                  context,
-                  IconPopUp(
-                    startIcon: device.icon,
-                    onIconSelected: (icon) {
-                      print(icon);
-                      context
-                          .read<DeviceCubit>()
-                          .updateDevice(deviceId: deviceId, icon: icon);
-                    },
-                  ),
-                );
-              },
-              child: SizedBox(
-                width: 50,
-                height: 50,
-                child: SvgPicture.asset(
-                  device.icon.path,
-                  fit: BoxFit.contain,
-                  colorFilter:
-                      ColorFilter.mode(GHColors.black, BlendMode.srcIn),
-                ),
-              ),
-            ),
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(
+                  child: PlantPopIcon(
+                deviceId: deviceId,
+                icon: device.icon,
+              )),
+            ],
           );
         },
       ),

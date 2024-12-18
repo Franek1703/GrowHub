@@ -35,7 +35,7 @@ class IconCircle extends HookWidget {
           color: active ? GHColors.primary : null,
           border: Border.all(
             color: active ? GHColors.black : Colors.transparent,
-            width: 4,
+            width: 3,
           ),
           shape: BoxShape.circle,
         ),

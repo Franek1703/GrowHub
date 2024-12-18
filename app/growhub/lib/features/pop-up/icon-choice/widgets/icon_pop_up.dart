@@ -28,7 +28,7 @@ class IconPopUp extends HookWidget {
   Widget build(BuildContext context) {
     final currentIcon = useState(startIcon);
     return GHDialog(
-      title: "Choose icon",
+      title: "Choose icon.",
       body: Wrap(
         children: [
           ...DeviceIcon.values.map(

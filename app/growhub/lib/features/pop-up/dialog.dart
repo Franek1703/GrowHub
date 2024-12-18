@@ -78,12 +78,12 @@ class GHDialog extends HookWidget {
           children: [
             Row(
               children: [
-                GestureDetector(
-                  onTap: () => Navigator.of(context).pop(),
-                  child: Icon(
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: Icon(
                     Icons.close_rounded,
                     color: GHColors.black,
-                    size: 40,
+                    size: 30,
                   ),
                 ),
                 const SizedBox(width: 24),
