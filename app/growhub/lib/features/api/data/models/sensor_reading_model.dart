@@ -15,7 +15,7 @@ class SensorReadingModel {
     return SensorReadingModel(
       id: json["reading_id"],
       recordedAt: HttpDate.parse(json["recorded_at"]),
-      value: json["value"],
+      value: double.parse(json["value"].toStringAsFixed(1)),
     );
   }
 }
