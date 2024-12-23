@@ -6,6 +6,7 @@ import 'package:growhub/features/api/data/models/device_model.dart';
 import 'package:growhub/features/api/data/models/sensor_model.dart';
 import 'package:growhub/features/api/data/models/user_model.dart';
 import 'package:growhub/features/api/data/models/dosage_history_model.dart';
+import 'package:growhub/features/device_dashboard/entities/device_icon.dart';
 
 class ApiService {
   final ApiClient apiClient;
@@ -117,6 +118,51 @@ class ApiService {
             .map((json) => DosageHistoryModel.fromJson(json))
             .toList();
       } else if (response.statusCode == 404) {
+        throw Exception("Device not found.");
+      }
+      throw Exception("Failed to fetch dosage history.");
+    } catch (e) {
+      throw Exception("Error fetching dosage history: $e");
+    }
+  }
+
+  Future<void> updateDevice({
+    required String token,
+    required int deviceId,
+    DeviceIcon? icon,
+    String? location,
+    String? name,
+  }) async {
+    try {
+      final Map<String, dynamic> updates = {};
+
+      if (icon != null) {
+        updates['icon'] = icon.adjustedIndex;
+      }
+      if (location != null) {
+        updates['location'] = location;
+      }
+      if (name != null) {
+        updates['name'] = name;
+      }
+
+      if (updates.isEmpty) {
+        throw Exception(
+            "At least one field (icon, location, name) is required to update the device.");
+      }
+
+      final response =
+          await apiClient.updateDevice(token, deviceId, updates).timeout(
+        ApiTimeout.timeout,
+        onTimeout: () {
+          throw ApiTimeout.timeoutException;
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return;
+      }
+      if (response.statusCode == 404) {
         throw Exception("Device not found.");
       }
       throw Exception("Failed to fetch dosage history.");

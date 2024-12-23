@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 
 abstract class GHBaseClient {
@@ -13,14 +15,28 @@ abstract class GHBaseClient {
   }
 
   Future<http.Response> postTokenized(
-      Uri uri, String token, Object? body) async {
+      Uri uri, String token, Object body) async {
     final response = await http.post(
       uri,
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
-      body: body,
+      body: jsonEncode(body),
+    );
+
+    return response;
+  }
+
+  Future<http.Response> patchTokenized(
+      Uri uri, String token, Object body) async {
+    final response = await http.patch(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(body),
     );
 
     return response;

@@ -10,6 +10,7 @@ import 'package:growhub/features/api/cubit/device/device_cubit.dart';
 import 'package:growhub/features/api/cubit/user/user_cubit.dart';
 import 'package:growhub/features/api/data/models/device_model.dart';
 import 'package:growhub/features/device_dashboard/widgets/device_card.dart';
+import 'package:growhub/features/pop-up/device/widgets/add_device_pop_up.dart';
 
 class DashboardPage extends HookWidget {
   const DashboardPage({super.key});
@@ -110,7 +111,7 @@ class DashboardPage extends HookWidget {
                         InkWell(
                           customBorder: const CircleBorder(),
                           onTap: () {
-                            // TODO: Add add new device logic here
+                            showAddDevicePopupDialog(context, AddDevicePopUp());
                           },
                           child: Container(
                             width: 50,

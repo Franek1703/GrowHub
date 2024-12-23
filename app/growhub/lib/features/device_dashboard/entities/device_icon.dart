@@ -1,5 +1,7 @@
 import 'package:growhub/config/assets.gen.dart';
 
+// Watch out! Since there is something fucked up on the backend side
+// DevicIcon indexes start from 1, not from 0.
 enum DeviceIcon {
   cactus,
   daisy,
@@ -29,10 +31,17 @@ enum DeviceIcon {
   }
 
   static DeviceIcon fromIndex(int index) {
-    if (index >= 0 && index < DeviceIcon.values.length) {
-      return DeviceIcon.values[index];
+    // Adjust for 1-based indexing
+    final adjustedIndex = index - 1;
+
+    if (adjustedIndex >= 0 && adjustedIndex < DeviceIcon.values.length) {
+      return DeviceIcon.values[adjustedIndex];
     } else {
       return DeviceIcon.cactus;
     }
+  }
+
+  int get adjustedIndex {
+    return index + 1;
   }
 }

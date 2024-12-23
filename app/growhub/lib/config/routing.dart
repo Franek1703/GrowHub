@@ -79,9 +79,14 @@ class GHRouter {
                   }),
               GoRoute(
                   path: GHRoutePath.settings.path,
-                  pageBuilder: (context, state) => const NoTransitionPage(
-                        child: SettingsPage(),
-                      )),
+                  pageBuilder: (context, state) {
+                    int deviceId = state.extra as int;
+                    return NoTransitionPage(
+                      child: SettingsPage(
+                        deviceId: deviceId,
+                      ),
+                    );
+                  }),
             ],
           ),
           GoRoute(

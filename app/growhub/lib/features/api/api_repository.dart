@@ -5,6 +5,7 @@ import 'package:growhub/features/api/services/api_service.dart';
 import 'package:growhub/features/api/services/auth_service.dart';
 import 'package:growhub/features/api/services/secure_storage_service.dart';
 import 'package:growhub/features/api/data/models/dosage_history_model.dart';
+import 'package:growhub/features/device_dashboard/entities/device_icon.dart';
 
 class ApiRepository {
   final AuthService authService;
@@ -56,6 +57,24 @@ class ApiRepository {
   Future<List<DosageHistoryModel?>> getDosageHistory(
       String token, int deviceId) async {
     return await apiService.getDosageHistory(token, deviceId);
+  }
+
+  /// Update device's values
+  /// At least one parameter is needed from
+  ///`icon`, `location`, `name`
+  Future<void> updateDevice({
+    required String token,
+    required int deviceId,
+    DeviceIcon? icon,
+    String? location,
+    String? name,
+  }) async {
+    await apiService.updateDevice(
+        token: token,
+        deviceId: deviceId,
+        icon: icon,
+        location: location,
+        name: name);
   }
 
   /// Save auth token into the `secure storage`.

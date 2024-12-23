@@ -44,8 +44,7 @@ class MainApp extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-            create: (context) => DosageHistoryCubit(apiRepository)),
+        BlocProvider(create: (context) => DosageHistoryCubit(apiRepository)),
         BlocProvider(
             create: (context) => UserCubit(apiRepository)..autoLogin()),
         BlocProvider(
@@ -68,6 +67,7 @@ class MainApp extends StatelessWidget {
         builder: (context, state) {
           if (state is UserStateStartApp) {
             return const MaterialApp(
+              debugShowCheckedModeBanner: false,
               home: LoadingScreen(),
             );
           }
