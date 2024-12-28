@@ -17,6 +17,8 @@ adc_oneshot_unit_handle_t adc_handle;
 int pHArray[PH_SAMPLES]; // Tablica do przechowywania próbek
 int pHArrayIndex = 0;    // Indeks tablicy próbek
 
+float ph_offset = 0.6;
+
 // Inicjalizacja jednostki ADC
 void init_adc() {
     // Konfiguracja jednostki ADC
@@ -147,7 +149,7 @@ float read_ph() {
     float voltage = (avg / 4095.0) * VREF;  // Skalowanie napięcia
 
     // Dostosowanie napięcia do zakresu pH
-    float ph_value = (voltage * 14.0) / 5.0;   // Wzór na pH: przekształcenie napięcia na pH
+    float ph_value = (voltage * 14.0) / 5.0 - ph_offset;   // Wzór na pH: przekształcenie napięcia na pH
 
     // Zapewniamy, że pH nie wykracza poza zakres 0-14
     if (ph_value > 14.0) ph_value = 14.0;

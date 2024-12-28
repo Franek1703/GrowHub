@@ -12,7 +12,7 @@
 #define WIFI_PASSWORD "12345688"
 
 // Adres URL serwera (przykład z protokołem HTTP)
-#define SERVER_URL "http://192.168.103.55:5000"
+#define SERVER_URL "http://5.75.170.112:5001"
 
 #define RESPONSE_BUFFER_SIZE 1024
 char response_buffer[RESPONSE_BUFFER_SIZE];
