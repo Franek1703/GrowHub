@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:growhub/common/widgets/slider.dart';
 import 'package:growhub/features/api/data/models/sensor_model.dart';
-
 import 'package:growhub/features/pop-up/dialog.dart';
 
 void showSensorValuesPopupDialog(BuildContext context, Widget popup) {
@@ -31,9 +31,8 @@ class SensorValuesPopUp extends HookWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.max,
         children: [
-          Container(
-            height: 5,
-          ),
+          GHSlider(),
+          Container(height: 50),
           Text("*so your plants can live a peaceful life"),
         ],
       ),
