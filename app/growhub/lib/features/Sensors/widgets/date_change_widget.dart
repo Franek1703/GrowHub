@@ -27,7 +27,7 @@ class SlidingDateRange extends HookWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 45),
+      padding: const EdgeInsets.symmetric(horizontal: 35),
       child: Opacity(
         opacity: visible ? 1 : 0,
         child: Row(

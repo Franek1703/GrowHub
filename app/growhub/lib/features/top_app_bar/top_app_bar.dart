@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/config/constants/sizes.dart';
 
-class GHTopAppBar extends StatelessWidget implements PreferredSizeWidget{
-
+class GHTopAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final VoidCallback? onLeadingPressed;
   final bool showLeading;
@@ -28,12 +27,12 @@ class GHTopAppBar extends StatelessWidget implements PreferredSizeWidget{
           color: GHColors.black,
         ),
       ),
-      leading: showLeading 
-        ? IconButton(
-            icon: Icon(Icons.close, color: GHColors.black),
-            onPressed: onLeadingPressed,
-          )
-        :null,
+      leading: showLeading
+          ? IconButton(
+              icon: Icon(Icons.close, color: GHColors.black),
+              onPressed: onLeadingPressed,
+            )
+          : null,
     );
   }
 

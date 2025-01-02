@@ -20,4 +20,8 @@ class ApiClientPath {
   static Uri devices(int deviceId) {
     return Uri.parse("${IpPath.ip}/api/devices/$deviceId");
   }
+
+  static Uri sensorValues(int sensorId) {
+    return Uri.parse("${IpPath.ip}/api/sensor-values/$sensorId");
+  }
 }

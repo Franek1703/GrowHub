@@ -70,11 +70,31 @@ class ApiRepository {
     String? name,
   }) async {
     await apiService.updateDevice(
-        token: token,
-        deviceId: deviceId,
-        icon: icon,
-        location: location,
-        name: name);
+      token: token,
+      deviceId: deviceId,
+      icon: icon,
+      location: location,
+      name: name,
+    );
+  }
+
+  /// Update sensor's values
+  /// At least one parameter is needed from
+  ///`minValue`, `maxValue`, `measurementFrequency`
+  Future<void> updateSensor({
+    required String token,
+    required int sensorId,
+    double? minValue,
+    double? maxValue,
+    double? measurementFrequency,
+  }) async {
+    await apiService.updateSensor(
+      token: token,
+      sensorId: sensorId,
+      minValue: minValue,
+      maxValue: maxValue,
+      measurementFrequency: measurementFrequency,
+    );
   }
 
   /// Save auth token into the `secure storage`.
