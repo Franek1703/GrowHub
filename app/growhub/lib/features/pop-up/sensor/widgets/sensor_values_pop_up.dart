@@ -18,12 +18,17 @@ class SensorValuesPopUp extends HookWidget {
   const SensorValuesPopUp({
     super.key,
     required this.sensor,
+    required this.onValuesSelected,
   });
 
   final SensorModel sensor;
+  final Function(RangeValues values) onValuesSelected;
 
   @override
   Widget build(BuildContext context) {
+    final currentRange =
+        useState(RangeValues(sensor.minValue, sensor.maxValue));
+
     return GHDialog(
       title: "Sensor - ${sensor.name}",
       subtitle: "select acceptable values*",
@@ -35,7 +40,7 @@ class SensorValuesPopUp extends HookWidget {
           GHSlider(
             startValues: RangeValues(sensor.minValue, sensor.maxValue),
             onValuesSelected: (values) {
-              print(values);
+              currentRange.value = values;
             },
           ),
           Container(height: 80),
@@ -45,7 +50,9 @@ class SensorValuesPopUp extends HookWidget {
           ),
         ],
       ),
-      onCheckmarkPressed: () {},
+      onCheckmarkPressed: () {
+        onValuesSelected(currentRange.value);
+      },
     );
   }
 }

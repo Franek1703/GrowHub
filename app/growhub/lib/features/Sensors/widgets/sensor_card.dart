@@ -1,7 +1,9 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:growhub/config/constants/colors.dart';
+import 'package:growhub/features/api/cubit/sensor/sensor_cubit.dart';
 import 'package:growhub/features/api/data/models/sensor_model.dart';
 import 'package:growhub/features/api/data/models/sensor_reading_model.dart';
 import 'package:growhub/features/pop-up/sensor/widgets/sensor_values_pop_up.dart';
@@ -109,6 +111,14 @@ class SensorCard extends HookWidget {
                 context,
                 SensorValuesPopUp(
                   sensor: sensor,
+                  onValuesSelected: (values) {
+                    print(values);
+                    context.read<SensorCubit>().updateSensor(
+                          sensorId: sensor.id,
+                          minValue: values.start,
+                          maxValue: values.end,
+                        );
+                  },
                 ),
               );
             },

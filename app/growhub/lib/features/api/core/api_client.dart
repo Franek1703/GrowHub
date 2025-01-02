@@ -23,4 +23,10 @@ class ApiClient extends GHBaseClient {
       String token, int deviceId, Map<String, dynamic> body) async {
     return super.patchTokenized(ApiClientPath.devices(deviceId), token, body);
   }
+
+  Future<http.Response> updateSensorValues(
+      String token, int sensorId, Map<String, dynamic> body) async {
+    return super
+        .patchTokenized(ApiClientPath.sensorValues(sensorId), token, body);
+  }
 }

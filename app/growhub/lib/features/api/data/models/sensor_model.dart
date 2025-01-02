@@ -47,4 +47,24 @@ class SensorModel {
     readings.sort((a, b) => b.recordedAt.compareTo(a.recordedAt));
     return readings.first;
   }
+
+  SensorModel copyWith({
+    int? id,
+    String? name,
+    String? unit,
+    double? minValue,
+    double? maxValue,
+    SensorReadingModel? lastSensorReading,
+    List<SensorReadingModel>? readings,
+  }) {
+    return SensorModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      unit: unit ?? this.unit,
+      minValue: minValue ?? this.minValue,
+      maxValue: maxValue ?? this.maxValue,
+      lastSensorReading: lastSensorReading ?? this.lastSensorReading,
+      readings: readings ?? this.readings,
+    );
+  }
 }
