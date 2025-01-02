@@ -41,8 +41,8 @@ class IconCircle extends HookWidget {
         ),
         child: SvgPicture.asset(
           icon.path,
-          width: 52,
-          height: 52,
+          width: 42,
+          height: 42,
           fit: BoxFit.contain,
           colorFilter: ColorFilter.mode(GHColors.black, BlendMode.srcIn),
         ),

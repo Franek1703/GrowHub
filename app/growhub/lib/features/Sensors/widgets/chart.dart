@@ -85,13 +85,17 @@ class SensorChart extends StatelessWidget {
               ),
               lineTouchData: LineTouchData(
                 touchTooltipData: LineTouchTooltipData(
-                  getTooltipColor: (touchedSpot) => gradientColor,
+                  getTooltipColor: (touchedSpot) =>
+                      GHColors.black.withOpacity(0.8),
                   tooltipPadding:
                       const EdgeInsets.symmetric(vertical: 7, horizontal: 5),
                   getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
                     return touchedBarSpots.map((LineBarSpot spot) {
                       return LineTooltipItem(
-                          '${spot.y.toStringAsFixed(1)}$unit', TextStyle());
+                          '${spot.y.toStringAsFixed(1)}$unit',
+                          TextStyle(
+                            color: GHColors.white,
+                          ));
                     }).toList();
                   },
                 ),
