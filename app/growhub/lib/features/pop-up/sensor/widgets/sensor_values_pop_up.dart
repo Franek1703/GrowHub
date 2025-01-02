@@ -17,10 +17,14 @@ void showSensorValuesPopupDialog(BuildContext context, Widget popup) {
 class SensorValuesPopUp extends HookWidget {
   const SensorValuesPopUp({
     super.key,
+    required this.minSliderValue,
+    required this.maxSliderValue,
     required this.sensor,
     required this.onValuesSelected,
   });
 
+  final double minSliderValue;
+  final double maxSliderValue;
   final SensorModel sensor;
   final Function(RangeValues values) onValuesSelected;
 
@@ -38,6 +42,8 @@ class SensorValuesPopUp extends HookWidget {
         children: [
           Container(height: 10),
           GHSlider(
+            min: minSliderValue,
+            max: maxSliderValue,
             startValues: RangeValues(sensor.minValue, sensor.maxValue),
             onValuesSelected: (values) {
               currentRange.value = values;

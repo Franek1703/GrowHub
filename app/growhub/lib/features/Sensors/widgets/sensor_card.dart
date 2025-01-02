@@ -110,6 +110,8 @@ class SensorCard extends HookWidget {
               showSensorValuesPopupDialog(
                 context,
                 SensorValuesPopUp(
+                  minSliderValue: 0,
+                  maxSliderValue: 100,
                   sensor: sensor,
                   onValuesSelected: (values) {
                     print(values);

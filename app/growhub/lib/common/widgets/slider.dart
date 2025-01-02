@@ -5,10 +5,14 @@ import 'package:growhub/config/constants/colors.dart';
 class GHSlider extends HookWidget {
   const GHSlider({
     super.key,
+    required this.min,
+    required this.max,
     required this.startValues,
     required this.onValuesSelected,
   });
 
+  final double min;
+  final double max;
   final RangeValues startValues;
   final Function(RangeValues values) onValuesSelected;
 
@@ -33,7 +37,8 @@ class GHSlider extends HookWidget {
             ),
             child: RangeSlider(
               values: rangeValue.value,
-              max: 100,
+              min: min,
+              max: max,
               divisions: 20,
               onChanged: (RangeValues values) {
                 rangeValue.value = values;
