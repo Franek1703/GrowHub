@@ -3,29 +3,43 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:growhub/config/constants/colors.dart';
 
 class GHSlider extends HookWidget {
-  const GHSlider({super.key});
+  const GHSlider({
+    super.key,
+    required this.startValues,
+    required this.onValuesSelected,
+  });
+
+  final RangeValues startValues;
+  final Function(RangeValues values) onValuesSelected;
 
   @override
   Widget build(BuildContext context) {
-    final value = useState(40.0);
+    final rangeValue = useState(startValues); // Initial range values
 
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment:
+          CrossAxisAlignment.stretch, // Ensures it takes up full width
       children: [
-        SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            thumbShape: CustomSliderThumb(value.value), // Custom thumb shape
-            activeTrackColor: GHColors.black,
-            inactiveTrackColor: GHColors.black.withOpacity(0.5),
-            thumbColor: GHColors.black,
-          ),
-          child: Slider(
-            value: value.value,
-            max: 100,
-            divisions: 20,
-            onChanged: (double v) {
-              value.value = v;
-            },
+        Padding(
+          padding: EdgeInsets.zero, // Removes any padding around the slider
+          child: SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              rangeThumbShape: CustomRangeThumbShape(
+                  rangeValue: rangeValue.value), // Custom thumb shape
+              activeTrackColor: GHColors.black,
+              inactiveTrackColor: GHColors.black.withOpacity(0.6),
+              thumbColor: GHColors.black,
+            ),
+            child: RangeSlider(
+              values: rangeValue.value,
+              max: 100,
+              divisions: 20,
+              onChanged: (RangeValues values) {
+                rangeValue.value = values;
+                onValuesSelected(values);
+              },
+            ),
           ),
         ),
       ],
@@ -33,14 +47,14 @@ class GHSlider extends HookWidget {
   }
 }
 
-class CustomSliderThumb extends SliderComponentShape {
-  final double value;
+class CustomRangeThumbShape extends RangeSliderThumbShape {
+  final RangeValues rangeValue;
 
-  CustomSliderThumb(this.value);
+  const CustomRangeThumbShape({required this.rangeValue});
 
   @override
   Size getPreferredSize(bool isEnabled, bool isDiscrete) {
-    return const Size(80, 80); // Rozmiar thumb
+    return const Size(40, 40); // Size of the thumb
   }
 
   @override
@@ -49,28 +63,32 @@ class CustomSliderThumb extends SliderComponentShape {
     Offset center, {
     required Animation<double> activationAnimation,
     required Animation<double> enableAnimation,
-    required bool isDiscrete,
-    required TextPainter labelPainter,
-    required RenderBox parentBox,
+    bool? isDiscrete,
+    bool? isEnabled,
+    bool? isOnTop,
+    TextDirection? textDirection,
     required SliderThemeData sliderTheme,
-    required TextDirection textDirection,
-    required double value,
-    required double textScaleFactor,
-    required Size sizeWithOverflow,
+    Thumb? thumb,
+    bool? isPressed,
   }) {
     final canvas = context.canvas;
 
-    // Draw the circle for the thumb
+    // Draw the thumb circle
     final thumbPaint = Paint()..color = sliderTheme.thumbColor!;
-    canvas.drawCircle(center, 14, thumbPaint);
+    canvas.drawCircle(center, 14, thumbPaint); // Thumb size (radius: 15)
+
+    // Get the value for the thumb dynamically
+    final valueText = thumb == Thumb.start
+        ? rangeValue.start.toStringAsFixed(0) // Left thumb value
+        : rangeValue.end.toStringAsFixed(0); // Right thumb value
 
     // Draw the value text
     final textSpan = TextSpan(
-      text: this.value.round().toString(),
+      text: valueText,
       style: const TextStyle(
         color: Colors.white,
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
       ),
     );
 

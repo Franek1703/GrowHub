@@ -31,8 +31,14 @@ class SensorValuesPopUp extends HookWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.max,
         children: [
-          const GHSlider(),
-          Container(height: 70),
+          Container(height: 10),
+          GHSlider(
+            startValues: RangeValues(sensor.minValue, sensor.maxValue),
+            onValuesSelected: (values) {
+              print(values);
+            },
+          ),
+          Container(height: 80),
           const Text(
             "*so your plants can lead a peaceful life",
             textAlign: TextAlign.center,

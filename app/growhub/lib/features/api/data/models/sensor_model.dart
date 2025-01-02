@@ -4,6 +4,8 @@ class SensorModel {
   final int id;
   final String name;
   final String unit;
+  final double minValue;
+  final double maxValue;
   final SensorReadingModel? lastSensorReading;
 
   List<SensorReadingModel> readings;
@@ -12,6 +14,8 @@ class SensorModel {
     required this.id,
     required this.name,
     required this.unit,
+    required this.minValue,
+    required this.maxValue,
     required this.lastSensorReading,
     this.readings = const [],
   });
@@ -21,6 +25,8 @@ class SensorModel {
       id: json['sensor_id'],
       name: json['sensor_type'],
       unit: json["unit"],
+      minValue: json["min_value"],
+      maxValue: json["max_value"],
       lastSensorReading:
           json['last_reading'] != null && json['last_reading'].isNotEmpty
               ? SensorReadingModel.fromJson(json['last_reading'])
