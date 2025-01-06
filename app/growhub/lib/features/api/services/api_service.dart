@@ -170,4 +170,49 @@ class ApiService {
       throw Exception("Error fetching dosage history: $e");
     }
   }
+
+  Future<void> updateSensor({
+    required String token,
+    required int sensorId,
+    double? minValue,
+    double? maxValue,
+    double? measurementFrequency,
+  }) async {
+    try {
+      final Map<String, dynamic> updates = {};
+
+      if (minValue != null) {
+        updates['min_value'] = minValue;
+      }
+      if (maxValue != null) {
+        updates['max_value'] = maxValue;
+      }
+      if (measurementFrequency != null) {
+        updates['measurement_frequency'] = measurementFrequency;
+      }
+
+      if (updates.isEmpty) {
+        throw Exception(
+            "At least one field (minValue, maxValue, measurementFrequency) is required to update the device.");
+      }
+
+      final response =
+          await apiClient.updateSensorValues(token, sensorId, updates).timeout(
+        ApiTimeout.timeout,
+        onTimeout: () {
+          throw ApiTimeout.timeoutException;
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return;
+      }
+      if (response.statusCode == 404) {
+        throw Exception("Sensor not found.");
+      }
+      throw Exception("Error patching sensor.");
+    } catch (e) {
+      throw Exception("Error patching sensor: $e");
+    }
+  }
 }

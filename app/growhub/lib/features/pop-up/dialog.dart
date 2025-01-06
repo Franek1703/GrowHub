@@ -7,6 +7,7 @@ class GHDialog extends HookWidget {
   const GHDialog({
     super.key,
     required this.title,
+    this.subtitle,
     required this.body,
     this.onCheckmarkPressed,
     this.height,
@@ -19,6 +20,11 @@ class GHDialog extends HookWidget {
   ///
   /// Use this to give context or purpose for the dialog.
   final String title;
+
+  /// The subtitle text displayed below the title.
+  ///
+  /// Use this to give context or purpose for the dialog.
+  final String? subtitle;
 
   /// Optional height of the dialog.
   ///
@@ -90,13 +96,26 @@ class GHDialog extends HookWidget {
               ],
             ),
             const SizedBox(height: 10),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: GHColors.black,
-              ),
+            Column(
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: GHColors.black,
+                  ),
+                ),
+                if (subtitle != null)
+                  Text(
+                    subtitle!,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                      color: GHColors.black,
+                    ),
+                  ),
+              ],
             ),
 
             const SizedBox(height: 20),

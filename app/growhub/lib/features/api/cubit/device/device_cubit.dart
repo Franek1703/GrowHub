@@ -90,7 +90,6 @@ class DeviceCubit extends Cubit<DeviceState> {
     try {
       return devices.firstWhere((device) => device.id == id);
     } catch (e) {
-      // Jeśli urządzenie nie zostanie znalezione, zwróć null
       return null;
     }
   }
