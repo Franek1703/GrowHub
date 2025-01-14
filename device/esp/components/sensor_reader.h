@@ -12,7 +12,8 @@
 // Definicje dla OneWire
 #define EXAMPLE_ONEWIRE_BUS_GPIO    4
 #define EXAMPLE_ONEWIRE_MAX_DS18B20 2
-#define PH_SAMPLES 40
+#define PH_SAMPLES 15
+#define TDS_SAMPLES 10
 
 // Deklaracja funkcji
 void init_adc(void);

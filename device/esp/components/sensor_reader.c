@@ -4,6 +4,7 @@
 
 #define VREF 5.0 // Odniesienie napięcia dla czujników TDS i pH
 
+
 static const char *TAG = "SensorReader";
 
 // Uchwyt do DS18B20
@@ -18,6 +19,10 @@ int pHArray[PH_SAMPLES]; // Tablica do przechowywania próbek
 int pHArrayIndex = 0;    // Indeks tablicy próbek
 
 float ph_offset = 0.6;
+
+// Parametry do zbierania próbek TDS
+int tdsArray[TDS_SAMPLES]; // Tablica do przechowywania próbek
+int tdsArrayIndex = 0;     // Indeks tablicy próbek
 
 // Inicjalizacja jednostki ADC
 void init_adc() {
@@ -89,6 +94,29 @@ void init_onewire() {
 }
 
 
+// Funkcja do obliczania średniej z próbek TDS, eliminując wartości ekstremalne
+double average_tds_samples(int* arr, int number) {
+    int i;
+    int max = arr[0], min = arr[0];
+    long sum = 0;
+
+    // Znajdź maksymalną i minimalną wartość
+    for (i = 0; i < number; i++) {
+        if (arr[i] > max) max = arr[i];
+        if (arr[i] < min) min = arr[i];
+    }
+
+    // Oblicz sumę, pomijając maksimum i minimum
+    for (i = 0; i < number; i++) {
+        if (arr[i] != max && arr[i] != min) {
+            sum += arr[i];
+        }
+    }
+
+    // Średnia z pozostałych wartości
+    return (double)sum / (number - 2);
+}
+
 float read_tds() {
     int sensor_value;
     esp_err_t ret = adc_oneshot_read(adc_handle, TDS_SENSOR_PIN, &sensor_value);
@@ -96,9 +124,23 @@ float read_tds() {
         ESP_LOGE(TAG, "Failed to read TDS sensor: %s", esp_err_to_name(ret));
         return -1.0; // Błąd odczytu
     }
-    ESP_LOGI(TAG, "TDS: %d", sensor_value);
-    float voltage = (sensor_value / 4095.0) * 3.3;
-    float tds_value = (133.42 * voltage * voltage * voltage - 255.86 * voltage * voltage + 857.39 * voltage) * 0.5; // Wzór na TDS w ppm
+    ESP_LOGI(TAG, "TDS Sensor data: %d", sensor_value);
+    
+    // Zapisz próbkowanie TDS do tablicy
+    tdsArray[tdsArrayIndex++] = sensor_value;
+    if (tdsArrayIndex == TDS_SAMPLES) {
+        tdsArrayIndex = 0; // Przepełnienie tablicy
+    }
+
+    // Oblicz średnią z próbek
+    double avg = average_tds_samples(tdsArray, TDS_SAMPLES);
+
+    // Przekształć średnią wartość na napięcie
+    float voltage = (avg / 4095.0) * 3.3;
+
+    // Wzór na TDS w ppm
+    float tds_value = (133.42 * voltage * voltage * voltage - 255.86 * voltage * voltage + 857.39 * voltage) * 0.5;
+    
     ESP_LOGI(TAG, "TDS: %.2f ppm", tds_value);
     return tds_value;
 }
