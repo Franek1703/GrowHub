@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:growhub/config/constants/colors.dart';
+import 'package:growhub/features/Sensors/sensor_min_max.dart';
 import 'package:growhub/features/api/cubit/sensor/sensor_cubit.dart';
 import 'package:growhub/features/api/data/models/sensor_model.dart';
 import 'package:growhub/features/api/data/models/sensor_reading_model.dart';
@@ -110,8 +111,8 @@ class SensorCard extends HookWidget {
               showSensorValuesPopupDialog(
                 context,
                 SensorValuesPopUp(
-                  minSliderValue: 0,
-                  maxSliderValue: 100,
+                  minSliderValue: SensorMinMax().getSensorMin(sensor.name),
+                  maxSliderValue: SensorMinMax().getSensorMax(sensor.name),
                   sensor: sensor,
                   onValuesSelected: (values) {
                     print(values);
