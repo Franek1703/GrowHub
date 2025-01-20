@@ -4,12 +4,14 @@ import 'package:growhub/features/api/data/models/sensor_model.dart';
 class DeviceModel {
   final int id;
   final String name;
+  final String? location;
   final List<SensorModel> sensors;
   final DeviceIcon icon;
 
   DeviceModel({
     required this.id,
     required this.name,
+    this.location,
     required this.sensors,
     required this.icon,
   });
@@ -18,6 +20,7 @@ class DeviceModel {
     return DeviceModel(
       id: json['device_id'],
       name: json['name'],
+      location: json['location'],
       sensors: List<SensorModel>.from(
         json['sensors'].map((x) => SensorModel.fromJson(x)),
       ),
@@ -28,12 +31,14 @@ class DeviceModel {
   DeviceModel copyWith({
     int? id,
     String? name,
+    String? location,
     List<SensorModel>? sensors,
     DeviceIcon? icon,
   }) {
     return DeviceModel(
       id: id ?? this.id,
       name: name ?? this.name,
+      location: location ?? this.location,
       sensors: sensors ?? this.sensors,
       icon: icon ?? this.icon,
     );

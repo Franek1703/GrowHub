@@ -10,8 +10,7 @@ import 'package:growhub/features/login/widgets/input_filed.dart';
 import 'package:growhub/features/settings/widgets/toggle.dart';
 
 /// The `SettingsPage` is responsible for rendering the settings interface
-/// for a specific device. It displays the device name, a dosage toggle, and an
-/// icon representing the device.
+/// for a specific device. It displays the device name, location, a dosage toggle, and an icon representing the device.
 class SettingsPage extends HookWidget {
   const SettingsPage({
     super.key,
@@ -39,19 +38,21 @@ class SettingsPage extends HookWidget {
     return null;
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
-    // A state hook to track changes in the device name.
+    // State hooks to track changes in the device name and location.
     final deviceName = useState<String>("");
+    final deviceLocation = useState<String>("");
 
     useEffect(() {
-      // Initialize deviceName only once when the widget is first built.
+      // Initialize deviceName and deviceLocation only once when the widget is first built.
       final device = context.read<DeviceCubit>().findDeviceById(
             getDevices(context.read<DeviceCubit>().state)!,
             deviceId,
           );
-      if (device != null && deviceName.value.isEmpty) {
-        deviceName.value = device.name;
+      if (device != null) {
+        if (deviceName.value.isEmpty) deviceName.value = device.name;
+        if (deviceLocation.value.isEmpty) deviceLocation.value = device.location ?? "";
       }
       return null; // Cleanup function not needed.
     }, [deviceId]); // Run only when the widget is created or deviceId changes.
@@ -97,6 +98,25 @@ class SettingsPage extends HookWidget {
                       context.read<DeviceCubit>().updateDevice(
                             deviceId: deviceId,
                             name: value,
+                          );
+                    },
+                  ),
+
+                  // Spacer between the input fields.
+                  const SizedBox(height: 16),
+
+                  // Input field for the device location.
+                  GHInputField(
+                    text: deviceLocation.value,
+                    hintText: "Device Location",
+                    title: "Device Location",
+                    onTitleChange: (value) {
+                      deviceLocation.value = value;
+
+                      // Save the updated device location using the DeviceCubit.
+                      context.read<DeviceCubit>().updateDevice(
+                            deviceId: deviceId,
+                            location: value,
                           );
                     },
                   ),
