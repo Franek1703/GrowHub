@@ -129,6 +129,35 @@ def add_user_device():
 
     return jsonify({"message":"Device added successfully"}), 200
 
+# Add new user-device relation using ssid
+@api.route('/user-devices/ssid', methods=['POST'])
+@jwt_required()
+@swag_from('../swagger_templates/add_user_device_ssid.yml')
+def add_user_device_by_ssid():
+    user = get_user_by_jwt()
+    if not user:
+        return jsonify({'message': 'User not found.'}), 400
+
+    data = request.get_json()
+
+    ssid = data.get('ssid')
+    
+    if not ssid:
+        return jsonify({"message": "Field ssid has to be provided."}), 400
+    
+    device = Device.query.filter_by(ssid=ssid).first()
+
+    if not device:
+        return jsonify({"message": f"There is no device with ssid = {ssid}"}), 400
+
+    if device in user.devices:
+        return jsonify({"message": "Device is already associated with the user."}), 400
+    
+    user.devices.append(device)
+    db.session.commit()
+
+    return jsonify({"message": "Device added successfully"}), 200
+
 # Remove user-device relation using JSON payload
 @api.route('/user-devices', methods=['DELETE'])
 @jwt_required()
@@ -358,4 +387,4 @@ def update_device(device_id):
         device.icon = icon
     db.session.commit()
 
-    return jsonify({"message": "Device updated successfully."}), 200
+    return jsonify({"message": "Device updated successfully."}), 
