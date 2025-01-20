@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:growhub/config/constants/colors.dart';
-import 'package:growhub/features/notification/cubit/notification_cubit.dart';
-import 'package:growhub/features/notification/model/notification_model.dart';
+import 'package:growhub/features/api/cubit/alert/alert_cubit.dart';
+import 'package:growhub/features/api/data/models/alert_model.dart';
 
 class NotificationMenu extends StatelessWidget {
-  final NotificationModel model;
+  final AlertModel model;
   final void Function() hideMenu;
   const NotificationMenu(
       {super.key, required this.model, required this.hideMenu});
@@ -19,8 +19,8 @@ class NotificationMenu extends StatelessWidget {
         "Mark as resolved",
         model.isResolved
             ? () {}
-            : () {
-                context.read<NotificationCubit>().markAsResolved(model);
+            : () async{
+                await context.read<AlertCubit>().markAsResolved(model);
                 hideMenu();
               },
         Icons.done,
@@ -28,8 +28,8 @@ class NotificationMenu extends StatelessWidget {
       ),
       (
         "Delete",
-        () {
-          context.read<NotificationCubit>().deleteNotification(model);
+        () async{
+          await context.read<AlertCubit>().deleteAlert(model);
           hideMenu();
         },
         Icons.delete,

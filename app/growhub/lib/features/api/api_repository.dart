@@ -1,3 +1,4 @@
+import 'package:growhub/features/api/data/models/alert_model.dart';
 import 'package:growhub/features/api/data/models/device_model.dart';
 import 'package:growhub/features/api/data/models/sensor_model.dart';
 import 'package:growhub/features/api/data/models/user_model.dart';
@@ -116,4 +117,20 @@ class ApiRepository {
   Future<void> clearTokens() async {
     await secureStorageService.clearTokens();
   }
+
+  /// Get all user alerts.
+  Future<Set<AlertModel>> getAlerts(String token) async {
+    return await apiService.getAlerts(token);
+  }
+
+  /// Mark alert as resolved.
+  Future<void> markAlertAsResolved(String token, int alertId) async {
+    await apiService.markAlertAsResolved(token, alertId);
+  }
+
+  /// Delete alert.
+  Future<void> deleteAlert(String token, int alertId) async {
+    await apiService.deleteAlert(token, alertId);
+  }
+
 }

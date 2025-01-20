@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:growhub/config/assets.gen.dart';
 import 'package:growhub/config/constants/colors.dart';
-import 'package:growhub/features/notification/model/notification_model.dart';
+import 'package:growhub/features/api/data/models/alert_model.dart';
 
 class NotificationTile extends StatelessWidget {
-  final NotificationModel tile;
+  final AlertModel tile;
   final void Function() onTileMenuOpen;
   const NotificationTile(
       {super.key, required this.tile, required this.onTileMenuOpen});

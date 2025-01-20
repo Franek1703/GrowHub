@@ -29,4 +29,16 @@ class ApiClient extends GHBaseClient {
     return super
         .patchTokenized(ApiClientPath.sensorValues(sensorId), token, body);
   }
+
+  Future<http.Response> getAlerts(String token) async {
+    return super.getTokenized(ApiClientPath.alerts(), token);
+  }
+
+  Future<http.Response> updateAlert(String token, int alertId) async {
+    return super.patchTokenized(ApiClientPath.resolveAlert(alertId), token, null);
+  }
+
+  Future<http.Response> deleteAlert(String token, int alertId) async {
+    return super.getTokenized(ApiClientPath.deleteAlert(alertId), token);
+  }
 }
