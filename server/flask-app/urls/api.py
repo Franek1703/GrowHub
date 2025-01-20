@@ -2,8 +2,9 @@ from flask import Blueprint, jsonify, request, redirect
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flasgger import swag_from
 from sqlalchemy import desc, and_, asc
+from datetime import datetime
 
-from models import User, DosageHistory, SensorReading, Sensor, db, Device, FertilizingDevice
+from models import User, DosageHistory, SensorReading, Sensor, db, Device, FertilizingDevice, Alert
 
 api = Blueprint('api', __name__)
 
@@ -387,4 +388,68 @@ def update_device(device_id):
         device.icon = icon
     db.session.commit()
 
-    return jsonify({"message": "Device updated successfully."}), 
+    return jsonify({"message": "Device updated successfully."}), 200
+
+@api.route('/alerts', methods=['GET'])
+@jwt_required()
+def get_user_alerts():
+    """
+    Get all alerts for the current user, including device and sensor names.
+    """
+    user = get_user_by_jwt()
+    if not user:
+        return jsonify({'message': 'User not found.'}), 404
+
+    devices = user.devices
+    alerts_list = []
+
+    for device in devices:
+        sensors = Sensor.query.filter_by(device_id=device.device_id).all()
+        for sensor in sensors:
+            alerts = Alert.query.filter_by(sensor_id=sensor.sensor_id).all()
+            for alert in alerts:
+                alert_dict = alert.to_dict()
+                alert_dict['device_name'] = device.name
+                alert_dict['sensor_name'] = sensor.sensor_type
+                alerts_list.append(alert_dict)
+
+    return jsonify(alerts=alerts_list), 200
+
+@api.route('/alerts/<int:alert_id>/resolve', methods=['PATCH'])
+@jwt_required()
+def resolve_alert(alert_id):
+    """
+    Mark an alert as resolved by its ID.
+    """
+    user = get_user_by_jwt()
+    if not user:
+        return jsonify({'message': 'User not found.'}), 404
+
+    alert = Alert.query.get(alert_id)
+    if not alert:
+        return jsonify({'message': 'Alert not found.'}), 404
+
+    alert.resolved = True
+    alert.resolved_at = datetime.utcnow()
+    db.session.commit()
+
+    return jsonify({'message': 'Alert marked as resolved.'}), 200
+
+@api.route('/alerts/<int:alert_id>', methods=['DELETE'])
+@jwt_required()
+def delete_alert(alert_id):
+    """
+    Delete an alert by its ID.
+    """
+    user = get_user_by_jwt()
+    if not user:
+        return jsonify({'message': 'User not found.'}), 404
+
+    alert = Alert.query.get(alert_id)
+    if not alert:
+        return jsonify({'message': 'Alert not found.'}), 404
+
+    db.session.delete(alert)
+    db.session.commit()
+
+    return jsonify({'message': 'Alert deleted successfully.'}), 200
