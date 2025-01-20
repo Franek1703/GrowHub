@@ -121,21 +121,21 @@ class SettingsPage extends HookWidget {
                     },
                   ),
 
-                  // Spacer between the input field and the dosage toggle.
-                  const SizedBox(height: 32),
+                  // // Spacer between the input field and the dosage toggle.
+                  // const SizedBox(height: 32),
 
-                  // Toggle widget to switch between automatic and manual dosage settings.
-                  Center(
-                    child: GHToggle(
-                      title: 'Dosage',
-                      leftText: 'Auto',
-                      rightText: 'every 12h',
-                      onToggle: (isLeftSelected) {
-                        // Handle toggle changes and print the selected state.
-                        print(isLeftSelected ? 'Auto selected' : 'Every 12h selected');
-                      },
-                    ),
-                  ),
+                  // // Toggle widget to switch between automatic and manual dosage settings.
+                  // Center(
+                  //   child: GHToggle(
+                  //     title: 'Dosage',
+                  //     leftText: 'Auto',
+                  //     rightText: 'every 12h',
+                  //     onToggle: (isLeftSelected) {
+                  //       // Handle toggle changes and print the selected state.
+                  //       print(isLeftSelected ? 'Auto selected' : 'Every 12h selected');
+                  //     },
+                  //   ),
+                  // ),
 
                   // Spacer between the toggle and the device icon.
                   const SizedBox(height: 42),
