@@ -217,7 +217,7 @@ class ApiService {
     }
   }
 
-  Future<Set<AlertModel>> getAlerts(String token) async {
+  Future<List<AlertModel>> getAlerts(String token) async {
     try {
       final response = await apiClient.getAlerts(token).timeout(
         ApiTimeout.timeout,
@@ -228,7 +228,7 @@ class ApiService {
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
 
-        Set<AlertModel> alerts = {};
+        List<AlertModel> alerts = [];
         for (var alert in body["alerts"]) {
           alerts.add(AlertModel.fromJson(alert));
         }
@@ -277,7 +277,6 @@ class ApiService {
       if (response.statusCode == 404) {
         throw Exception("Alert not found.");
       }
-      throw Exception("Failed to delete alert.");
     } catch (e) {
       throw Exception("Error deleting alert: $e");
     }

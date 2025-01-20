@@ -1,5 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
+import 'package:intl/intl.dart';
 
 class AlertModel {
   final int id;
@@ -23,13 +22,14 @@ class AlertModel {
   });
 
   factory AlertModel.fromJson(Map<String, dynamic> map) {
+    final dateFormat = DateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
     return AlertModel(
       id: map['alert_id'] as int,
       message: map['message'] as String,
       isResolved: map['resolved'] as bool,
       value: map['value'] as double,
-      time: DateTime.fromMillisecondsSinceEpoch(map['alert_time'] as int),
-      resolvedTime: map['resolved_at'] != null ? DateTime.fromMillisecondsSinceEpoch(map['resolvedTime'] as int) : null,
+      time: dateFormat.parse(map['alert_time']),
+      resolvedTime: map['resolved_at'] != null ? dateFormat.parse(map['resolved_at']) : null,
       sensorName: map['sensor_name'] as String,
       deviceName: map['device_name'] as String,
     );

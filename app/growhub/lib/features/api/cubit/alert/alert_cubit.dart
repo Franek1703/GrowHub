@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:growhub/features/api/api_repository.dart';
 import 'package:growhub/features/api/data/models/alert_model.dart';
 
@@ -13,7 +12,7 @@ class AlertCubit extends Cubit<AlertState> {
     if (state is AlertStateLoaded) {
       emit(AlertStateLoading(alerts: state.alerts));
     } else {
-      emit(const AlertStateLoading());
+      emit(AlertStateLoading());
     }
     try {
       final token = await apiRepository.getToken();
@@ -22,6 +21,9 @@ class AlertCubit extends Cubit<AlertState> {
         return;
       }
       final alerts = await apiRepository.getAlerts(token);
+      alerts.sort(
+        (a, b) => -a.time.compareTo(b.time),
+      );
       emit(AlertStateLoaded(alerts: alerts));
     } catch (e) {
       emit(AlertStateError(error: e.toString()));
@@ -35,9 +37,9 @@ class AlertCubit extends Cubit<AlertState> {
       if (token == null) {
         return;
       }
+      apiRepository.markAlertAsResolved(token, alert.id);
       state.alerts.firstWhere((element) => element == alert).isResolved = true;
-      await apiRepository.markAlertAsResolved(token, alert.id);
-      emit(AlertStateLoaded(alerts: state.alerts));
+      emit(AlertStateLoaded(alerts: [...state.alerts]));
     }
   }
 
@@ -50,7 +52,7 @@ class AlertCubit extends Cubit<AlertState> {
       }
       await apiRepository.deleteAlert(token, alert.id);
       emit(AlertStateLoaded(
-          alerts: state.alerts.where((element) => element != alert).toSet()));
+          alerts: state.alerts.where((element) => element != alert).toList()));
     }
   }
 

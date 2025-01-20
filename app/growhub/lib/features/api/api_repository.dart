@@ -119,7 +119,7 @@ class ApiRepository {
   }
 
   /// Get all user alerts.
-  Future<Set<AlertModel>> getAlerts(String token) async {
+  Future<List<AlertModel>> getAlerts(String token) async {
     return await apiService.getAlerts(token);
   }
 

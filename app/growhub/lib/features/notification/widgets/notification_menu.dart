@@ -19,18 +19,18 @@ class NotificationMenu extends StatelessWidget {
         "Mark as resolved",
         model.isResolved
             ? () {}
-            : () async{
-                await context.read<AlertCubit>().markAsResolved(model);
+            : () async {
                 hideMenu();
+                await context.read<AlertCubit>().markAsResolved(model);
               },
         Icons.done,
         model.isResolved ? GHColors.grey.withOpacity(0.6) : GHColors.black,
       ),
       (
         "Delete",
-        () async{
-          await context.read<AlertCubit>().deleteAlert(model);
+        () async {
           hideMenu();
+          await context.read<AlertCubit>().deleteAlert(model);
         },
         Icons.delete,
         Colors.red,

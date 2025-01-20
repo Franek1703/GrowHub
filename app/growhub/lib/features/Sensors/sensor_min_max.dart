@@ -19,7 +19,7 @@ class SensorMinMax{
       case "temp":
         return 125.0;
       case "tds":
-        return 1000.0;
+        return 1500.0;
       case "ph":
         return 14.0;
       case "humidity":

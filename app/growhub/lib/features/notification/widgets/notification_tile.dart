@@ -57,7 +57,7 @@ class NotificationTile extends StatelessWidget {
                                     color: Colors.red,
                                     fontWeight: FontWeight.w600)),
                         TextSpan(
-                            text: tile.message,
+                            text: "Device:${tile.deviceName}, Sensor:${tile.sensorName}, Message:${tile.message}, Value:${tile.value}",
                             style: Theme.of(context).textTheme.bodyMedium),
                       ],
                     ),

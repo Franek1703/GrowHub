@@ -5,6 +5,7 @@ import 'package:growhub/common/widgets/progress_indicator_small.dart';
 import 'package:growhub/common/widgets/refresh_indicator.dart';
 import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/features/api/cubit/alert/alert_cubit.dart';
+import 'package:growhub/features/api/data/models/alert_model.dart';
 import 'package:growhub/features/notification/widgets/notification_menu.dart';
 import 'package:growhub/features/notification/widgets/notification_tile.dart';
 
@@ -13,17 +14,18 @@ class NotificationPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-
     useMemoized(
       () async {
-        await context.read<AlertCubit>().loadAlert();
+        context.read<AlertCubit>().loadAlert();
       },
     );
     return BlocBuilder<AlertCubit, AlertState>(
       builder: (context, state) {
-        if (state is AlertStateLoaded || (state is AlertStateLoading && state.alerts != null)) {
+        print(state);
+        if (state is AlertStateLoaded ||
+            (state is AlertStateLoading && state.alerts != null)) {
           dynamic alertState = state;
-          final notificationTiles = alertState.alerts;
+          final List<AlertModel> notificationTiles = alertState.alerts;
           final now = DateTime.now();
 
           final newTiles = notificationTiles.where((element) {
@@ -52,51 +54,45 @@ class NotificationPage extends HookWidget {
                   left: 10, right: 10, bottom: 90, top: 10),
               scrollDirection: Axis.vertical,
               children: [
-                Builder(builder: (context) {
-                  if (newTiles.isNotEmpty) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 40),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "New",
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                                color: GHColors.black),
-                          ),
-                          Divider(
-                            color: GHColors.grey,
-                          ),
-                          ...newTiles.map((tile) => NotificationTile(
-                                tile: tile,
-                                onTileMenuOpen: () {
-                                  showModalBottomSheet<void>(
-                                      useRootNavigator: true,
-                                      clipBehavior: Clip.hardEdge,
-                                      barrierColor:
-                                          GHColors.black.withOpacity(0.8),
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return NotificationMenu(
-                                            model: tile,
-                                            hideMenu: () =>
-                                                Navigator.pop(context));
-                                      });
-                                },
-                              ))
-                        ],
-                      ),
-                    );
-                  } else {
-                    return const SizedBox.shrink();
-                  }
-                }),
-                Builder(
-                  builder: (context) {
-                    if (todaysTiles.isNotEmpty) {
-                      return Padding(
+                newTiles.isNotEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.only(bottom: 40),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "New",
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: GHColors.black),
+                            ),
+                            Divider(
+                              color: GHColors.grey,
+                            ),
+                            ...newTiles.map((tile) => NotificationTile(
+                                  tile: tile,
+                                  onTileMenuOpen: () {
+                                    showModalBottomSheet<void>(
+                                        useRootNavigator: true,
+                                        clipBehavior: Clip.hardEdge,
+                                        barrierColor:
+                                            GHColors.black.withOpacity(0.8),
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return NotificationMenu(
+                                              model: tile,
+                                              hideMenu: () =>
+                                                  Navigator.pop(context));
+                                        });
+                                  },
+                                ))
+                          ],
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+                todaysTiles.isNotEmpty ?
+                      Padding(
                         padding: EdgeInsets.only(bottom: 16.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,16 +125,9 @@ class NotificationPage extends HookWidget {
                                 ))
                           ],
                         ),
-                      );
-                    } else {
-                      return const SizedBox.shrink();
-                    }
-                  },
-                ),
-                Builder(
-                  builder: (context) {
-                    if (oldTiles.isNotEmpty) {
-                      return Padding(
+                      ):
+                      const SizedBox.shrink(),
+                oldTiles.isNotEmpty ? Padding(
                         padding: EdgeInsets.only(bottom: 16.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,12 +160,8 @@ class NotificationPage extends HookWidget {
                                 ))
                           ],
                         ),
-                      );
-                    } else {
-                      return const SizedBox.shrink();
-                    }
-                  },
-                )
+                      ):
+                      const SizedBox.shrink(),
               ],
             ),
           );
