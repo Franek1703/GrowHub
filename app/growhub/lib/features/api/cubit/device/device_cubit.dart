@@ -71,6 +71,7 @@ class DeviceCubit extends Cubit<DeviceState> {
       final updatedDevice = device.copyWith(
         icon: icon ?? device.icon,
         name: name ?? device.name,
+        location: location ?? device.location,
       );
 
       final updatedDevices = {
