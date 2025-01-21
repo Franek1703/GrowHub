@@ -406,12 +406,15 @@ def get_user_alerts():
     for device in devices:
         sensors = Sensor.query.filter_by(device_id=device.device_id).all()
         for sensor in sensors:
-            alerts = Alert.query.filter_by(sensor_id=sensor.sensor_id).all()
+            alerts = Alert.query.filter_by(sensor_id=sensor.sensor_id).order_by(desc(Alert.created_at)).limit(100).all()
             for alert in alerts:
                 alert_dict = alert.to_dict()
                 alert_dict['device_name'] = device.name
                 alert_dict['sensor_name'] = sensor.sensor_type
                 alerts_list.append(alert_dict)
+
+    # Sort the alerts_list by created_at in descending order and limit to 100
+    alerts_list = sorted(alerts_list, key=lambda x: x['created_at'], reverse=True)[:100]
 
     return jsonify(alerts=alerts_list), 200
 
