@@ -24,4 +24,14 @@ class ApiClientPath {
   static Uri sensorValues(int sensorId) {
     return Uri.parse("${IpPath.ip}/api/sensor-values/$sensorId");
   }
+
+  static Uri alerts() {
+    return Uri.parse("${IpPath.ip}/api/alerts");
+  }
+  static Uri resolveAlert(int alertId) {
+    return Uri.parse("${IpPath.ip}/api/alerts/$alertId/resolve");
+  }
+  static Uri deleteAlert(int alertId) {
+    return Uri.parse("${IpPath.ip}/api/alerts/$alertId");
+  }
 }

@@ -1,0 +1,53 @@
+# swagger_templates/add_user_device_ssid.yml
+---
+tags:
+  - User Devices
+summary: Add a device to the user's account using its SSID
+description: Associates a new device with the user’s account based on the provided SSID.
+operationId: addUserDeviceBySSID
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      properties:
+        ssid:
+          type: string
+          example: "device-abc-123"
+          description: The SSID of the device to associate with the user.
+      required:
+        - ssid
+responses:
+  200:
+    description: Device successfully added to the user's account.
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Device added successfully"
+  400:
+    description: Bad request (e.g., SSID not provided, device already associated, or invalid input).
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          examples:
+            missing_ssid:
+              value: "Field ssid has to be provided."
+            device_not_found:
+              value: "There is no device with ssid = device-abc-123."
+            already_associated:
+              value: "Device is already associated with the user."
+  404:
+    description: User not found.
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "User not found."
+security:
+  - jwt: []

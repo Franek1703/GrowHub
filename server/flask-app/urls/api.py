@@ -2,8 +2,9 @@ from flask import Blueprint, jsonify, request, redirect
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flasgger import swag_from
 from sqlalchemy import desc, and_, asc
+from datetime import datetime
 
-from models import User, DosageHistory, SensorReading, Sensor, db, Device, FertilizingDevice
+from models import User, DosageHistory, SensorReading, Sensor, db, Device, FertilizingDevice, Alert
 
 api = Blueprint('api', __name__)
 
@@ -128,6 +129,35 @@ def add_user_device():
     db.session.commit()
 
     return jsonify({"message":"Device added successfully"}), 200
+
+# Add new user-device relation using ssid
+@api.route('/user-devices/ssid', methods=['POST'])
+@jwt_required()
+@swag_from('../swagger_templates/add_user_device_ssid.yml')
+def add_user_device_by_ssid():
+    user = get_user_by_jwt()
+    if not user:
+        return jsonify({'message': 'User not found.'}), 400
+
+    data = request.get_json()
+
+    ssid = data.get('ssid')
+    
+    if not ssid:
+        return jsonify({"message": "Field ssid has to be provided."}), 400
+    
+    device = Device.query.filter_by(ssid=ssid).first()
+
+    if not device:
+        return jsonify({"message": f"There is no device with ssid = {ssid}"}), 400
+
+    if device in user.devices:
+        return jsonify({"message": "Device is already associated with the user."}), 400
+    
+    user.devices.append(device)
+    db.session.commit()
+
+    return jsonify({"message": "Device added successfully"}), 200
 
 # Remove user-device relation using JSON payload
 @api.route('/user-devices', methods=['DELETE'])
@@ -359,3 +389,70 @@ def update_device(device_id):
     db.session.commit()
 
     return jsonify({"message": "Device updated successfully."}), 200
+
+@api.route('/alerts', methods=['GET'])
+@jwt_required()
+def get_user_alerts():
+    """
+    Get all alerts for the current user, including device and sensor names.
+    """
+    user = get_user_by_jwt()
+    if not user:
+        return jsonify({'message': 'User not found.'}), 404
+
+    devices = user.devices
+    alerts_list = []
+
+    for device in devices:
+        sensors = Sensor.query.filter_by(device_id=device.device_id).all()
+        for sensor in sensors:
+            alerts = Alert.query.filter_by(sensor_id=sensor.sensor_id).order_by(desc(Alert.created_at)).limit(100).all()
+            for alert in alerts:
+                alert_dict = alert.to_dict()
+                alert_dict['device_name'] = device.name
+                alert_dict['sensor_name'] = sensor.sensor_type
+                alerts_list.append(alert_dict)
+
+    # Sort the alerts_list by created_at in descending order and limit to 100
+    alerts_list = sorted(alerts_list, key=lambda x: x['created_at'], reverse=True)[:100]
+
+    return jsonify(alerts=alerts_list), 200
+
+@api.route('/alerts/<int:alert_id>/resolve', methods=['PATCH'])
+@jwt_required()
+def resolve_alert(alert_id):
+    """
+    Mark an alert as resolved by its ID.
+    """
+    user = get_user_by_jwt()
+    if not user:
+        return jsonify({'message': 'User not found.'}), 404
+
+    alert = Alert.query.get(alert_id)
+    if not alert:
+        return jsonify({'message': 'Alert not found.'}), 404
+
+    alert.resolved = True
+    alert.resolved_at = datetime.utcnow()
+    db.session.commit()
+
+    return jsonify({'message': 'Alert marked as resolved.'}), 200
+
+@api.route('/alerts/<int:alert_id>', methods=['DELETE'])
+@jwt_required()
+def delete_alert(alert_id):
+    """
+    Delete an alert by its ID.
+    """
+    user = get_user_by_jwt()
+    if not user:
+        return jsonify({'message': 'User not found.'}), 404
+
+    alert = Alert.query.get(alert_id)
+    if not alert:
+        return jsonify({'message': 'Alert not found.'}), 404
+
+    db.session.delete(alert)
+    db.session.commit()
+
+    return jsonify({'message': 'Alert deleted successfully.'}), 200

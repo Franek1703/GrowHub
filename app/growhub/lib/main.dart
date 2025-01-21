@@ -5,6 +5,7 @@ import 'package:growhub/config/themes/theme.dart';
 import 'package:growhub/features/api/api_repository.dart';
 import 'package:growhub/features/api/core/api_client.dart';
 import 'package:growhub/features/api/core/auth_client.dart';
+import 'package:growhub/features/api/cubit/alert/alert_cubit.dart';
 import 'package:growhub/features/api/cubit/config_data/config_data_cubit.dart';
 import 'package:growhub/features/api/cubit/device/device_cubit.dart';
 import 'package:growhub/features/api/cubit/dosage_history/dosage_history_cubit.dart';
@@ -15,7 +16,6 @@ import 'package:growhub/features/api/services/secure_storage_service.dart';
 import 'package:growhub/features/api/cubit/sensor/sensor_cubit.dart';
 import 'package:growhub/features/bottom_app_bar/cubit/path_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:growhub/features/notification/cubit/notification_cubit.dart';
 
 void main() {
   runApp(const MainApp());
@@ -54,7 +54,7 @@ class MainApp extends StatelessWidget {
           create: (context) => PathCubit(),
         ),
         BlocProvider(
-          create: (context) => NotificationCubit()..init(),
+          create: (context) => AlertCubit(apiRepository),
         ),
         BlocProvider(
           create: (context) => DeviceCubit(apiRepository),

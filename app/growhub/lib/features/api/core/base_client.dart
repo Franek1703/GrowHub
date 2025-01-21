@@ -29,7 +29,7 @@ abstract class GHBaseClient {
   }
 
   Future<http.Response> patchTokenized(
-      Uri uri, String token, Object body) async {
+      Uri uri, String token, Object? body) async {
     final response = await http.patch(
       uri,
       headers: {
