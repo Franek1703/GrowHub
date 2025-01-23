@@ -111,7 +111,17 @@ class DashboardPage extends HookWidget {
                         InkWell(
                           customBorder: const CircleBorder(),
                           onTap: () {
-                            showAddDevicePopupDialog(context, AddDevicePopUp());
+                            showAddDevicePopupDialog(
+                              context,
+                              AddDevicePopUp(
+                                onSubmit: (code) {
+                                  if (code.isEmpty) {
+                                    return;
+                                  }
+                                  context.read<DeviceCubit>().addDevice(code);
+                                },
+                              ),
+                            );
                           },
                           child: Container(
                             width: 50,

@@ -281,4 +281,28 @@ class ApiService {
       throw Exception("Error deleting alert: $e");
     }
   }
+
+  Future<void> addUserDevice({
+    required String token,
+    required String deviceSsid,
+  }) async {
+    try {
+      final response = await apiClient.addUserDevice(token, deviceSsid).timeout(
+        ApiTimeout.timeout,
+        onTimeout: () {
+          throw ApiTimeout.timeoutException;
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return;
+      }
+      if (response.statusCode == 404) {
+        throw Exception("Device not found.");
+      }
+      throw Exception("Error adding user device.");
+    } catch (e) {
+      throw Exception("Error adding user device: $e");
+    }
+  }
 }

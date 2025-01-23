@@ -35,10 +35,16 @@ class ApiClient extends GHBaseClient {
   }
 
   Future<http.Response> updateAlert(String token, int alertId) async {
-    return super.patchTokenized(ApiClientPath.resolveAlert(alertId), token, null);
+    return super
+        .patchTokenized(ApiClientPath.resolveAlert(alertId), token, null);
   }
 
   Future<http.Response> deleteAlert(String token, int alertId) async {
     return super.getTokenized(ApiClientPath.deleteAlert(alertId), token);
+  }
+
+  Future<http.Response> addUserDevice(String token, String deviceSsid) async {
+    Map<String, String> body = {"ssid": deviceSsid};
+    return super.postTokenized(ApiClientPath.userDevicesSsid(), token, body);
   }
 }

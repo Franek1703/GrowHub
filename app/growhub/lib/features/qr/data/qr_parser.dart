@@ -1,5 +1,5 @@
 class QRParser {
-  static const String _expression = "&ghcode";
+  static const String _expression = "&gh";
 
   static String? parseQRCode(String? code) {
     if (code == null) {

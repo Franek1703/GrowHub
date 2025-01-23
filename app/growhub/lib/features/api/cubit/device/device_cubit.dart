@@ -33,6 +33,32 @@ class DeviceCubit extends Cubit<DeviceState> {
     }
   }
 
+  Future<void> addDevice(String deviceSsid) async {
+    final state = this.state;
+    if (state is DeviceStateLoaded) {
+      DeviceStateLoading(devices: state.devices);
+    } else {
+      emit(DeviceStateLoading());
+    }
+
+    try {
+      final token = await apiRepository.getToken();
+
+      if (token == null) {
+        emit(DeviceStateInitial());
+        return;
+      }
+
+      await apiRepository.addUserDevice(token: token, deviceSsid: deviceSsid);
+
+      final devices = await apiRepository.getConfiguration(token);
+
+      emit(DeviceStateLoaded(devices));
+    } catch (e) {
+      emit(DeviceStateError(error: e.toString()));
+    }
+  }
+
   Future<void> updateDevice({
     required int deviceId,
     DeviceIcon? icon,
@@ -71,7 +97,6 @@ class DeviceCubit extends Cubit<DeviceState> {
       final updatedDevice = device.copyWith(
         icon: icon ?? device.icon,
         name: name ?? device.name,
-        location: location ?? device.location,
       );
 
       final updatedDevices = {
