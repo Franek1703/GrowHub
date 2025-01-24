@@ -79,6 +79,15 @@ class ApiRepository {
     );
   }
 
+  /// Add user's device
+  ///`deviceSsid` is required
+  Future<void> addUserDevice({
+    required String token,
+    required String deviceSsid,
+  }) async {
+    await apiService.addUserDevice(token: token, deviceSsid: deviceSsid);
+  }
+
   /// Update sensor's values
   /// At least one parameter is needed from
   ///`minValue`, `maxValue`, `measurementFrequency`
@@ -132,5 +141,4 @@ class ApiRepository {
   Future<void> deleteAlert(String token, int alertId) async {
     await apiService.deleteAlert(token, alertId);
   }
-
 }
