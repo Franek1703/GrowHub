@@ -7,7 +7,6 @@ import 'package:growhub/features/api/cubit/device/device_cubit.dart';
 import 'package:growhub/features/api/data/models/device_model.dart';
 import 'package:growhub/features/settings/widgets/plant_pop_icon.dart';
 import 'package:growhub/features/login/widgets/input_filed.dart';
-import 'package:growhub/features/settings/widgets/toggle.dart';
 
 /// The `SettingsPage` is responsible for rendering the settings interface
 /// for a specific device. It displays the device name, location, a dosage toggle, and an icon representing the device.
@@ -52,7 +51,8 @@ class SettingsPage extends HookWidget {
           );
       if (device != null) {
         if (deviceName.value.isEmpty) deviceName.value = device.name;
-        if (deviceLocation.value.isEmpty) deviceLocation.value = device.location ?? "";
+        if (deviceLocation.value.isEmpty)
+          deviceLocation.value = device.location ?? "";
       }
       return null; // Cleanup function not needed.
     }, [deviceId]); // Run only when the widget is created or deviceId changes.

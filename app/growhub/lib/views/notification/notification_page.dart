@@ -91,8 +91,8 @@ class NotificationPage extends HookWidget {
                         ),
                       )
                     : const SizedBox.shrink(),
-                todaysTiles.isNotEmpty ?
-                      Padding(
+                todaysTiles.isNotEmpty
+                    ? Padding(
                         padding: EdgeInsets.only(bottom: 16.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,9 +125,10 @@ class NotificationPage extends HookWidget {
                                 ))
                           ],
                         ),
-                      ):
-                      const SizedBox.shrink(),
-                oldTiles.isNotEmpty ? Padding(
+                      )
+                    : const SizedBox.shrink(),
+                oldTiles.isNotEmpty
+                    ? Padding(
                         padding: EdgeInsets.only(bottom: 16.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,8 +161,8 @@ class NotificationPage extends HookWidget {
                                 ))
                           ],
                         ),
-                      ):
-                      const SizedBox.shrink(),
+                      )
+                    : const SizedBox.shrink(),
               ],
             ),
           );

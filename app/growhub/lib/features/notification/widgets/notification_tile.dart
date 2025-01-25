@@ -57,7 +57,8 @@ class NotificationTile extends StatelessWidget {
                                     color: Colors.red,
                                     fontWeight: FontWeight.w600)),
                         TextSpan(
-                            text: "Device:${tile.deviceName}, Sensor:${tile.sensorName}, Message:${tile.message}, Value:${tile.value}",
+                            text:
+                                "Device:${tile.deviceName}, Sensor:${tile.sensorName}, Message:${tile.message}, Value:${tile.value}",
                             style: Theme.of(context).textTheme.bodyMedium),
                       ],
                     ),
@@ -112,19 +113,22 @@ class NotificationTile extends StatelessWidget {
 }
 
 String _getNotificationTimeMessage(int hours) {
-  if (hours == 0) {
-    return 'less than an hour ago';
-  } else if (hours == 1) {
-    return 'an hour ago';
-  } else if (hours == 2) {
-    return 'two hours ago';
-  } else if (hours == 3) {
-    return 'three hours ago';
-  } else if (hours == 4) {
-    return 'four hours ago';
-  } else {
-    return '$hours hours ago';
+  int time = hours;
+
+  if (hours == 1) {
+    return '$time hour ago';
   }
+
+  if (hours >= 24 && hours < 48) {
+    time = 1;
+    return '$time day ago';
+  }
+  if (hours >= 48) {
+    time = hours ~/ 24;
+    return '$time days ago';
+  }
+
+  return '$time hours ago';
 }
 
 class CustomBoxShadow extends BoxShadow {
