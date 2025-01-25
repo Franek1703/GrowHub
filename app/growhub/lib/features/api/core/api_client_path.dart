@@ -22,7 +22,7 @@ class ApiClientPath {
   }
 
   static Uri sensorValues(int sensorId) {
-    return Uri.parse("${IpPath.ip}/api/user-devices/ssid/$sensorId");
+    return Uri.parse("${IpPath.ip}/api/sensor-values/$sensorId");
   }
 
   static Uri alerts() {

@@ -62,7 +62,6 @@ class SensorCubit extends Cubit<SensorState> {
         measurementFrequency: measurementFrequency,
       );
 
-      // Znajdź urządzenie w aktualnym stanie
       final sensor = findSensorById(state.sensors, sensorId);
       if (sensor == null) {
         emit(SensorStateError(error: "No devices found."));

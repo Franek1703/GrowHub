@@ -50,7 +50,7 @@ class SensorValuesPopUp extends HookWidget {
               currentRange.value = values;
             },
           ),
-          Container(height: 80),
+          Container(height: 30),
           const Text(
             "*so your plants can lead a peaceful life",
             textAlign: TextAlign.center,
