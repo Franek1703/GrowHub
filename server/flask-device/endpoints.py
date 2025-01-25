@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from models import db, Alert, Device, DosageHistory, Sensor, FertilizingDevice, SensorReading
-from datetime import datetime
+from datetime import datetime, timedelta
 from alert_enum import AlertMessages
 from device_default_values import DefaultValues
 from flasgger import swag_from
@@ -76,15 +76,21 @@ def add_reading():
         db.session.add(alert)
 
     db.session.commit()
+    
+    if(needs_fertilization):
+        last_dosage = DosageHistory.query.filter_by(device_id=sensor.device_id).order_by(DosageHistory.dosed_at.desc()).first()
+        if last_dosage and (datetime.utcnow() - last_dosage.dosed_at) < timedelta(hours=6):
+            needs_fertilization = False
 
     response = {
         'needs_fertilization': needs_fertilization,
         'frequency': sensor.measurement_frequency
     }
     
-    fertilizing_device = FertilizingDevice.query.filter_by(device_id=sensor.device_id).first()
+    
 
     if needs_fertilization:
+        fertilizing_device = FertilizingDevice.query.filter_by(device_id=sensor.device_id).first()
         if fertilizing_device:
             response['activation_time'] = fertilizing_device.activation_time
         else:

@@ -181,6 +181,13 @@ void app_main()
         vTaskDelay(pdMS_TO_TICKS(100));
     }
 
+        for (int i = 0; i < TDS_SAMPLES; i++)
+    {
+        read_tds();
+        vTaskDelay(pdMS_TO_TICKS(100));
+    }
+
+
     // Przygotowanie zadania do odczytu danych czujników
     sensor_device_data_t temp_with_device = {temp, device};
     sensor_device_data_t ph_with_device = {ph, device};
