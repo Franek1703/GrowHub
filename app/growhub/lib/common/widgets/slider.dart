@@ -18,6 +18,10 @@ class GHSlider extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    int getDivisionsNumber() {
+      return (max - min) ~/ 20;
+    }
+
     final rangeValue = useState(startValues); // Initial range values
 
     return Column(
@@ -39,7 +43,7 @@ class GHSlider extends HookWidget {
               values: rangeValue.value,
               min: min,
               max: max,
-              divisions: 20,
+              divisions: getDivisionsNumber(),
               onChanged: (RangeValues values) {
                 rangeValue.value = values;
                 onValuesSelected(values);

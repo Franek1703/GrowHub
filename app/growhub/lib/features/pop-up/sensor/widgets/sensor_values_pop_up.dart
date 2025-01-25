@@ -34,6 +34,7 @@ class SensorValuesPopUp extends HookWidget {
         useState(RangeValues(sensor.minValue, sensor.maxValue));
 
     return GHDialog(
+      height: MediaQuery.of(context).size.height * 0.6,
       title: "Sensor - ${sensor.name}",
       subtitle: "select acceptable values*",
       body: Column(

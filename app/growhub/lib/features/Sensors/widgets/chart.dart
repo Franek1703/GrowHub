@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:growhub/config/constants/colors.dart';
+import 'package:intl/intl.dart';
 
 class SensorChart extends StatelessWidget {
   final List<FlSpot> dataPoints;
@@ -91,8 +92,13 @@ class SensorChart extends StatelessWidget {
                       const EdgeInsets.symmetric(vertical: 7, horizontal: 5),
                   getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
                     return touchedBarSpots.map((LineBarSpot spot) {
+                      DateTime dateTime =
+                          DateTime.fromMillisecondsSinceEpoch(spot.x.toInt());
+
+                      String datePart = DateFormat('dd.MM').format(dateTime);
+                      String timePart = DateFormat('HH:mm').format(dateTime);
                       return LineTooltipItem(
-                          '${spot.y.toStringAsFixed(1)}$unit',
+                          '${spot.y.toStringAsFixed(1)}$unit\n$datePart $timePart',
                           TextStyle(
                             color: GHColors.white,
                           ));
