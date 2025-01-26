@@ -457,7 +457,7 @@ def delete_alert(alert_id):
 
     return jsonify({'message': 'Alert deleted successfully.'}), 200
 
-@api.route('/fertilizing-devices/<int:device_id>', methods = ['POST'])
+@api.route('/fertilizing-devices/<int:device_id>', methods = ['PATCH'])
 @jwt_required()
 def update_fertilizing_device_activation_time(device_id):
     user = get_user_by_jwt()
@@ -473,7 +473,7 @@ def update_fertilizing_device_activation_time(device_id):
     activation_time = data.get('activation_time')
 
 
-    if not activation_time:
+    if activation_time is None:
         return jsonify({"message": "Activation time must provided."}), 400
 
     fertilizing_device = FertilizingDevice.query.filter_by(device_id = device_id).first()
