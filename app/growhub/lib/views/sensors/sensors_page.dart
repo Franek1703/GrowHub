@@ -35,18 +35,24 @@ class SensorPage extends HookWidget {
   Widget build(BuildContext context) {
     final isFirstLoaded = useState(false);
 
-    useMemoized(
-      () async {
-        await context.read<SensorCubit>().loadSensorReadings(deviceId);
-        isFirstLoaded.value = true;
-      },
-    );
+    useEffect(() {
+      final sensorCubit = context.read<SensorCubit>();
+      Future.microtask(() async {
+        await sensorCubit.loadSensorReadings(deviceId);
+        if (context.mounted) {
+          isFirstLoaded.value = true;
+        }
+      });
+      return null;
+    }, [deviceId]);
 
     return isFirstLoaded.value == false
         ? const GHProgressIndicatorSmall()
         : GHRefreshIndicator(
             onRefresh: () async {
-              context.read<SensorCubit>().loadSensorReadings(deviceId);
+              if (context.mounted) {
+                await context.read<SensorCubit>().loadSensorReadings(deviceId);
+              }
             },
             child: GHPagePadding(
               bottom: 100,
