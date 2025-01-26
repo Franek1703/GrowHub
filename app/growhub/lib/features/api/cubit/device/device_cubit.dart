@@ -87,7 +87,6 @@ class DeviceCubit extends Cubit<DeviceState> {
         name: name,
       );
 
-      // Znajdź urządzenie w aktualnym stanie
       final device = findDeviceById(state.devices, deviceId);
       if (device == null) {
         emit(DeviceStateError(error: "No devices found."));
@@ -104,8 +103,6 @@ class DeviceCubit extends Cubit<DeviceState> {
           if (d.id == deviceId) updatedDevice else d,
       };
 
-      print(icon);
-
       emit(DeviceStateLoaded(updatedDevices));
     } catch (e) {
       emit(DeviceStateError(error: e.toString()));
@@ -117,6 +114,51 @@ class DeviceCubit extends Cubit<DeviceState> {
       return devices.firstWhere((device) => device.id == id);
     } catch (e) {
       return null;
+    }
+  }
+
+  Future<void> updateFertilizingTime({
+    required int deviceId,
+    required int activationTime,
+  }) async {
+    final state = this.state;
+
+    if (state is! DeviceStateLoaded) {
+      return;
+    }
+    emit(DeviceStateLoading(devices: state.devices));
+
+    try {
+      final token = await apiRepository.getToken();
+      if (token == null) {
+        emit(DeviceStateInitial());
+        return;
+      }
+
+      await apiRepository.updateFertilizingTime(
+        token: token,
+        deviceId: deviceId,
+        activationTime: activationTime,
+      );
+
+      final device = findDeviceById(state.devices, deviceId);
+      if (device == null) {
+        emit(DeviceStateError(error: "No devices found."));
+        return;
+      }
+
+      final updatedDevice = device.copyWith(
+          fertilizingDevice: device.fertilizingDevice!
+              .copyWith(activationTime: activationTime));
+
+      final updatedDevices = {
+        for (final d in state.devices)
+          if (d.id == deviceId) updatedDevice else d,
+      };
+
+      emit(DeviceStateLoaded(updatedDevices));
+    } catch (e) {
+      emit(DeviceStateError(error: e.toString()));
     }
   }
 }
