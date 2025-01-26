@@ -33,12 +33,16 @@ class DashboardPage extends HookWidget {
   Widget build(BuildContext context) {
     final isFirstLoaded = useState(false);
 
-    useMemoized(
-      () async {
-        await context.read<DeviceCubit>().loadData();
-        isFirstLoaded.value = true;
-      },
-    );
+    useEffect(() {
+      final deviceCubit = context.read<DeviceCubit>();
+      Future.microtask(() async {
+        await deviceCubit.loadData();
+        if (context.mounted) {
+          isFirstLoaded.value = true;
+        }
+      });
+      return null;
+    }, []);
 
     return Scaffold(
       body: isFirstLoaded.value == false

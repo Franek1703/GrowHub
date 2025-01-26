@@ -15,11 +15,13 @@ class NotificationPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    useMemoized(
-      () async {
-        context.read<AlertCubit>().loadAlert();
-      },
-    );
+    useEffect(() {
+      final alertCubit = context.read<AlertCubit>();
+      Future.microtask(() async {
+        await alertCubit.loadAlert();
+      });
+      return null;
+    }, []);
     return BlocBuilder<AlertCubit, AlertState>(
       builder: (context, state) {
         if (state is AlertStateLoaded ||

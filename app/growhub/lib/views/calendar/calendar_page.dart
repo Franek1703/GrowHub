@@ -66,12 +66,16 @@ class CalendarPage extends HookWidget {
   }
 
   /// Load dosage history data when the widget is first built.
-  useMemoized(
-    () async {
-      await context.read<DosageHistoryCubit>().loadDosageHistory(deviceId);
+  useEffect(() {
+  final dosageHistoryCubit = context.read<DosageHistoryCubit>();
+  Future.microtask(() async {
+    await dosageHistoryCubit.loadDosageHistory(deviceId);
+    if (context.mounted) {
       isFirstLoaded.value = true;
-    },
-  );
+    }
+  });
+  return null;
+}, [deviceId]);
 
   /// Display a progress indicator until the page is loaded.
   return isFirstLoaded.value == false
