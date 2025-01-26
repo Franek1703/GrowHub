@@ -456,3 +456,40 @@ def delete_alert(alert_id):
     db.session.commit()
 
     return jsonify({'message': 'Alert deleted successfully.'}), 200
+
+@api.route('/fertilizing-devices/<int:device_id>', methods = ['POST'])
+@jwt_required()
+def update_fertilizing_device_activation_time(device_id):
+    user = get_user_by_jwt()
+    if not user:
+        return jsonify({'message': 'User not found.'}), 404
+    
+    if not request.is_json:
+        return jsonify({'message': 'Request body must be JSON.'}), 400
+    
+    data = request.get_json()
+
+
+    activation_time = data.get('activation_time')
+
+
+    if not activation_time:
+        return jsonify({"message": "Activation time must provided."}), 400
+
+    fertilizing_device = FertilizingDevice.query.filter_by(device_id = device_id).first()
+    if not fertilizing_device:
+        return jsonify({'message': 'Device not found.'}), 404
+    
+    if not isinstance(activation_time, int):
+        return jsonify({'message': 'Activation time must be an integer.'}), 400
+    
+    if activation_time < 1 or activation_time > 5:
+        return jsonify({'message': 'Activation time must be between 1-5'}), 400
+    
+    
+    fertilizing_device.activation_time =activation_time
+
+    db.session.commit()
+
+    return jsonify({"message": "Device activation time updated successfully."}), 200
+    
