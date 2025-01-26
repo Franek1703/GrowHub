@@ -36,11 +36,12 @@ class GHSlider extends HookWidget {
             min: min,
             max: max,
             divisions: 4,
+            onChangeEnd: (value) {
+              onValueSelected(value);
+            },
             value: currentValue.value,
             onChanged: (value) {
-              print(value);
               currentValue.value = value;
-              onValueSelected(value);
             },
           ),
         ),
