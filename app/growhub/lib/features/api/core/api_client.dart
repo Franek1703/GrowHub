@@ -47,4 +47,14 @@ class ApiClient extends GHBaseClient {
     Map<String, String> body = {"ssid": deviceSsid};
     return super.postTokenized(ApiClientPath.userDevicesSsid(), token, body);
   }
+
+  Future<http.Response> updateFertilizingTime(
+      String token, int deviceId, int activationTime) async {
+    Map<String, int> body = {"activation_time": activationTime};
+    return super.patchTokenized(
+      ApiClientPath.fertilizingDeviceByDeviceId(deviceId),
+      token,
+      body,
+    );
+  }
 }

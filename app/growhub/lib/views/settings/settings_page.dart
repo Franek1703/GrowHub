@@ -124,25 +124,37 @@ class SettingsPage extends HookWidget {
 
                   const SizedBox(height: 32),
 
-                  Center(
-                    child: Text(
-                      "Fertilization time (seconds)",
-                      style: TextStyle(
-                        color: GHColors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
+                  if (device.fertilizingDevice != null)
+                    Column(
+                      children: [
+                        Center(
+                          child: Text(
+                            "Fertilization time (seconds)",
+                            style: TextStyle(
+                              color: GHColors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        GHSlider(
+                          min: 1,
+                          max: 5,
+                          startValue: device.fertilizingDevice!.activationTime
+                              .toDouble(),
+                          onValueSelected: (value) {
+                            context.read<DeviceCubit>().updateFertilizingTime(
+                                  deviceId: deviceId,
+                                  activationTime: value.toInt(),
+                                );
+                          },
+                        ),
+                        const SizedBox(height: 22),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 5),
-                  GHSlider(
-                    min: 1,
-                    max: 5,
-                    startValue: 2,
-                    onValueSelected: (value) {},
-                  ),
-                  const SizedBox(height: 22),
+
                   // Icon representing the current device, centered horizontally.
                   Center(
                     child: PlantPopIcon(

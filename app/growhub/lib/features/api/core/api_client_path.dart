@@ -40,4 +40,8 @@ class ApiClientPath {
   static Uri userDevicesSsid() {
     return Uri.parse("${IpPath.ip}/api/user-devices/ssid");
   }
+
+  static Uri fertilizingDeviceByDeviceId(int deviceId) {
+    return Uri.parse("${IpPath.ip}/api/fertilizing-devices/$deviceId");
+  }
 }

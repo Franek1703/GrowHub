@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:growhub/features/api/core/api_client.dart';
 import 'package:growhub/features/api/core/api_timeout.dart';
 import 'package:growhub/features/api/data/models/device_model.dart';
+import 'package:growhub/features/api/data/models/fertilizing_device_model.dart';
 import 'package:growhub/features/api/data/models/sensor_model.dart';
 import 'package:growhub/features/api/data/models/user_model.dart';
 import 'package:growhub/features/api/data/models/dosage_history_model.dart';
@@ -62,9 +63,30 @@ class ApiService {
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
 
+        Set<FertilizingDeviceModel> fertilizingDevices = {};
+
+        for (var fertDevice in body["fertilizing_devices"]) {
+          fertilizingDevices.add(FertilizingDeviceModel.fromJson(fertDevice));
+        }
+
         Set<DeviceModel> devices = {};
-        for (var device in body["devices"]) {
-          devices.add(DeviceModel.fromJson(device));
+        for (var jsonDevice in body["devices"]) {
+          DeviceModel device = DeviceModel.fromJson(jsonDevice);
+          FertilizingDeviceModel? fertilizingDevice;
+
+          try {
+            fertilizingDevice = fertilizingDevices.firstWhere(
+              (f) => f.deviceId == device.id,
+            );
+          } catch (e) {
+            fertilizingDevice = null;
+          }
+
+          if (fertilizingDevice != null) {
+            device.fertilizingDevice = fertilizingDevice;
+          }
+
+          devices.add(device);
         }
 
         return devices;
@@ -303,6 +325,38 @@ class ApiService {
       throw Exception("Error adding user device.");
     } catch (e) {
       throw Exception("Error adding user device: $e");
+    }
+  }
+
+  Future<void> updateFertilizingTime({
+    required String token,
+    required int deviceId,
+    required int activationTime,
+  }) async {
+    try {
+      final response = await apiClient
+          .updateFertilizingTime(token, deviceId, activationTime)
+          .timeout(
+        ApiTimeout.timeout,
+        onTimeout: () {
+          throw ApiTimeout.timeoutException;
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return;
+      }
+
+      if (response.statusCode == 404) {
+        throw Exception("Device not found");
+      }
+
+      if (response.statusCode == 400) {
+        throw Exception("Activation time must be an integer between 1-5.");
+      }
+      throw Exception("Error updating fertilizing time.");
+    } catch (e) {
+      throw Exception("Error updating fertilizing time: $e");
     }
   }
 }

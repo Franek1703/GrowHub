@@ -42,7 +42,7 @@ class MainPage extends HookWidget {
         appBarTitle = "Notifications";
         break;
       case "/dashboard/calendar":
-        appBarTitle = "Calendar";
+        appBarTitle = "Fertilizing Calendar";
         break;
       case "/dashboard/sensor":
         appBarTitle = "Sensors";
