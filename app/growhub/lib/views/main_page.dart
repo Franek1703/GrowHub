@@ -31,7 +31,7 @@ class MainPage extends HookWidget {
     }
 
     late String appBarTitle;
-    switch(path){
+    switch (path) {
       case "/dashboard":
         appBarTitle = "Dashboard";
         break;
@@ -39,7 +39,7 @@ class MainPage extends HookWidget {
         appBarTitle = "Account";
         break;
       case "/notification":
-        appBarTitle = "Notification";
+        appBarTitle = "Notifications";
         break;
       case "/dashboard/calendar":
         appBarTitle = "Calendar";
@@ -58,13 +58,16 @@ class MainPage extends HookWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: GHColors.background,
-      appBar: path != "/dashboard" ? GHTopAppBar(
-            title: appBarTitle,
-            onLeadingPressed: () {
-              context.read<PathCubit>().onPathChange("/dashboard");
-              context.pop();},
-            showLeading: path.contains("/dashboard/"),
-          ) : null,
+      appBar: path != "/dashboard"
+          ? GHTopAppBar(
+              title: appBarTitle,
+              onLeadingPressed: () {
+                context.read<PathCubit>().onPathChange("/dashboard");
+                context.pop();
+              },
+              showLeading: path.contains("/dashboard/"),
+            )
+          : null,
       body: Stack(
         children: [
           child,

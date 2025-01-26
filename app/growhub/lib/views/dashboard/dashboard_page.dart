@@ -139,6 +139,7 @@ class DashboardPage extends HookWidget {
                             ),
                           ),
                         ),
+                        const SizedBox(height: 20),
                       ],
                     );
                   },
