@@ -7,44 +7,41 @@ class GHSlider extends HookWidget {
     super.key,
     required this.min,
     required this.max,
-    required this.startValues,
-    required this.onValuesSelected,
+    required this.startValue,
+    required this.onValueSelected,
   });
 
   final double min;
   final double max;
-  final RangeValues startValues;
-  final Function(RangeValues values) onValuesSelected;
+  final double startValue;
+  final Function(double value) onValueSelected;
 
   @override
   Widget build(BuildContext context) {
-    final rangeValue = useState(startValues); // Initial range values
+    final currentValue = useState(startValue);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment:
-          CrossAxisAlignment.stretch, // Ensures it takes up full width
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Padding(
-          padding: EdgeInsets.zero, // Removes any padding around the slider
-          child: SliderTheme(
-            data: SliderTheme.of(context).copyWith(
-              rangeThumbShape: CustomRangeThumbShape(
-                  rangeValue: rangeValue.value), // Custom thumb shape
-              activeTrackColor: GHColors.black,
-              inactiveTrackColor: GHColors.black.withOpacity(0.6),
-              thumbColor: GHColors.black,
-            ),
-            child: RangeSlider(
-              values: rangeValue.value,
-              min: min,
-              max: max,
-              divisions: 20,
-              onChanged: (RangeValues values) {
-                rangeValue.value = values;
-                onValuesSelected(values);
-              },
-            ),
+        SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            thumbShape: CustomSliderThumbShape(value: currentValue.value),
+            activeTrackColor: GHColors.black,
+            inactiveTrackColor: GHColors.black.withOpacity(0.6),
+            thumbColor: GHColors.black,
+            trackHeight: 5,
+          ),
+          child: Slider(
+            min: min,
+            max: max,
+            divisions: 4,
+            value: currentValue.value,
+            onChanged: (value) {
+              print(value);
+              currentValue.value = value;
+              onValueSelected(value);
+            },
           ),
         ),
       ],
@@ -52,10 +49,10 @@ class GHSlider extends HookWidget {
   }
 }
 
-class CustomRangeThumbShape extends RangeSliderThumbShape {
-  final RangeValues rangeValue;
+class CustomSliderThumbShape extends SliderComponentShape {
+  final double value;
 
-  const CustomRangeThumbShape({required this.rangeValue});
+  const CustomSliderThumbShape({required this.value});
 
   @override
   Size getPreferredSize(bool isEnabled, bool isDiscrete) {
@@ -69,27 +66,25 @@ class CustomRangeThumbShape extends RangeSliderThumbShape {
     required Animation<double> activationAnimation,
     required Animation<double> enableAnimation,
     bool? isDiscrete,
-    bool? isEnabled,
-    bool? isOnTop,
-    TextDirection? textDirection,
+    TextPainter? labelPainter,
+    required RenderBox parentBox,
     required SliderThemeData sliderTheme,
-    Thumb? thumb,
-    bool? isPressed,
+    TextDirection? textDirection,
+    double? value,
+    double? textScaleFactor,
+    Size? sizeWithOverflow,
   }) {
     final canvas = context.canvas;
 
     // Draw the thumb circle
     final thumbPaint = Paint()..color = sliderTheme.thumbColor!;
-    canvas.drawCircle(center, 14, thumbPaint); // Thumb size (radius: 15)
-
-    // Get the value for the thumb dynamically
-    final valueText = thumb == Thumb.start
-        ? rangeValue.start.toStringAsFixed(0) // Left thumb value
-        : rangeValue.end.toStringAsFixed(0); // Right thumb value
+    canvas.drawCircle(center, 14, thumbPaint); // Thumb size (radius: 14)
 
     // Draw the value text
+    final valueText = this.value.toStringAsFixed(0); // Round value to integer
+
     final textSpan = TextSpan(
-      text: valueText,
+      text: "${valueText}s",
       style: const TextStyle(
         color: Colors.white,
         fontSize: 12,

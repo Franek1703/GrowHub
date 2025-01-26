@@ -56,7 +56,7 @@ class DashboardPage extends HookWidget {
                     return ListView(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          padding: const EdgeInsets.symmetric(horizontal: 0),
                           child: BlocBuilder<UserCubit, UserState>(
                             builder: (context, state) {
                               return Text.rich(
@@ -139,6 +139,7 @@ class DashboardPage extends HookWidget {
                             ),
                           ),
                         ),
+                        const SizedBox(height: 20),
                       ],
                     );
                   },

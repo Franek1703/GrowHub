@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:growhub/common/widgets/slider.dart';
+import 'package:growhub/common/widgets/range_slider.dart';
 import 'package:growhub/features/api/data/models/sensor_model.dart';
 import 'package:growhub/features/pop-up/dialog.dart';
 
@@ -42,7 +42,7 @@ class SensorValuesPopUp extends HookWidget {
         mainAxisSize: MainAxisSize.max,
         children: [
           Container(height: 10),
-          GHSlider(
+          GHRangeSlider(
             min: minSliderValue,
             max: maxSliderValue,
             startValues: RangeValues(sensor.minValue, sensor.maxValue),

@@ -1,3 +1,4 @@
+import 'package:growhub/features/api/data/models/fertilizing_device_model.dart';
 import 'package:growhub/features/device_dashboard/entities/device_icon.dart';
 import 'package:growhub/features/api/data/models/sensor_model.dart';
 
@@ -7,6 +8,7 @@ class DeviceModel {
   final String? location;
   final List<SensorModel> sensors;
   final DeviceIcon icon;
+  FertilizingDeviceModel? fertilizingDevice;
 
   DeviceModel({
     required this.id,
@@ -14,6 +16,7 @@ class DeviceModel {
     this.location,
     required this.sensors,
     required this.icon,
+    this.fertilizingDevice,
   });
 
   factory DeviceModel.fromJson(Map<String, dynamic> json) {
@@ -34,13 +37,14 @@ class DeviceModel {
     String? location,
     List<SensorModel>? sensors,
     DeviceIcon? icon,
+    FertilizingDeviceModel? fertilizingDevice,
   }) {
     return DeviceModel(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      location: location ?? this.location,
-      sensors: sensors ?? this.sensors,
-      icon: icon ?? this.icon,
-    );
+        id: id ?? this.id,
+        name: name ?? this.name,
+        location: location ?? this.location,
+        sensors: sensors ?? this.sensors,
+        icon: icon ?? this.icon,
+        fertilizingDevice: fertilizingDevice ?? this.fertilizingDevice);
   }
 }

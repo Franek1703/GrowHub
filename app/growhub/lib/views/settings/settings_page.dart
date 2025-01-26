@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:growhub/common/widgets/progress_indicator_small.dart';
+import 'package:growhub/common/widgets/slider.dart';
 import 'package:growhub/config/constants/colors.dart';
 import 'package:growhub/features/api/cubit/device/device_cubit.dart';
 import 'package:growhub/features/api/data/models/device_model.dart';
@@ -121,24 +122,38 @@ class SettingsPage extends HookWidget {
                     },
                   ),
 
-                  // // Spacer between the input field and the dosage toggle.
-                  // const SizedBox(height: 32),
+                  const SizedBox(height: 32),
 
-                  // // Toggle widget to switch between automatic and manual dosage settings.
-                  // Center(
-                  //   child: GHToggle(
-                  //     title: 'Dosage',
-                  //     leftText: 'Auto',
-                  //     rightText: 'every 12h',
-                  //     onToggle: (isLeftSelected) {
-                  //       // Handle toggle changes and print the selected state.
-                  //       print(isLeftSelected ? 'Auto selected' : 'Every 12h selected');
-                  //     },
-                  //   ),
-                  // ),
-
-                  // Spacer between the toggle and the device icon.
-                  const SizedBox(height: 42),
+                  if (device.fertilizingDevice != null)
+                    Column(
+                      children: [
+                        Center(
+                          child: Text(
+                            "Fertilization time (seconds)",
+                            style: TextStyle(
+                              color: GHColors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        GHSlider(
+                          min: 1,
+                          max: 5,
+                          startValue: device.fertilizingDevice!.activationTime
+                              .toDouble(),
+                          onValueSelected: (value) {
+                            context.read<DeviceCubit>().updateFertilizingTime(
+                                  deviceId: deviceId,
+                                  activationTime: value.toInt(),
+                                );
+                          },
+                        ),
+                        const SizedBox(height: 22),
+                      ],
+                    ),
 
                   // Icon representing the current device, centered horizontally.
                   Center(

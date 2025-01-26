@@ -95,7 +95,7 @@ class FertilizingDevice(db.Model):
     device_id = db.Column(db.Integer, db.ForeignKey('devices.device_id'), nullable=False)
     device_type = db.Column(db.String, default="Pump") 
     activation_time = db.Column(db.Integer, nullable=False) 
-
+        
     def to_dict(self):
         return {
             "fertilizing_device_id": self.fertilizing_device_id,

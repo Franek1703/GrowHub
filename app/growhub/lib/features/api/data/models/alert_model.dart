@@ -21,17 +21,19 @@ class AlertModel {
     required this.id,
   });
 
-  factory AlertModel.fromJson(Map<String, dynamic> map) {
+  factory AlertModel.fromJson(Map<String, dynamic> json) {
     final dateFormat = DateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
     return AlertModel(
-      id: map['alert_id'] as int,
-      message: map['message'] as String,
-      isResolved: map['resolved'] as bool,
-      value: map['value'] as double,
-      time: dateFormat.parse(map['alert_time']),
-      resolvedTime: map['resolved_at'] != null ? dateFormat.parse(map['resolved_at']) : null,
-      sensorName: map['sensor_name'] as String,
-      deviceName: map['device_name'] as String,
+      id: json['alert_id'] as int,
+      message: json['message'] as String,
+      isResolved: json['resolved'] as bool,
+      value: double.parse(json["value"].toStringAsFixed(1)),
+      time: dateFormat.parse(json['alert_time']),
+      resolvedTime: json['resolved_at'] != null
+          ? dateFormat.parse(json['resolved_at'])
+          : null,
+      sensorName: json['sensor_name'] as String,
+      deviceName: json['device_name'] as String,
     );
   }
   AlertModel copyWith({

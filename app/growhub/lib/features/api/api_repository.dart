@@ -141,4 +141,17 @@ class ApiRepository {
   Future<void> deleteAlert(String token, int alertId) async {
     await apiService.deleteAlert(token, alertId);
   }
+
+  /// Update fertilizing time based on the `device id`
+  Future<void> updateFertilizingTime({
+    required String token,
+    required int deviceId,
+    required int activationTime,
+  }) async {
+    await apiService.updateFertilizingTime(
+      token: token,
+      deviceId: deviceId,
+      activationTime: activationTime,
+    );
+  }
 }
