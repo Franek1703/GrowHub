@@ -1,0 +1,16 @@
+# karmada_full.yml
+- name: Zainstaluj lokalny k3s (server) na nodzie karmada
+  hosts: karmada          # ← grupa/host, na którym ma być i k3s, i Karmada
+  become: true
+  gather_facts: false
+  roles:
+    - k3s_master          # ta sama rola, którą używałeś do mastera w pierwszym klastrze
+
+- name: Zainstaluj Karmadę na tym samym węźle
+  hosts: karmada
+  become: true
+  gather_facts: yes       # można włączyć, Karmada używa faktów (arch itp.)
+  roles:
+    - karmada_install
+  vars:
+    kubeconfig_path: "/home/{{ ansible_user }}/.kube/config"   # plik utworzony przez rolę k3s_master

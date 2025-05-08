@@ -1,0 +1,4 @@
+- hosts: karmada
+  become: true
+  roles:
+    - prometheus

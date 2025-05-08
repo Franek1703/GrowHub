@@ -1,0 +1,21 @@
+- name: Generate SSH key on Ansible control node
+  delegate_to: localhost
+  openssh_keypair:
+    path: ~/.ssh/id_rsa
+    type: rsa
+    size: 2048
+    force: false
+
+- name: Ensure ~/.ssh on remote host
+  file:
+    path: /home/{{ ansible_user }}/.ssh
+    state: directory
+    mode: '0700'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Copy public key to remote host
+  authorized_key:
+    user: "{{ ansible_user }}"
+    state: present
+    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"

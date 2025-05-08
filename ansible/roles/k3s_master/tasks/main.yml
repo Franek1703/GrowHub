@@ -1,0 +1,51 @@
+- name: Uninstall previous k3s if present
+  shell: |
+    if [ -f /usr/local/bin/k3s-uninstall.sh ]; then /usr/local/bin/k3s-uninstall.sh; fi
+  args:
+    executable: /bin/bash
+  changed_when: false
+
+- name: Get Tailscale IPv4
+  command: tailscale ip -4
+  register: ts_ip
+  changed_when: false
+
+- name: Install k3s server (advertise via tailscale, add TLS-SAN)
+  environment:
+    INSTALL_K3S_EXEC: >-
+      server
+      --advertise-address {{ ts_ip.stdout }}
+      --node-ip {{ ts_ip.stdout }}
+      --flannel-iface tailscale0
+      --tls-san {{ ts_ip.stdout }}          # ← tu!
+      --write-kubeconfig-mode 644
+  shell: curl -sfL https://get.k3s.io | sh -
+  args:
+    creates: /etc/systemd/system/k3s.service
+
+- name: Ensure ~/.kube exists for {{ ansible_user }}
+  become: true
+  become_user: "{{ ansible_user }}"
+  file:
+    path: "~/.kube"
+    state: directory
+    mode: 0700
+
+- name: Copy kube‑config to ~/.kube/config for {{ ansible_user }}
+  become: true
+  become_user: "{{ ansible_user }}"
+  copy:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: "~/.kube/config"
+    mode: 0600
+
+- name: Read cluster join token
+  slurp:
+    src: /var/lib/rancher/k3s/server/node-token
+  register: raw_token
+
+- name: Share token & master IP
+  add_host:
+    name: token_holder
+    k3s_token: "{{ raw_token.content | b64decode }}"
+    master_ts_ip: "{{ ts_ip.stdout }}"

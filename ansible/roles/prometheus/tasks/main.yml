@@ -1,0 +1,59 @@
+---
+# roles/prometheus/tasks/main.yml
+
+- name: Set Helm version and architecture
+  set_fact:
+    helm_version: "v3.11.3"
+    helm_arch: "arm64"
+
+- name: Download Helm tarball
+  get_url:
+    url: "https://get.helm.sh/helm-{{ helm_version }}-linux-{{ helm_arch }}.tar.gz"
+    dest: "/tmp/helm-{{ helm_version }}-linux-{{ helm_arch }}.tar.gz"
+    mode: "0644"
+
+- name: Extract Helm binary
+  unarchive:
+    src: "/tmp/helm-{{ helm_version }}-linux-{{ helm_arch }}.tar.gz"
+    dest: "/tmp"
+    remote_src: yes
+    creates: "/tmp/linux-{{ helm_arch }}/helm"
+
+- name: Install Helm binary
+  become: true
+  copy:
+    remote_src: yes
+    src: "/tmp/linux-{{ helm_arch }}/helm"
+    dest: "/usr/local/bin/helm"
+    mode: "0755"
+
+- name: Add Prometheus Community Helm repo if missing
+  shell: |
+    if ! helm repo list | grep -q '^prometheus-community\s'; then
+      helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+    fi
+  args:
+    executable: /bin/bash
+  register: helm_repo
+
+- name: Update Helm repos if added
+  shell: helm repo update
+  when: helm_repo.changed
+  args:
+    executable: /bin/bash
+
+- name: Create monitoring namespace if missing
+  shell: |
+    kubectl get namespace monitoring >/dev/null 2>&1 || kubectl create namespace monitoring
+  args:
+    executable: /bin/bash
+
+- name: Install kube-prometheus-stack via Helm
+  shell: |
+    export KUBECONFIG=/home/{{ ansible_user }}/.kube/config
+    helm repo update
+    helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
+      --namespace monitoring \
+      --wait --timeout 300s
+  args:
+    executable: /bin/bash

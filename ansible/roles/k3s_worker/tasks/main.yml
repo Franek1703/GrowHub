@@ -1,0 +1,28 @@
+- name: Uninstall previous k3s‑agent if present
+  shell: |
+    if [ -f /usr/local/bin/k3s-agent-uninstall.sh ]; then /usr/local/bin/k3s-agent-uninstall.sh; fi
+  args:
+    executable: /bin/bash
+  changed_when: false
+
+- name: Get Tailscale IPv4
+  command: tailscale ip -4
+  register: ts_ip
+  changed_when: false
+
+- name: Obtain variables from master
+  set_fact:
+    k3s_token: "{{ hostvars['token_holder']['k3s_token'] }}"
+    master_ts_ip: "{{ hostvars['token_holder']['master_ts_ip'] }}"
+
+- name: Install k3s agent and join cluster
+  environment:
+    INSTALL_K3S_EXEC: >-
+      agent
+      --server https://{{ master_ts_ip }}:6443
+      --token {{ k3s_token }}
+      --node-ip {{ ts_ip.stdout }}
+      --flannel-iface tailscale0
+  shell: curl -sfL https://get.k3s.io | sh -
+  args:
+    creates: /etc/systemd/system/k3s-agent.service

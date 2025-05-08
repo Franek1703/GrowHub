@@ -1,0 +1,192 @@
+# Karmada installation tasks for Raspberry Pi (arm64)
+
+# 0a. Bazowe fakty — wersje i ścieżki
+- name: Set base facts for Karmada install
+  set_fact:
+    go_version: "1.23.7"
+    go_arch: "arm64"
+    kubeconfig_path: "{{ kubeconfig_path | default('/home/' + ansible_user + '/.kube/config') }}"
+    karmada_repo_path: "/opt/karmada"
+    karmada_tag: "v1.13.2"
+    log_dir: "/var/log/karmada"
+
+# 0b. Fakty zależne – używają go_version / go_arch
+- name: Set derived facts for Karmada install
+  set_fact:
+    go_tarball: "go{{ go_version }}.linux-{{ go_arch }}.tar.gz"
+    go_url: "https://go.dev/dl/go{{ go_version }}.linux-{{ go_arch }}.tar.gz"
+    go_tar_path: "/tmp/go{{ go_version }}.linux-{{ go_arch }}.tar.gz"
+
+# 1. Pakiety systemowe
+- name: Install prerequisites
+  apt:
+    name:
+      - git
+      - wget
+      - make
+      - curl
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+      - lsb-release
+      - dirmngr
+      - software-properties-common
+      - rpi-eeprom
+      - raspi-config
+    state: present
+    update_cache: yes
+
+# 1b. Swap — zwiększ do 2 GB dla kompilacji Go, jeśli działa dphys-swapfile
+- name: Ensure 2G swap if dphys-swapfile present
+  shell: |
+    if [ -f /etc/dphys-swapfile ]; then
+      sed -i 's/^CONF_SWAPSIZE=.*/CONF_SWAPSIZE=2048/' /etc/dphys-swapfile
+      systemctl restart dphys-swapfile.service || true
+    fi
+  args:
+    executable: /bin/bash
+  changed_when: false
+
+# 2. Instalacja Golanga (binarka z go.dev)
+- name: Remove apt golang-go if present
+  apt:
+    name: golang-go
+    state: absent
+  ignore_errors: yes
+
+- name: Download Go archive
+  get_url:
+    url: "{{ go_url }}"
+    dest: "{{ go_tar_path }}"
+    mode: "0644"
+  register: go_dl
+
+- name: Remove /usr/local/go if exists
+  file:
+    path: /usr/local/go
+    state: absent
+  when: go_dl is changed
+
+- name: Extract Go
+  unarchive:
+    src: "{{ go_tar_path }}"
+    dest: /usr/local
+    remote_src: yes
+    creates: /usr/local/go/bin/go
+
+- name: Ensure Go in global PATH
+  copy:
+    dest: /etc/profile.d/go_path.sh
+    content: 'export PATH=$PATH:/usr/local/go/bin\n'
+    mode: "0755"
+
+# 3. GOPATH dla {{ ansible_user }}
+- name: Ensure GOPATH directory and PATH lines
+  become_user: "{{ ansible_user }}"
+  block:
+    - name: Create GOPATH directory
+      file:
+        path: "~/go"
+        state: directory
+        mode: "0755"
+
+    - name: Add Go env lines to ~/.bashrc
+      lineinfile:
+        path: "~/.bashrc"
+        line: "{{ item }}"
+        create: yes
+      loop:
+        - 'export PATH=$PATH:/usr/local/go/bin'
+        - 'export GOPATH=$HOME/go'
+        - 'export PATH=$PATH:$GOPATH/bin'
+
+# 4. Klonowanie repozytorium Karmady
+- name: Clone Karmada repo
+  git:
+    repo: https://github.com/karmada-io/karmada.git
+    dest: "{{ karmada_repo_path }}"
+    version: "{{ karmada_tag }}"
+    force: yes
+
+# 4b. Pobierz bieżący kontekst z kubeconfig
+- name: Get current kubeconfig context name
+  command: kubectl --kubeconfig {{ kubeconfig_path }} config current-context
+  register: kube_ctx
+  changed_when: false
+
+# 4c. Katalog logów
+- name: Ensure {{ log_dir }} exists
+  become: true
+  file:
+    path: "{{ log_dir }}"
+    state: directory
+    owner: root
+    mode: 0755
+
+# 5. Uruchom oficjalny skrypt remote-up-karmada.sh
+- name: Run official remote-up script
+  args:
+    chdir: /opt/karmada/hack
+  environment:
+    PATH: "/usr/local/go/bin:{{ ansible_env.PATH }}"
+    GOPATH: "/home/{{ ansible_user }}/go"
+    APISERVER_ALT_NAMES: "100.70.99.74,127.0.0.1,localhost"
+  shell: >-
+    ./remote-up-karmada.sh "{{ kubeconfig_path }}" {{ kube_ctx.stdout }} false \
+    --insecure-skip-tls-verify=true --validate=false \
+    2>&1 | tee {{ log_dir }}/remote-up-$(date +%F-%T).log
+  register: remote_log
+  changed_when: "'ERROR' not in remote_log.stdout"
+
+# 6. Przygotuj wrapper install-karmada.sh (future re-run)
+- name: Deploy wrapper install-karmada.sh
+  copy:
+    dest: "{{ karmada_repo_path }}/install-karmada.sh"
+    mode: "0755"
+    content: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+      export PATH=$PATH:/usr/local/go/bin
+      export GOPATH=$HOME/go
+      KCFG="${1:-{{ kubeconfig_path }}}"
+      HOST_IP="$(tailscale ip -4 2>/dev/null || hostname -I | awk '{print $1}')"
+      export KARMADA_HOST_IP=$HOST_IP
+      for comp in APISERVER AGGREGATED_APISERVER CONTROLLER_MANAGER SCHEDULER WEBHOOK; do
+        export KARMADA_${comp}_REPLICAS=1
+      done
+      cd "$(dirname "$0")"
+      ./hack/remote-up-karmada.sh "$KCFG" $(kubectl --kubeconfig "$KCFG" config current-context) \
+        --insecure-skip-tls-verify=true --validate=false
+
+# 7. Wykonaj instalator i zapisz log
+- name: Run Karmada installer and write log as root
+  become: true
+  environment:
+    PATH: "/usr/local/go/bin:{{ ansible_env.PATH }}"
+    GOPATH: "/home/{{ ansible_user }}/go"
+    GOMAXPROCS: "2"
+  shell: |
+    ts=$(date +%F-%T)
+    /opt/karmada/install-karmada.sh {{ kubeconfig_path }} \
+      2>&1 | /usr/bin/tee {{ log_dir }}/karmada-install-${ts}.log
+  args:
+    executable: /bin/bash
+  register: karmada_install
+
+# 8. Czekaj na gotowość podów
+- name: Wait for pods Ready
+  shell: |
+    kubectl --kubeconfig {{ kubeconfig_path }} --insecure-skip-tls-verify=true \
+      wait --for=condition=Ready pods --all -n karmada-system --timeout=300s
+  register: wait_result
+  retries: 3
+  delay: 60
+  until: wait_result.rc == 0
+  ignore_errors: yes
+
+- name: List Karmada pods
+  shell: kubectl --kubeconfig {{ kubeconfig_path }} --insecure-skip-tls-verify=true get pods -n karmada-system -o wide
+  register: pods
+
+- debug:
+    var: pods.stdout_lines

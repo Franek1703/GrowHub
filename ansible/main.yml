@@ -1,0 +1,19 @@
+- name: Generate SSH key and install K3s cluster
+  hosts: all
+  gather_facts: false
+  roles:
+    - ssh_key_setup
+
+- name: Install / configure K3s server
+  hosts: master
+  become: true
+  gather_facts: false
+  roles:
+    - k3s_master
+
+- name: Install / configure K3s workers
+  hosts: workers
+  become: true
+  gather_facts: false
+  roles:
+    - k3s_worker
